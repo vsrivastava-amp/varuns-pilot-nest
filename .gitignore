@@ -1,0 +1,5 @@
+# Credentials never enter the nest (guardrail #4)
+.env
+.env.*
+*.pem
+*.key
