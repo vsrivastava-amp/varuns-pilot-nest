@@ -26,7 +26,9 @@ Context: Dhaval asked 7/21 "does this increase input tokens compared to what we 
 
 **Draft (Varun sends as himself):**
 
-> On your token question Dhaval: yes, but modestly. The demo's system prompt is ~2.2k tokens today, of which the GPC list is ~480. Going from 66 to the full 192 L2s (+21 L1s) in the same compact format adds ~800 tokens per request — system prompt lands around 3k (~+35%). Since it's a fixed prefix, provider prompt caching absorbs most of it (we see 93–97% cache-read rates on the offline civ service, whose prompt is 16.4k tokens with the full L3 tree). Net effect on the cost estimates is low single-digit percent. The disambiguation rules will need some expansion too — will size that as part of the fix.
+> Prompt size after the update: ~3k tokens, up from ~2.2k today. The GPC list itself goes from ~480 to ~1.25k tokens moving from 66 categories to the full set (192 L2s + 21 L1s), and the disambiguation rules will need some expansion on top (est. +100–300). Cost impact is small though: the system prompt is a fixed prefix, so prompt caching absorbs most of the increase — we see 93–97% cache-read rates on the offline civ service, whose prompt is 16.4k tokens with the full L3 tree. Net effect on the input-cost estimates: low single-digit percent.
+
+(2026-07-22 revised per Varun in-session: reframed to lead with post-update prompt size + cost, answering Dhaval's 13:13 EDT ask directly.)
 
 **Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
 
