@@ -1,6 +1,8 @@
-# Slack Claude playbook
+# Slack Claude playbook — RETIRED 2026-07-22
 
-*(Living reference. Started 2026-07-21.)*
+**Slack Claude is no longer part of the workflow** (Varun's decision, 2026-07-22 — see `log/nest--laptop.md`). Laptop sessions now have direct Slack access via the claude.ai Slack MCP with full Varun-level visibility, superseding everything below. All deposits landed before retirement (last applied: ca89703). Do not compose sweep asks or expect deposits. Kept as historical reference for the deposit-protocol design and the capability audit.
+
+*(Living reference. Started 2026-07-21. Frozen 2026-07-22.)*
 
 ## Capabilities (self-audit relayed 2026-07-21 — re-verify occasionally)
 

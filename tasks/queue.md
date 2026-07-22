@@ -8,8 +8,8 @@ Tagged by privilege tier: `no-auth` / `session` / `sudo`. Dated on entry. Move t
 - 2026-07-21 — Set up Atlassian MCP (or API token) for Jira read access; smoke-test against PCIV board
 - 2026-07-21 — ✅ DONE: nest repo live at github.com/vsrivastava-amp/varuns-pilot-nest
 - 2026-07-21 — ✅ DONE: Slack Claude capability audit → `playbooks/slack-claude.md`. Clone/read of nest repo confirmed 2026-07-21; first patch deposit applied same day. Remaining curiosity (non-blocking): observed session lifetime
-- 2026-07-21 — Admin ask: GitHub write access for Slack Claude (account not linked; push 403). Until then: patch-deposit protocol per `playbooks/slack-claude.md`
-- 2026-07-21 — Draft Slack Claude's nest-protocol briefing (canvas/pinned msg for dev channel): pull ritual, deposit format, single-writer rule
+- 2026-07-21 — ~~Admin ask: GitHub write access for Slack Claude~~ 2026-07-22: OBSOLETE — Slack Claude retired (see `log/nest--laptop.md`); withdraw the admin ask if filed
+- 2026-07-21 — ~~Draft Slack Claude's nest-protocol briefing~~ 2026-07-22: OBSOLETE — Slack Claude retired
 
 ## session
 

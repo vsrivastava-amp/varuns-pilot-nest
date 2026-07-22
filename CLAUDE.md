@@ -44,8 +44,8 @@ Rule of thumb: **infrastructure probably exists; facts are probably stale.** Reu
   Surfacing conflicts crisply is one of the most valuable things you can do — resolving them is Varun's actual job.
 - Timestamps: this machine is Pacific; Databricks/most APIs are UTC. Say which.
 - Learned a new incantation, gotcha, or auth fact? Fold it into the relevant `playbooks/` file before you finish — that's how the next session skips your pain.
-- Laptop Claude is nest steward (weekly compaction, proposes `map/` edits for Varun's review). Slack Claude is a contributor, never steward.
-- Signals in Slack, state in git: notable commits get a one-liner in the dev channel (via Slack Claude / Varun).
+- Laptop Claude is nest steward (weekly compaction, proposes `map/` edits for Varun's review). (Slack Claude retired 2026-07-22 — laptop sessions read Slack directly via MCP.)
+- Signals in Slack, state in git: notable commits get a one-liner in the dev channel (via Varun, or Varun-directed send).
 
 ## Guardrails (non-negotiable)
 
@@ -56,8 +56,9 @@ Rule of thumb: **infrastructure probably exists; facts are probably stale.** Reu
 5. Probe credentials before session-tier work (`databricks auth describe -p <profile>`, Jira `/myself` ping, `aws sts get-caller-identity`). Dead → park the task, tell Varun. Never fail silently.
 6. Outbound artifacts (messages, PRs beyond dev branches, Jira writes) go through `REVIEW.md`. Keep working other tasks while they wait.
 7. Ambiguous → park in `REVIEW.md` with your best-guess draft. Don't guess on anything outward-facing.
-8. Slack Claude in DM mode (Varun's OAuth fallback) is read-only by policy.
+8. claude.ai MCP connectors (Slack, Gmail, Calendar, Drive, Rovo) ride Varun's OAuth — **read-only by policy**. Any send/write via them appears *as Varun*: never, unless Varun explicitly directs it in-chat (that direction is the approval; log it in your run file).
 
 ## Current status (update when it changes)
 
 - 2026-07-21 — Bootstrap phase. Live: nest repo (github.com/vsrivastava-amp/varuns-pilot-nest), Jira API (see `playbooks/jira.md`), Databricks CLI dev profile (see `playbooks/databricks.md`). Pending: Slack Claude access to this repo (Varun verifying), Datadog keys, pilot digest.
+- 2026-07-22 — claude.ai MCP connectors live on laptop sessions: Calendar, Gmail, Drive, Atlassian Rovo, Slack (per-session `/mcp` handshake required — see `playbooks/google.md`). **Slack Claude retired** (see `log/nest--laptop.md`); morning routine v2 runs all sweeps laptop-side (`playbooks/morning-routine.md`). Still pending: Datadog keys.

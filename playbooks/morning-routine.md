@@ -30,18 +30,16 @@ Goal: by the time Varun finishes coffee, one integrated digest in `state/` cover
 5. **Slack sweep** — direct, via laptop Slack MCP (full Varun-level visibility; see access audit in `playbooks/slack-claude.md`):
    - Anchors: `#pub-onboarding-qwant-ai` (C0AUE5JBTAP), `#team-relevance-yield` (C08GKCC9742) — direct `slack_read_channel` since last digest.
    - `slack_search_public_and_private` for stream keywords (pCIV, Qwant, ARES…) and mentions of Varun since last digest; open threads he's in.
-   - **Harvest deposits**: check the dev channel and the Varun↔Slack Claude DM for un-acked 🪺 NEST DEPOSIT / NEST NOTE messages; apply per `playbooks/slack-claude.md` rules (own-files only, proposals → REVIEW.md). Ack path: note in digest for Varun to confirm, or Varun relays.
-   - Slack Claude remains a contributor for in-workspace work (posting, channel-native tasks) — but morning sweeps no longer depend on prompting it.
+   - (Slack Claude retired 2026-07-22 — no deposits to harvest, no sweep asks to compose. `log/pciv-live-integration--slack.md` is frozen; continue that stream in laptop-owned files.)
 
 6. **Integrate + deliver**: one digest in chat, attention flags first (commitments due, waiting-on-Varun, incoming asks, calendar conflicts), then by stream. Write to `state/digest-YYYY-MM-DD.md`, commit, push.
 
 7. **Close out**: run log in `runs/YYYY-MM-DD-<slug>.md`; fold new gotchas into playbooks; conflicts/decisions → `needs-human.md`.
 
-## Fallback: v1 path (no connectors — headless/cron or auth dead)
+## Fallback: no connectors (headless/cron or auth dead)
 
 - Jira via curl (`playbooks/jira.md` patterns) — this path is headless-safe.
-- Slack via composed sweep ask for Slack Claude (Varun pastes; we never send). Per `playbooks/slack-claude.md`: confirm landed deposits by commit hash; ask for deltas since last digest, known anchors + open-ended scope, channels-checked list; remind about deposit formats.
-- No calendar/Gmail on this path — say so in the digest rather than silently omitting.
+- No Slack/calendar/Gmail on this path (Slack Claude retired 2026-07-22 — that fallback no longer exists). Say what's missing in the digest rather than silently omitting; flag to Varun so an interactive session can cover the gap.
 
 ## Gotchas learned
 
