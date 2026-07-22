@@ -6,20 +6,6 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ---
 
-## 2026-07-22 — laptop — message draft — group DM (Varun/Elisa/Dhaval/Yaarit/Saksham, C0BJPQHFFGC) — answers Dhaval's open token question
-
-Context: Dhaval asked 7/21 "does this increase input tokens compared to what we estimated?" — still unanswered in-thread after Varun's 7/22 confirmation. Numbers verified against local repos (`runs/2026-07-22-pciv-taxonomy-gap.md`).
-
-2026-07-22 13:13 EDT update: Dhaval re-pinged — wants this work scheduled **asap** (prompts are actively going to pubs), wants Amarachi Miller / Elisa Branson / Cameron Park to update the pub packet with the new prompt, and explicitly asked "let me know what the prompt size is after this update." The draft below answers that directly (~3k tokens post-update, +~800). Urgency is now higher — draft is send-ready as-is.
-
-**Draft (Varun sends as himself):**
-
-> Prompt size after the update: ~3k tokens, up from ~2.2k today. The GPC list itself goes from ~480 to ~1.25k tokens moving from 66 categories to the full set (192 L2s + 21 L1s), and the disambiguation rules will need some expansion on top (est. +100–300). Cost impact is small though: the system prompt is a fixed prefix, so prompt caching absorbs most of the increase — we see 93–97% cache-read rates on the offline civ service, whose prompt is 16.4k tokens with the full L3 tree. Net effect on the input-cost estimates: low single-digit percent.
-
-(2026-07-22 revised per Varun in-session: reframed to lead with post-update prompt size + cost, answering Dhaval's 13:13 EDT ask directly.)
-
-**Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
-
 ## 2026-07-22 — laptop — message draft — Slack DM to Claire Conklin (cc/or Camille Baudou) — re: Q-2026-07-21-01
 
 **Send condition (Varun decides):** HOLD unless pCIV extraction / eval code actually consumes locale or timezone from Qwant requests. Dhaval + Camille are already working this in-channel; it may self-resolve. If it does concern our extraction assumptions, send — the tracker calcifying "cannot" is the risk.

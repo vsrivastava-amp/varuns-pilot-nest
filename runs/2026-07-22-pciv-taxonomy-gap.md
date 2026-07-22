@@ -19,3 +19,14 @@
   6. **Borrow eval harness**: llm-evaluator-service civ_extraction has labeled data at L3 — roll up to L2 as ground truth, measure accuracy old vs new prompt.
   7. **Token/cache verification post-change**: count real prompt tokens (confirm ~3k), watch cache-read rates after deploy.
   Open design points (Varun/Yaarit): flat vs grouped-by-L1 list format; disambiguation scope; regression tolerance threshold.
+- 2026-07-22 — Varun sent the cost message to the group DM (in-session confirmation); REVIEW.md disposition updated to sent.
+- 2026-07-22 — **Latency-impact test scope** (Varun-directed). Grounded in main.py review:
+  - Architecture fact: one generation streams reply → DELIM → pCIV JSON (`generate_events`). User-perceived metrics: TTFT (first `token` SSE), time-to-`reply_done`, time-to-`result`. The +800 prompt tokens hit **prefill only** ⇒ TTFT is the headline metric; output is untouched.
+  - Cache reality check: offline service's 93–97% cache-read is batch traffic. The demo is sparse interactive traffic; OpenAI implicit cache TTL ~5–10 min ⇒ cold prefill may be the *common* case for Qwant demo users. So measure cold and warm separately; cold TTFT delta is the honest number.
+  - Instrumentation gap: `format_usage()` (main.py:159) drops `input_token_details.cache_read` from langchain usage_metadata — SSE `result.usage` can't confirm cache hits. Fix options: (a) 2-line extend of format_usage (needs repo write → Varun), (b) provider-level harness reads usage directly.
+  - Two-level plan:
+    1. **Provider-level A/B** (clean, no repo changes): script calls OpenAI directly with old vs new system prompt (same turns), streams, records TTFT + total + usage.cached_tokens. Interleave A/B to control provider variance. N≥50/arm/cache-state, report p50/p95. Models: gpt-5.4-nano (default) + gpt-5.4-mini; optionally mistral-small via OpenRouter (different caching semantics).
+    2. **Service-level E2E sanity** (uses existing smoke_test.py SSE parser): two service checkouts (old/new prompts+taxonomy) on two ports, same query set, timestamp SSE events. Catches anything provider-level misses (Quart/streaming interaction).
+  - Cache-state control: warm = prime then measure back-to-back; cold = space >10 min or first-of-session. Both prompts (2.2k, 3k) clear OpenAI's 1024-token implicit-cache floor; increments of 128 tok.
+  - Second-order watch: expanded disambiguation rules could lengthen/slow the *reply* portion (prompt-design effect, not token-count) — covered by comparing reply_done times + output token counts across arms on the fixed regression query set (reuse test-plan item 3 queries).
+  - Acceptance frame (proposal): cold TTFT delta < ~100ms p50 and no p95 regression beyond noise ⇒ report "no material impact"; anything worse → revisit prompt format (e.g., grouped-by-L1 might compress).
