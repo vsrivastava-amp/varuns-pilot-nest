@@ -13,6 +13,7 @@ Tagged by privilege tier: `no-auth` / `session` / `sudo`. Dated on entry. Move t
 
 ## session
 
+- 2026-07-22 — **pCIV demo GPC taxonomy fix** (Qwant client escalation, group DM C0BJPQHFFGC): expand `gpc_taxonomy.json` 75→213 entries (21 L1 + 192 L2 from eval-service full taxonomy) AND rework `prompts/pciv_extraction.txt` GPC section (66 ids → full L2, incl. disambiguations) **in sync** — they're already mismatched (66 vs 75). Analysis + token impact done: `runs/2026-07-22-pciv-taxonomy-gap.md`. Token-answer draft for Dhaval in REVIEW.md. Implementation blocked on Varun/Yaarit design call (prompt format, regression testing) — demo repo posture is read-only for agents.
 - 2026-07-21 — Databricks: confirm auth mechanism (`databricks auth describe`), list eval/experimentation jobs & dashboards
 - 2026-07-21 — Pilot catch-up digest (read-only) → `state/digest-YYYY-MM-DD.md`. ⏳ partial: Slack leg done by slack-claude 2026-07-21 (`log/pciv-live-integration--slack.md`); Jira leg done 2026-07-22 morning-routine (`state/digest-2026-07-22.md`); remaining legs: git history, Databricks job status
 
