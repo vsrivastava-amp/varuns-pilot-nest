@@ -25,6 +25,13 @@ BASE="https://admarketplace.atlassian.net/rest/api/3"
 - Use `/search/jql` (GET with `--data-urlencode`), the modern endpoint — the old `/search` is deprecated.
 - `/usr/bin/curl` full path (sandbox blocks bare `curl` — same gotcha as Databricks).
 
+## Second path: Atlassian Rovo MCP (2026-07-22)
+
+- claude.ai "Atlassian Rovo" connector, live on laptop sessions after a per-session `/mcp` handshake (see `playbooks/google.md` → session bridging gotcha). Verified via `atlassianUserInfo` → Varun's account, active.
+- Rides Varun's OAuth, same as the API token: **read-only is behavioral here too.** Write tools exist (`createJiraIssue`, `editJiraIssue`, `transitionJiraIssue`, `addCommentToJiraIssue`, Confluence page create/update) — all go through REVIEW.md first.
+- Adds what the curl path didn't have wired up: `searchJiraIssuesUsingJql`, `getJiraIssue`, plus **Confluence** (`getConfluencePage`, `searchConfluenceUsingCql`) and Teamwork Graph context.
+- curl path (above) remains the headless-safe option — MCP connectors need interactive auth and may be absent in cron runs.
+
 ## Landscape (2026-07-21 snapshot — re-derive, don't trust stale)
 
 ~40 projects visible. Ones that matter here: **AI** (Artificial Intelligence — PCIV core), **AS** (Ad Selection), **DPR** (Data Products & Reporting), **INFRA**, **PUB** (Publisher Onboarding), **DATABRICKS**, **RELEASE**.
