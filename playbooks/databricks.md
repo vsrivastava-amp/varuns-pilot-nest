@@ -47,6 +47,28 @@ databricks api get "/api/2.0/jobs/runs/get-output?run_id=<TASK run id>" -p X | j
 - Poll pattern: background `while` loop echoing state every 60–90s, exit on `TERMINATED|INTERNAL_ERROR`.
 - Continuous jobs never terminate on success — poll for FAILED, verify output tables, then cancel.
 
+## "Who uses this table?" forensics (system tables)
+
+Dev-profile auth can read `system.*` via the shared metastore — answers usage questions no code grep can (proved out 2026-07-22, `runs/2026-07-22-prakash-intent-type.md`):
+
+```sql
+-- last reads + who/what (1yr retention; covers ALL Databricks reads incl. jobs/notebooks)
+SELECT created_by, entity_type, entity_id, target_table_full_name, date(event_time) d, count(*)
+FROM system.access.table_lineage
+WHERE source_table_full_name = '<catalog.schema.table>' AND event_time > now() - INTERVAL 365 DAYS
+GROUP BY ALL ORDER BY d DESC;
+
+-- the actual SQL text (SQL-warehouse/serverless only, shorter retention)
+SELECT executed_by, client_application, left(statement_text,180), max(end_time), count(*)
+FROM system.query.history
+WHERE statement_text ILIKE '%<table>%' AND start_time > now() - INTERVAL 30 DAYS
+GROUP BY ALL ORDER BY 4 DESC;
+```
+
+- `created_by` numeric id? Resolve service principals: `databricks api get /api/2.0/preview/scim/v2/ServicePrincipals -p <profile>`. Unattributed bare-TABLE reads with no entity ≈ Catalog Explorer browsing, not a job.
+- Backticked names dodge the ILIKE filter (`` `amp`.`intent_type` ``) — lineage catches what query.history misses, and cluster-based Spark jobs skip query.history entirely. Trust lineage for coverage, query.history for the statement text.
+- Caveat: covers Databricks reads only — direct MySQL-side consumers need DB-team telemetry.
+
 ## Other
 
 - `databricks fs ls/rm -r dbfs:/...` — checkpoint inspection/reset.
