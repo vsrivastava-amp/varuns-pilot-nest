@@ -8,13 +8,13 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ## 2026-07-22 — laptop — message draft — Slack DM to Prakash Patel (D093GDY36SD) — re: ssp.intent_type deletion check
 
-Context: Prakash asked today (12:08 EDT) whether the ML team uses the MySQL `ssp.intent_type` table in production — they want to delete/repurpose it for the new media-segment taxonomy. Investigated code + Databricks lineage/query history (`runs/2026-07-22-prakash-intent-type.md`). Varun's clarifying q (sent himself, 13:00 EDT) + Prakash's reply confirmed: `ssp.intent_type` is **MySQL-only, no Databricks replica** — distinct from `amp.INTENT_TYPE` (the RELEASE-5309 table). ML code has zero MySQL reads (everything runs against Databricks tables), so nothing in the ML stack can even see it → clean "no". Side note kept for Prakash: pricing (aguo's recurring supply_card query, last 7/15) reads `prod_amplify.amp.intent_type`, relevant only if they touch that table too. 👀 reaction added earlier (Varun-directed in-chat, 2026-07-22).
+Context: Prakash asked today (12:08 EDT) whether ML uses "ssp.intent_type" (MySQL) in production — deletion/repurpose candidate for the new media-segment taxonomy. After Varun's clarifying q, Prakash corrected himself (13:00/13:01 EDT): the table is **`amp.INTENT_TYPE`** ("ssp" was a typo); context msg lists the near-duplicate intent tables (amp.QUERY_INTENT_TYPE = EDM 2.0, amp.INTENT_TYPE = 2025 ML-taxonomy one, amp.QUERY_TARGET / amp.QUERY_OBJECTIVE = new DPE media-segment). Investigation (`runs/2026-07-22-prakash-intent-type.md`): ML does NOT read amp.INTENT_TYPE — pipelines use `intent_clf.intent_type_master` (migration never happened; ID orderings differ). BUT UC lineage shows **pricing** reads `prod_amplify.amp.intent_type`: aguo's recurring query → `dev_pricing.pricing_team.supply_card` (4/14, 5/2, 6/2, 7/2 via Jobs, 7/15 manual). 👀 reaction added earlier (Varun-directed in-chat, 2026-07-22).
 
 **Draft (Varun sends as himself):**
 
-> Confirmed then — no, we don't use `ssp.intent_type`. All our production pipelines read Databricks tables only (intent lookup comes from `intent_clf.intent_type_master`), and we have no direct MySQL reads anywhere in ML code. So since it's MySQL-only, nothing on our side can even see it. Fine to delete/repurpose from our end.
+> Ah ok that makes sense. So for `amp.INTENT_TYPE`: the ML side doesn't use it in production — our pipelines read `intent_clf.intent_type_master` in Databricks instead. The swap to `amp.INTENT_TYPE` never actually happened on our end after that release (the IDs are even ordered differently between the two), so no objection from us.
 >
-> Unrelated heads-up in case `amp.INTENT_TYPE` is also in scope for the media-segment work: Databricks lineage shows the pricing team joins `prod_amplify.amp.intent_type` into `dev_pricing.pricing_team.supply_card` (aguo's recurring query, last ran 7/15) — worth a ping to them before touching that one.
+> One thing before you delete/repurpose it though: Databricks lineage shows the pricing team does read `prod_amplify.amp.INTENT_TYPE` — aguo has a recurring query that joins it into `dev_pricing.pricing_team.supply_card` (runs ~monthly, last ran 7/15). Worth a ping to them first.
 
 **Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
 
