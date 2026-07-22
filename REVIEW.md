@@ -22,6 +22,8 @@ Context: Prakash asked today (12:08 EDT) whether ML uses "ssp.intent_type" (MySQ
 
 Context: Dhaval asked 7/21 "does this increase input tokens compared to what we estimated?" — still unanswered in-thread after Varun's 7/22 confirmation. Numbers verified against local repos (`runs/2026-07-22-pciv-taxonomy-gap.md`).
 
+2026-07-22 13:13 EDT update: Dhaval re-pinged — wants this work scheduled **asap** (prompts are actively going to pubs), wants Amarachi Miller / Elisa Branson / Cameron Park to update the pub packet with the new prompt, and explicitly asked "let me know what the prompt size is after this update." The draft below answers that directly (~3k tokens post-update, +~800). Urgency is now higher — draft is send-ready as-is.
+
 **Draft (Varun sends as himself):**
 
 > On your token question Dhaval: yes, but modestly. The demo's system prompt is ~2.2k tokens today, of which the GPC list is ~480. Going from 66 to the full 192 L2s (+21 L1s) in the same compact format adds ~800 tokens per request — system prompt lands around 3k (~+35%). Since it's a fixed prefix, provider prompt caching absorbs most of it (we see 93–97% cache-read rates on the offline civ service, whose prompt is 16.4k tokens with the full L3 tree). Net effect on the cost estimates is low single-digit percent. The disambiguation rules will need some expansion too — will size that as part of the fix.
