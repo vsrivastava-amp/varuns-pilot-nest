@@ -20,6 +20,16 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 **Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
 
+## 2026-07-22 — laptop — message draft — Slack reply to Saksham in #team-relevance-yield (thread ts 1784739438.331709)
+
+Context: Saksham (12:57 EDT) quoted the "66 vs 192 L2 GPCs" line and asked (1) was the prompt size misleading / how much will it grow, (2) how are prompts stored today — "google docs initially and then evalID in the llm-eval-service?". Both answers are already derived in `runs/2026-07-22-pciv-taxonomy-gap.md`; the size numbers overlap with the cost message Varun sent to the group DM today. One caveat: I can't verify whether drafts *start* in Google Docs — that clause is hedged, adjust if wrong.
+
+> On size: the numbers we quoted were accurate for what the demo shipped — the taxonomy was just incomplete. Today's demo system prompt is ~2.2k tokens, with the GPC list (~66 IDs) at ~480 of those. Expanding to the full 21 L1 + 192 L2 (~213 entries) takes the list to ~1.2k tokens → **~3k total, i.e. +~800 tokens (+~35%)**, plus maybe 100–300 more when we rework the disambiguation rules. Effective cost impact is much smaller than that sounds: the system prompt is a fixed prefix, and OpenAI prefix caching absorbs most of it (the offline civ service measures 93–97% of input tokens as cache reads). We're scoping a latency check too since demo traffic is sparse enough that cold-cache may be common.
+>
+> On storage: prompts are in git, not docs. The demo prompt is `prompts/pciv_extraction.txt` in the pciv-demo-service repo (with `taxonomy/gpc_taxonomy.json` alongside — those two have to change together). In llm-evaluator-service, prompt files live in the repo and each evalId in `domains/<domain>/eval_configs.json` maps to a model + prompt file (active configs also mirrored in the `llm_evals.civ_config` table). So yes — evalId is the handle once it's in the eval service.
+
+**Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
+
 ## 2026-07-22 — laptop — message draft (optional) — Slack Claude's session — stand-down note
 
 Context: Slack Claude retired today (`log/nest--laptop.md`). No operational need — it only acts when prompted, and all its deposits landed. This is just closing the loop kindly if you'd rather not leave it hanging; totally fine to drop.
