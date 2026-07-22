@@ -47,3 +47,4 @@ Goal: by the time Varun finishes coffee, one integrated digest in `state/` cover
 - 2026-07-22 — Verify agent paraphrases against source before Varun acts on them (re-fetch the actual comment thread for anything that drives a decision).
 - 2026-07-22 — Jira writes (transitions etc.) are OK when Varun directs them in-chat — that *is* the approval; log the write in the run file. Agent-initiated writes still go through `REVIEW.md`.
 - 2026-07-22 — Calendar default TZ is America/New_York (Varun's calendar); this machine is Pacific. Always pass `timeZone` explicitly and label which zone the digest uses.
+- 2026-07-22 — Rovo `searchJiraIssuesUsingJql` with `comment` in fields across a broad sweep (~23 issues) overflows context (138k chars; auto-saved to a tool-results file). Either omit `comment` from the broad sweep and fetch comments per-anchor-issue, or digest the saved file via a subagent (worked well).
