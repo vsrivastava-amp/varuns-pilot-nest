@@ -38,7 +38,10 @@ Rule of thumb: **infrastructure probably exists; facts are probably stale.** Reu
 
 - Every line you write in `log/`, `tasks/`, `runs/`, `REVIEW.md` starts with a date (YYYY-MM-DD).
 - **Cache interpretations, re-derive facts.** Never mirror Jira/git/Slack state into the nest — fetch fresh via map pointers. The nest holds only what's expensive to re-derive.
-- **Sources disagree, or a needed decision doesn't exist yet? Never silently pick a side.** File it in `needs-human.md` (template inside), reference the entry, and keep working whatever isn't blocked. Resolving those is Varun's actual job — surfacing them crisply is one of the most valuable things you can do.
+- **Sources disagree, or a needed decision doesn't exist yet? Never silently pick a side.** File it in `needs-human.md` (template inside). Then check where the unknown sits:
+  - **On your task's hot path** (the outcome changes what you'd build/write/conclude): **the task is blocked — let it stay blocked.** Park it in the queue referencing the Q-entry and release your claim. Do NOT build around the unknown, scaffold both branches, or proceed on the "likely" answer — work built on an undecided assumption calcifies into a de-facto decision nobody made.
+  - **Peripheral** to your task: file it and continue; note the entry in your run log.
+  Surfacing conflicts crisply is one of the most valuable things you can do — resolving them is Varun's actual job.
 - Timestamps: this machine is Pacific; Databricks/most APIs are UTC. Say which.
 - Learned a new incantation, gotcha, or auth fact? Fold it into the relevant `playbooks/` file before you finish — that's how the next session skips your pain.
 - Laptop Claude is nest steward (weekly compaction, proposes `map/` edits for Varun's review). Slack Claude is a contributor, never steward.

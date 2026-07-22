@@ -6,6 +6,8 @@ Varun's decision inbox. Conflicts, contradictions, and open decisions that only 
 
 **Rules:** append at bottom; write only your own entries; this file is the one exception to single-writer (shared inbox — slack-claude contributes via deposits). Never mark another agent's entry resolved without a Varun answer.
 
+**Hot-path rule (Varun, 2026-07-22):** if the open question sits on your current task's hot path, the task is blocked — *let it stay blocked*. Park it in the queue referencing the Q-entry. Don't build around the unknown or proceed on the likely answer; that manufactures a decision nobody made. Blocked-and-filed beats built-on-sand.
+
 Entry template:
 
 ```
@@ -26,4 +28,5 @@ Entry template:
 - conflict/decision: Claire Conklin's tracker records Qwant as unable to send region, locale, AND timezone. Dhaval Shah pushed back (only region is truly impossible; locale/timezone are easy and not privacy-sensitive), and Camille Baudou later relayed Qwant saying locale & timezone "should be fine." Tracker and thread now disagree.
 - why it matters: locale/timezone availability changes pCIV extraction and eval assumptions downstream; if the tracker's "cannot" calcifies, integration gets designed against the wrong constraint before the mid-Aug launch.
 - ask: confirm with Claire/Camille what Qwant will actually send (locale? timezone?) and get the tracker corrected — then answer here.
+- 2026-07-22 update: message draft parked in REVIEW.md with a HOLD-unless recommendation — Dhaval/Camille are already working this in-channel; only escalate if our extraction/eval code consumes these fields (Varun knows). Slack Claude monitoring for self-resolution.
 - resolution: (pending)
