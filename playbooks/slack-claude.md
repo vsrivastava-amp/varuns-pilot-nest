@@ -40,6 +40,10 @@ Rules for the applying session: read the diff before applying — deposits touch
 
 **Long deposits** (big diffs, digests, channel summaries): publish as a claude.ai artifact (Markdown), post `🪺 NEST DEPOSIT <date> — <summary> — <artifact link>` in the channel. Applying session fetches the link, applies/files it. Avoids Slack message-length mangling of patch text.
 
+## Sweep scope (how to task it)
+
+- 2026-07-22 — Varun: don't scope sweeps to a fixed channel list. #pub-onboarding-qwant-ai is the known anchor, but plenty of other channels are likely relevant — when asking for a sweep, name the known anchors *and* explicitly invite it to search anything it judges relevant to Varun's four streams (workspace-wide search reaches public channels it isn't in). Ask it to name which channels it checked so useful ones get promoted into `map/` pointers over time.
+
 ## Current gaps / asks
 
 - 2026-07-21 — Admin ask pending: GitHub write for the nest repo (would replace the deposit protocol with direct push).
