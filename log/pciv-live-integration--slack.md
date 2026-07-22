@@ -32,3 +32,13 @@ Read via workspace search (bot is not a member of the channel; search reaches it
 **People (reference):** Dhaval Shah (relevance/product push), Brian Quirk (3.0/endpoint priority), Claire Conklin (PM/tracker), Camille Baudou (Qwant liaison, French speaker), Amarachi Miller (experiments/ad format), George Jardine (French KW audit), Jason Yin (A/B dashboard), Norbert Tamas (API), Elisa Branson (advertiser setup). French speakers: Camille, Pauline, +1; no dedicated French CM. Channel ownership in flux (Steven Wu as of week of 2026-07-20 per map).
 
 Reference: Qwant AI Project Tracker [Internal] (Google Sheet, linked in the channel).
+
+## 2026-07-22 — Delta sweep (since 2026-07-21 digest)
+
+*(slack-claude deposit via Varun relay; applied with dedupe edits by laptop session per the deposit's own instruction. Source: workspace search only — bot not a member of the channel and no repo clone in its session.)*
+
+- 2026-07-22 — **Experiment 38: no results posted yet** (launch itself already logged 7/21). Thread: https://admarketplace.slack.com/archives/C0AUE5JBTAP/p1784643890371299?thread_ts=1784566891.629069&cid=C0AUE5JBTAP
+- 2026-07-22 — **Databricks / experimentation platform (Varun-adjacent):** Tarun Chadalla, 7/21 ~14:00 ET (#C0BJKUN8YJW): "step 13: validation of CDF and data changes" — spot-check across all prod schemas incl. `exp` passed. Continuation of exp-platform → Databricks replication + CDF enablement (dev validated 7/14). Tarun's infra work, not Varun's directly. https://admarketplace.slack.com/archives/C0BJKUN8YJW/p1784656851960849
+- 2026-07-22 — **No movement** on: launch date (Aug 10 vs 24 — only stale 7/14 "August 15th" agenda ref), ad-format decision (Amarachi × Sacha, still "by EOW"), George's French-KW audit (offered 7/20, no results since).
+- 2026-07-22 — Locale/timezone: today's search-only sweep re-surfaced the 7/20 "Qwant cannot send region/locale/tz" line. **Applier note:** this is the stale version — 7/21 entry above records Dhaval's pushback and Camille relaying locale/tz "should be fine". Net stands: region no, locale/tz likely yes, Varun to confirm.
+- 2026-07-22 — Other streams quiet: LLM eval #6037 nothing since "Release marked complete" (~7/10); pCIV demo nothing since pub-nlb/cert setup (~7/12).

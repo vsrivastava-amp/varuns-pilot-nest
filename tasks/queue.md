@@ -14,7 +14,7 @@ Tagged by privilege tier: `no-auth` / `session` / `sudo`. Dated on entry. Move t
 ## session
 
 - 2026-07-21 — Databricks: confirm auth mechanism (`databricks auth describe`), list eval/experimentation jobs & dashboards
-- 2026-07-21 — Pilot catch-up digest (read-only) → `state/digest-YYYY-MM-DD.md`. ⏳ partial: Slack leg done by slack-claude 2026-07-21 (`log/pciv-live-integration--slack.md`); remaining legs: git history, Jira PCIV activity, Databricks job status
+- 2026-07-21 — Pilot catch-up digest (read-only) → `state/digest-YYYY-MM-DD.md`. ⏳ partial: Slack leg done by slack-claude 2026-07-21 (`log/pciv-live-integration--slack.md`); Jira leg done 2026-07-22 morning-routine (`state/digest-2026-07-22.md`); remaining legs: git history, Databricks job status
 
 ## sudo
 
