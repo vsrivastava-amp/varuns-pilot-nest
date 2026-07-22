@@ -13,8 +13,22 @@
 
 - **Pipeline readers only use `eval_id` + `is_active`**; model/prompt/group-size columns are documentation for downstream consumers.
 - **Source of truth for those metadata columns = the service's `src/main/python/domains/<domain>/eval_configs.json`** — the old eval_config had drifted (claimed civ ran gpt-5-mini; service actually runs gpt-5-4-nano). Keep table rows in sync when service config changes.
-- Contents (all envs, as of 2026-07-21): relevancy `(1, active, gpt-5-mini, hybrid_prompt_v1.txt, 50)`; civ `(1, inactive, DUMMY - NOT USED — placeholder agreed with Sunil)` + `(2, active, gpt-5-4-nano, civ_extraction.txt, 40)`. Service also defines civ eval_ids 4/5 — deliberately not in the table (only active configs get rows).
+- Contents (all envs, as of 2026-07-21): relevancy `(1, active, gpt-5-mini, hybrid_prompt_v1.txt, 50)`; civ `(1, inactive, DUMMY - NOT USED — placeholder agreed with Sunil)` + `(2, active, gpt-5-4-nano, civ_extraction.txt, 40)`. Service also defines civ eval_ids 3/4/5 — deliberately not in the table (only active configs get rows).
+- Service-side civ eval configs on origin/main (2026-07-22): `2 = gpt-5-4-nano, civ_extraction.txt, b40/c20` · `3 = gpt-5-4-nano, civ_extraction_v2.txt (query_objective prompt, PR #47 by Yaarit, 2026-07-15), b40/c20` · `4 = gpt-5-mini, b10/c10` · `5 = gpt-5-2, b10/c10`. 4 and 5 reuse `civ_extraction.txt`.
 - Old `eval_config` left in place as rollback insurance.
+
+## Service internals worth knowing (learned 2026-07-22, AI-1474 scoping)
+
+- **The civ "cache" is DynamoDB in the service** (`persistence/dynamodb_repo.py`, table `civ_label` via `CIV_TABLE_NAME`). Cache key = `sha256("<evalId>|<lower(trim(qt))>")` — **namespaced by eval_id**, so a new eval_id starts with a clean cache; old misclassifications can't leak in. Busting options: `bypassCache: true` per request (still writes results back), `DISABLE_CACHE=true` env (kills reads+writes), `POST /v1/intent/civ/invalidate-cache` (delete by evalId+qt). Cache hits are re-validated against current pydantic/taxonomies; schema-valid-but-wrong entries survive.
+- **Model registry** = `llm/config/models.json` (the allow-list of `model_id`s; provider=databricks AI gateway, OAuth). Endpoint resolved per-domain via `domain_endpoint_name` — civ passes `domain="civ"`; models without a `"civ"` key fall back to `default` (e.g. `gpt-5-2` → `ai-gpt-5-2`). New eval config = one entry in `domains/<domain>/eval_configs.json` (+prompt file if new) + model present in models.json + **redeploy** (configs are `@lru_cache`d at process start). `evalId` is an unvalidated int in the request schema; unknown ids fail deep in llm.py as KeyError.
+- **Prompt caching is real and huge**: the civ system prompt (~16.4k tok — embeds full GPC tree with IDs + IAB taxonomy) is resent per LLM call; OpenAI-side auto prefix caching (≥1024 tok) gives **93–97% of input tokens as cache reads** (verified in `system.ai_gateway.usage.token_details.cache_read_input_tokens`). The `cache_control: ephemeral` block in `invoker_unstructured.py` is Anthropic-style and a no-op for OpenAI models. Cost estimates that ignore this run ~10× high.
+- **Observed civ latency** ≈ 5s/LLM-call (gateway telemetry, nano and mini alike).
+- Civ LLM returns integer GPC leaf IDs; `llm.py` resolves them to path strings via `resources/gpc_taxonomy.json`; `validation.py` drops paths not in `taxonomy.en-US.txt`.
+
+## Cost / usage telemetry
+
+- `system.ai_gateway.usage` — per-request tokens (incl. cache read/write, reasoning), latency, status per endpoint. Workspace ids: dev `4731856320192987`, stage `1602623610650144`, prod `5702410742425796`.
+- Dashboard "AI Gateway Endpoint Cost Attribution" (dev workspace, dashboardsv3 id `01f138e4b0c318dc984558506661d5d0`) — tokens by endpoint + $ via `system.billing.usage` × `system.billing.list_prices`, keyed by `usage_metadata.endpoint_name` where `billing_origin_product='MODEL_SERVING'`.
 
 ## Pipeline mechanics
 
