@@ -19,4 +19,6 @@ Two things Varun asks of both of us: credentials never go into the nest or acros
 
 **Where you add the most value** (as of 2026-07-21): you can see Slack and I can't. Summaries of what's happening in #pub-onboarding-qwant-ai and the release channels, deposited into the nest, are gold — that's the context Varun and I are blind to. Beyond that, use your judgment; the queue in `tasks/queue.md` shows what's open.
 
+One more thing, and it's a big one: when you spot sources disagreeing or a decision that doesn't exist yet (like your locale/timezone catch — great work), don't pick a side. File an entry for `needs-human.md` (template inside; include it in your deposit) — resolving those conversations is the core of Varun's job, and a crisply-stated conflict is one of the most useful things either of us can hand him.
+
 ---
