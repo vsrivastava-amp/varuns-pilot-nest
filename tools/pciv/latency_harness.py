@@ -78,6 +78,7 @@ def stream_request(base_url, token, model, system_prompt, query, timeout):
     t_first = t_delim = None
     content = ""
     usage = {}
+    finish_reason = None
 
     try:
         resp = urllib.request.urlopen(req, timeout=timeout)
@@ -94,6 +95,8 @@ def stream_request(base_url, token, model, system_prompt, query, timeout):
         if chunk.get("usage"):
             usage = chunk["usage"]
         choices = chunk.get("choices") or []
+        if choices and choices[0].get("finish_reason"):
+            finish_reason = choices[0]["finish_reason"]
         delta = choices[0].get("delta", {}) if choices else {}
         piece = delta.get("content") or ""
         if piece:
@@ -113,7 +116,38 @@ def stream_request(base_url, token, model, system_prompt, query, timeout):
         "cached_tokens": details.get("cached_tokens", 0),
         "completion_tokens": usage.get("completion_tokens"),
         "delim_seen": t_delim is not None,
+        "finish_reason": finish_reason,
+        "content": content,
     }
+
+
+def grade_pciv(sample, tax_ids):
+    """Parse and validate the post-DELIM pCIV exactly as main.py would.
+
+    Adds parse_ok / bad_gpc_ids to the sample; replaces raw content with a
+    short tail kept only for failed samples (diagnosis without bloating rows).
+    """
+    content = sample.pop("content")
+    parse_ok = False
+    bad_ids = []
+    if sample["delim_seen"]:
+        raw = content.split(DELIM, 1)[1]
+        start, end = raw.find("{"), raw.rfind("}")
+        if start != -1 and end != -1:
+            try:
+                pciv = json.loads(raw[start:end + 1])
+                parse_ok = True
+                for target in pciv.get("targets") or []:
+                    for gid in target.get("gpc") or []:
+                        if str(gid) not in tax_ids:
+                            bad_ids.append(gid)
+            except json.JSONDecodeError:
+                pass
+    sample["parse_ok"] = parse_ok
+    sample["bad_gpc_ids"] = bad_ids
+    if not sample["delim_seen"] or not parse_ok or bad_ids:
+        sample["tail"] = content[-400:]
+    return sample
 
 
 def pctl(values, p):
@@ -143,7 +177,11 @@ def summarize(samples, arm, mode):
         "cache_hit_rate": round(sum(1 for c in cached if c > 0) / len(cached), 2),
         "completion_tokens_mean": round(statistics.mean(
             s["completion_tokens"] for s in rows if s["completion_tokens"]), 1),
-        "delim_rate": round(sum(1 for s in rows if s["delim_seen"]) / len(rows), 2),
+        "delim_rate": round(sum(1 for s in rows if s["delim_seen"]) / len(rows), 3),
+        "parse_ok_rate": round(sum(1 for s in rows if s.get("parse_ok")) / len(rows), 3),
+        "bad_gpc_rate": round(sum(1 for s in rows if s.get("bad_gpc_ids")) / len(rows), 3),
+        "finish_reasons": {fr: sum(1 for s in rows if s.get("finish_reason") == fr)
+                           for fr in {s.get("finish_reason") for s in rows}},
     }
 
 
@@ -151,6 +189,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--arm-a", required=True, type=Path, help="prompts/ dir for arm A (baseline)")
     ap.add_argument("--arm-b", type=Path, help="prompts/ dir for arm B (candidate); omit for single-arm/noise-floor A-vs-A")
+    ap.add_argument("--taxonomy-a", type=Path, help="gpc_taxonomy.json for arm A (enables pCIV grading)")
+    ap.add_argument("--taxonomy-b", type=Path, help="gpc_taxonomy.json for arm B (defaults to taxonomy-a)")
     ap.add_argument("--queries", required=True, type=Path, help="one user query per line; # lines ignored")
     ap.add_argument("--n", type=int, default=50, help="samples per arm per mode")
     ap.add_argument("--mode", choices=["warm", "cold", "both"], default="warm")
@@ -172,6 +212,10 @@ def main():
 
     arms = {"A": build_system_prompt(args.arm_a)}
     arms["B"] = build_system_prompt(args.arm_b) if args.arm_b else arms["A"]
+    tax = {}
+    if args.taxonomy_a:
+        tax["A"] = set(json.loads(args.taxonomy_a.read_text()))
+        tax["B"] = set(json.loads((args.taxonomy_b or args.taxonomy_a).read_text()))
     modes = ["warm", "cold"] if args.mode == "both" else [args.mode]
 
     run_id = uuid.uuid4().hex[:8]
@@ -196,13 +240,18 @@ def main():
                     except Exception as exc:
                         print(f"  [{mode} {arm} #{i}] ERROR {exc}", flush=True)
                         continue
+                    if arm in tax:
+                        s = grade_pciv(s, tax[arm])
+                    else:
+                        s.pop("content", None)
                     s.update(run_id=run_id, arm=arm, mode=mode, model=args.model,
                              query_idx=i % len(queries), ts=time.time())
                     samples.append(s)
                     out.write(json.dumps(s) + "\n")
                     out.flush()
+                    flags = "" if s.get("parse_ok", True) and s["delim_seen"] else " ** PCIV FAIL"
                     print(f"  [{mode} {arm} #{i}] ttft={s['ttft_ms']}ms total={s['total_ms']}ms "
-                          f"cached={s['cached_tokens']}/{s['prompt_tokens']}", flush=True)
+                          f"cached={s['cached_tokens']}/{s['prompt_tokens']}{flags}", flush=True)
 
     print("\n=== summary ===")
     for mode in modes:
