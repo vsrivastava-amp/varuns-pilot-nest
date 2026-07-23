@@ -33,21 +33,23 @@ Context: Slack Claude retired today (`log/nest--laptop.md`). No operational need
 
 ## 2026-07-23 — laptop (ai1545-latency) — Jira comment draft — AI-1545
 
-Context: Varun asked for an independent investigation of Artem's 2.0-vs-3.0 result reversal. I verified his run-2 numbers from the attached CSVs, then ran controlled A/Bs against stage VSS (~350 sequential requests, `testingParameters.yql` clause isolation). Full evidence: `runs/2026-07-23-ai1545-vespa-latency.md`. Draft below posts as Varun on Artem's ticket — collegial, additive.
+Context: Varun asked for an independent investigation of Artem's 2.0-vs-3.0 result reversal. I verified his run-2 numbers from the attached CSVs, then ran controlled A/Bs against stage VSS. Full evidence: `runs/2026-07-23-ai1545-vespa-latency.md`.
 
-**Draft comment for AI-1545:**
+Plain-language background for Varun (not part of the comment): many products in the Vespa index have no category set. When a 3.0 request filters by category, VSS deliberately generates "category starts with X **OR category is empty**" so those uncategorized products aren't excluded. Measured on stage: each half of that OR alone is fast (~20-23ms), but the combined OR — what production sends — is 63ms for a common category and 140ms for a rare one. And for rare categories the "starts with X" half matches ~nothing, so the whole returned page is uncategorized products: the slowest queries pay the most for a filter doing the least. This also explains the run-1/run-2 reversal: run 1's requests carried a brand filter (from a real ad), and narrow brand filters take a different, fast path in Vespa; run 2's were mostly category-without-brand — the slow shape.
 
-> Great harness — I was able to reproduce your run-2 numbers exactly from the attached CSVs, and then isolate *where* the 3.0 slowdown comes from with some controlled A/Bs against stage VSS. Three findings that might be useful for the writeup:
+**Draft comment for AI-1545** (v2 — scoped to what Varun can honestly own; no Vespa-internals claims):
+
+> Nice harness — I pulled the CSVs off the ticket and could reproduce your run-2 summary numbers exactly. I dug into the per-row data a bit and found something that might be useful: the slowdown doesn't seem to be the 3.0 path itself, it looks concentrated in one specific filter.
 >
-> **1. It's not the 3.0 path itself — it's specifically the GPC filter clause.** Unfiltered 3.0 ≈ 2.0 (18.5 vs 21ms avg on stage). Brand/gender filters are cheap (brand actually makes queries *faster* — it's selective enough to flip Vespa into exact-search mode, which also explains why run 1, whose requests carried brand+price from a real ad, showed 3.0 faster). In your run-2 data the entire mean/p99 gap sits in GPC-present/brand-absent rows (avg 42.5ms, all top-15 slowest); median paired diff across the 177 rows is only +2ms.
+> - Rows with no filters at all: 3.0 ≈ 2.0 (~22ms avg). Rows with a brand filter: 3.0 is actually *faster* (~12ms).
+> - The entire avg/p99 gap comes from rows with a **category (GPC) filter and no brand** — all of the 15 slowest rows are that shape, with rare categories (Home & Garden \*) at 140-220ms.
+> - I could reproduce this against stage VSS directly: same query goes from ~20ms unfiltered to ~63ms (common category) / ~140ms (rare category) just by adding the GPC filter.
 >
-> **2. Within the GPC clause, the cost is the null-sentinel OR, not the prefix match.** Using `testingParameters.yql` to vary just the where-clause on stage ("shoes", limit 100): prefix-only 23ms, exact-only 22ms, exact+sentinel 35ms, **prefix + `OR googleProductCategory IN ("")` (the production clause) 63ms** — and 140ms for a sparse category (Home & Garden > Cookware). Each branch alone is cheap; the OR defeats Vespa's filter fast-path, and the cost is flat in targetHits. (Schema note: `googleProductCategory` also lacks `rank: filter`, unlike brand/gender/condition.)
+> One more thing from the raw data that seemed worth flagging: on the rare-category queries, the returned ads are almost entirely products with *no category set* (the generated query intentionally also matches products whose category field is empty). So the slowest requests are also the ones where the filter isn't narrowing much — might be relevant for whoever owns the VSS query generation.
 >
-> **3. Semantic flag: for sparse categories the sentinel is doing all the matching.** "cookware set" + GPC H&G>Cookware: the prefix branch alone returns ~0 hits — the full page of 100 comes entirely from products with *no category set*. So on exactly the slow queries, the filter pays ~6x latency while doing ~zero category narrowing. Whether unset-GPC products should match feels like the real product decision here; if the sentinel semantics are kept, a dedicated has-category bitvector field (or materialized ancestor-path array + exact IN) should make the whole clause ~free.
+> Also noticed 600/1000 of the independent 3.0 requests returned 0 ads (vs ~290 for 2.0) — possibly relevant to the AI-1556 request-construction work.
 >
-> One more data point from the full 1000-row set: 600/1000 independent 3.0 requests returned 0 ads (vs 293 for 2.0) — probably worth a look alongside the AI-1556 request-construction work.
->
-> Happy to share the stage A/B scripts if useful.
+> Happy to share my analysis scripts if useful — and curious whether this matches what you saw.
 
 **Disposition:** pending Varun — ✅ post (via Rovo `addCommentToJiraIssue`) / ❌ drop / ✏️ edit
 
