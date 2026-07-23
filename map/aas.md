@@ -100,6 +100,39 @@ DSP (Discover 3.0, per 7/23 sync): `unifiedScore * CTR * CPC`.
   reading above is inferred from AI-1432's scope; confirm with Joseph/Saksham
   before treating as fact.
 
+## Auction formula (read from code 2026-07-23)
+
+**2.0 suggest auction** (prod formula lives in DSP; read here from the AAS
+port on branch `AI-1518`, which carries explicit DSP-parity notes + 98/98
+parity suite). Gate, both ad types: `useYield = discoverAuction=="yield"
+experiment && any candidate has non-null CTR`.
+
+- Yield mode, primary sort key — **identical formula for text and product**:
+  `relevanceScore × CTR × advertiserBid(CPC)`, descending (`AuctionComparators.pricingScoreRanking`;
+  null ctr/bid → back of list). `DEFAULT_CTR = 0.0011` fills missing CTRs.
+- Differences are around the primary key:
+  - **Text**: dedup (advertiser/brand) applies; tie-breakers CTR desc → bid desc; stamped TEXT_YIELD.
+  - **Product**: **no dedup**; creativeYield enriched first from the *real* CTR
+    (`(bid − payout) × ctr`, null if no real CTR); tie-breakers normalizedScore → creativeYield;
+    optional per-queryTerm grouping (VECTOR_SEARCH_PRODUCT_ADS flag); stamped HIGH_YIELD.
+  - **Score input differs**: product = Vespa vector score; text in DSP =
+    elasticScore *or* keywordRelevanceScore chosen by keywordSource — AAS collapses
+    text to the single KVSS vector score (flagged in code as a potential shadow-compare divergence).
+- No-yield fallback (experiment off or zero CTR signal): text = score desc → bid desc;
+  product = ctrType (ELME/DEFAULT ≻ LEGACY/null) → normalizedScore → creativeYield. Stamped RELEVANCE.
+
+**Discover 3.0 in AAS** (main, live): no bids/CTR in AAS yet — pure relevance
+rank on `normalizedScore`, uniform across types (`DiscoverRankingStep`):
+- product: `floor(rawVespaScore × 1e6)` (SASS-era scale)
+- text: `floor((a·rawKvssScore + b) × 1e6)`, defaults a=0.93, b=0; per-request
+  overridable via experiment keys `kvssScoreLinearA/B` — this linear transform
+  **is** the "unified retrieval score" from Saksham's 7/21 thread.
+- Intent Adjacent (`placement.adCount` set): merge all targets, top adCount.
+  Intent Inline: rank per target, top `target.adCount` (default 1).
+- Economic auction for 3.0 stays DSP-side for now: `unifiedScore × CTR × CPC`
+  (Pinkel sync note 7/23) — same shape as 2.0 with score := unified retrieval score.
+- `DiscoverAuctionStep` is response assembly only ("bid and price resolution not yet wired").
+
 ## Key Jira (AI project = Relevance & Yield; AS = Ad Selection/engines)
 
 Hierarchy: AI-1550 (Initiative, Saksham, created 7/20, empty — children
