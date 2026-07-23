@@ -1,5 +1,5 @@
-The CIV prompt is 3,307 of the 3,563 — demo glue is only ~240 tokens.
+The CIV prompt is 3,307 of the 3,563. The rest is demo-only glue (chat persona 48 + output protocol 192), which pubs don't inherit as-is.
 
-Yes, we can reduce. Three low-risk cuts: drop Business & Industrial's 25 subcategories (−179), drop the Mature vertical (−12), trim examples from 5 to 3 (−~230). That lands the CIV prompt at ~2,900; we'd re-run the A/B before shipping.
+Yes, we can reduce — measured cuts: drop Business & Industrial's 25 subcategories (−179), drop the Mature vertical (−12), compact the examples (3 instead of 5, single-line JSON: −330), fold the L1 IDs into the category headers (−81). That lands the CIV prompt around 2,700, and the compact examples also shorten the model's responses themselves. We'd re-run the A/B before shipping.
 
-The bigger lever: the category list is 1,536 tokens because it's now the complete set. Since it's machine-generated, we can cheaply produce a per-pub subset — e.g. Qwant consumer verticals only — which would cut it well below 3k while keeping their categories complete. If Qwant can tell us which verticals they care about, I can turn that around quickly.
+The bigger lever: the category list is ~1,500 tokens because it's now the complete set. It's machine-generated, so a per-pub subset — e.g. Qwant consumer verticals only — is cheap to produce, stays in sync automatically, and would land well under 2,500 while keeping their categories complete. If Qwant can tell us which verticals they care about, I can turn that around quickly.
