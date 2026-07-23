@@ -2,6 +2,10 @@
 
 *(Living reference. Started 2026-07-23, from the AI-1545 latency investigation.)*
 
+## Traffic context (per Varun, 2026-07-23 — read before framing any latency finding)
+
+VSS serves **low-latency, high-QPS mainline product-ad traffic** — the money-maker path, where DB latency runs ~20ms and every added millisecond is a real per-query and cluster-capacity cost. The Qwant/pCIV 3.0 flow is an **emerging avenue, not the main revenue driver** — don't conflate their latency budgets (the Qwant "~3s Flash Answer budget" in some digests applies to that conversational flow only). A filter shape that adds 40–120ms is a rounding error against 3s but a 3–8x regression against mainline VSS. The AI-1545-style concern is 3.0-style filters reaching the mainline path, not Qwant UX.
+
 ## Repos
 
 - **`admarketplace-gh/vespa-search-service`** (VSS) — Spring service that fronts Vespa. Key classes: `VespaYqlQueryBuilder` (assembles YQL), `WhereNearestNeighborBuilder` (ANN annotations), `ProductAdConstraintsTranslator` (3.0 filters → YQL predicates), `ExperimentSearchConfigResolver` (experimentContext keys like `vespaYqlVersionProduct`).
