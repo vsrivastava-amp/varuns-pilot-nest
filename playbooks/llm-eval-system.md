@@ -25,6 +25,14 @@
 - **Observed civ latency** ≈ 5s/LLM-call (gateway telemetry, nano and mini alike).
 - Civ LLM returns integer GPC leaf IDs; `llm.py` resolves them to path strings via `resources/gpc_taxonomy.json`; `validation.py` drops paths not in `taxonomy.en-US.txt`.
 
+## Model gateway / registry (how models get onto the eval service)
+
+- The eval service runs on the **Databricks model gateway** (AI Gateway / Foundation Model APIs). Two layers:
+  1. **Foundation model catalog**: `databricks-<model>` pay-per-token endpoints (FOUNDATION_MODEL_API). Browse: UI `/ml/ai-gateway` per workspace, or CLI `databricks api get /api/2.0/serving-endpoints -p <profile>` (filter `FOUNDATION_MODEL_API`; `creation_timestamp` reveals recency). Dev had 49 endpoints on 2026-07-23; newest: gemini-3-6-flash + gemini-3-5-flash-lite (added 2026-07-21), inkling (07-15), gpt-5-6-luna/terra/sol (07-09), claude-sonnet-5 (06-30), glm-5-2 (06-23), claude-fable-5 (06-09). Databricks tracks frontier releases within days-weeks.
+  2. **Named wrapper endpoints** the service actually calls (`ai-gpt-5-2`, `civ-gpt-5-mini`, `ares-gpt-5-mini`…), mapped per-domain in the service's `llm/config/models.json`. These have their own **rate limits** — as of 2026-07-23 everything except gpt-5-mini and gpt-5-4-nano wrappers is rate-limited to near-zero (e.g. prod `ai-gpt-5-2` admitted ~56 requests then 100% 429s). Increases go through Databricks (see REVIEW.md 2026-07-23 draft for the ask template with sizing).
+- **Pricing**: Databricks charges *pretty close* to the official provider list prices (OpenAI/Anthropic/Google). DBX's own pages lag: https://www.databricks.com/product/pricing/model-serving and https://www.databricks.com/product/pricing/foundation-model-serving. For OpenAI-family models, check openai.com model pricing directly and assume ≈parity. Empirical per-run cost: measure via `system.ai_gateway.usage` token counts (see telemetry below) × provider list price.
+- Prod's endpoint roster can lag dev's — verify in the prod workspace UI before promising a model.
+
 ## Cost / usage telemetry
 
 - `system.ai_gateway.usage` — per-request tokens (incl. cache read/write, reasoning), latency, status per endpoint. Workspace ids: dev `4731856320192987`, stage `1602623610650144`, prod `5702410742425796`.
