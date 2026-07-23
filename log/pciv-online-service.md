@@ -1,0 +1,95 @@
+# Online pCIV service — context dossier (AI-1542 / AI-1538)
+
+Append-only. Date every entry. Seeded 2026-07-23 by a laptop session (slug: pciv-online-context) from a four-way sweep: Jira (62 pCIV-matching + 48 Qwant tickets, full descriptions/comments on the core set), Slack (#pub-onboarding-qwant-ai, #proj-pciv-pub-integration-xfn-wg, #team-relevance-yield, #proj-amp-discover-3-0, group DM C0BJPQHFFGC, DMs, Gong summaries), Google Drive (12+ docs incl. the v3.0 spec and the Jul 10 kickoff notes), and local repos (pciv-demo-service, llm-evaluator-service, llm-evaluation-pipeline, nest tools/pciv). Facts below are quoted/derived from those sources as of this date — re-verify anything load-bearing before acting on it later.
+
+## 2026-07-23 — Full context dossier
+
+### 0. TL;DR
+
+Qwant refused to run pCIV extraction on their side (cost/latency/UX, June 26). After a brief "Qwant does it as a decoupled 2nd LLM call" phase, AMP pivoted (Jul 8, Saksham+Dhaval): **Qwant sends conversational context on the 3.0 API; SSP calls an AMP-hosted service that extracts pCIV in real time.** The service = **new work on llm-evaluator-service** (Varun's own AI-1535 spike comment + Jul 10 kickoff are the de-facto design doc): single-query mode, tight timeouts/fail-fast, structured JSON out, **AWS Bedrock instead of Databricks AI Gateway** as the biggest latency lever. Targets (verbal, no formal SLA doc): **P99 < 2s, 100–200 QPS**, inside Qwant Flash Answer's ~3s end-to-end budget. Model: **undecided** — Steven Wu's analysis in flight (AI-1540), Dhaval proposed experimenting with Llama 4 Maverick 17B on Bedrock. Launch: ghost 3.0 endpoints live by 7/31, production launch **Aug 24** (decision made 7/23; ramp 25%→100% over ~4 weeks). Varun owns both build tickets since 7/22: AI-1538 (deploy) + AI-1542 (latency) — both currently have empty descriptions.
+
+### 1. Decision history (why online pCIV exists)
+
+- **Original MVP stance** (v3.0 spec doc, Norbert): "In the MVP, the publisher LLM/platform is responsible for running CIV extraction and generating the Publisher CIV (PCIV)." AMP built pciv-demo-service to prove it (one-shot: reply + delimiter + pCIV JSON in a single streamed generation).
+- **2026-06-17 call**: Qwant estimates 4–10x LLM cost from AMP's ~4k-token prompt (they run Mistral small on ~1k-token prompts); skeptical of caching ("could not get it to work with their provider" — later fixed on their end, 7/8 call).
+- **2026-06-26**: Qwant email — won't implement pCIV: "costly, increases latency and hurts their UX" (Yaarit→Varun DM). War-room response: prompt slimmed ~4000→~1600 tokens, production-replica demo, daily standups.
+- **2026-07-07**: Qwant's own eval concedes a decoupled path: "constrained extraction (structured output), decoupled from response generation." Dhaval: fine to "let them do it… ads show up 1-2 secs later."
+- **2026-07-08 — THE PIVOT** (Saksham, #proj-pciv-pub-integration-xfn-wg, after chat with Dhaval): "1. [AI-1532] Online pCIV extraction within AMP (potentially in llm-eval-service). Publisher sends (LLM req+response) to 3.0 API, and SSP calls a service to invoke an LLM on our end to extract PCIV in real-time." (Dhaval: "SSP calls the service, not DSP.") Same day, Qwant kickoff call: Pierre (Qwant) proposes decoupling extraction from response generation; "ideal state for August launch: ads based on user query + the same context they send to other partners."
+- **2026-07-10 — Online pCIV kickoff** (Gemini notes, doc id 1gjv3AJNm1jvrjlQzkZGnn1xKLLqLDODLzdzAUPlGYOo; Varun, Saksham, Rama, Steven Wu): build on llm-evaluator-service; AWS Bedrock over Databricks; P99 < 2s; "fastest way possible… deadlines are not going to move. This is based on a contract that's been signed." Roles then: Steven = model selection, Rama = Bedrock infra/deploy, Varun = historical context + two-prompt pattern.
+- **2026-07-17**: Dhaval — Flash may launch with **prompt-only** (no LLM response at all): "all we will have is the user prompt (and we can A/B test extracting CIV on our end vs a Vespa query without CIV)". Saksham: does that change the online-pCIV plan? Dhaval: "No."
+- **2026-07-22**: Saksham reassigns AI-1538 (Rama→Varun) and AI-1542 (Steven→Varun). Varun now owns build + latency.
+- Note: nothing anywhere marks the publisher-side track (demo service, PCIV Extraction Guide, AI-1483/1484) as formally superseded — it survives as pub-facing collateral for *other* publishers; Qwant-path is AMP-side.
+
+### 2. What Qwant actually sends (payload contract)
+
+Not a "conversation summary." Spec = `intent` object on `POST /di` (v3.0), accepted by ssp-engine build `1.1.1557-release-qwant` (AS-13400, Ready for QA 7/23; **launch scope = accept + log only, no downstream transit** — deferred to next release/model bump):
+
+- `intent.prompt` (≤4,096 chars) — the user query. Always present.
+- `intent.response` `{content ≤32,768 chars, status: partial|complete}` — an AI response, when sent.
+- `intent.source` `{type: serp|web_search, summary ≤32,768, items[]: {rank, title, description, url, snippets[].text}}` — the **ContextSummary**: "Qwant does not wait for the final LLM answer. Instead, it constructs a string from the search results" (SERP titles/descriptions; snippets added after 7/17 when titles alone were deemed insufficient). `items[].snippets` shape still a Qwant proposal, not agreed.
+- `intent.chat.{commerciality, type, topic}` + `targets[]` are marked Required in the spec but **Qwant will not send targets/topic/type** — AMP must derive them. That derivation IS the online pCIV service's job.
+
+Per-surface (Qwant proposal tab, 7/20, doc 1-FfoHnnPSJ5bPXCcSzv95nLlAnow1EaaZ5HHIWfynHM):
+- **Flash Answer** (all geos; the majority surface): prompt + source. **No LLM response** (latency). Commerciality flag from their in-house models (FR model; EN/US/CA classifier).
+- **Detailed Flash Answer** (EN/CA/US): response = the *previous* flash answer.
+- **AI Chat** (FR only): response = current turn's LLM response; source only when the search tool fired; **no commerciality** (no intent model on long-tail chat).
+- Mechanics: `ad_count=10` sent / max 5 rendered, one API call per placement, `meta.mode=privacy` (server-side tracking, no raw IP), no `user.geo.region_code`; locale/timezone "should be fine" per Camille (region=no stands).
+- ⚠️ Shape watch: Saksham's 7/8 framing assumed "entire thread" and Dhaval 7/10 said "full history (array of user prompt/llm response objects) — we should update API to support this new object", but the shipped v3.0 spec has a **single prompt + single response.content** — no turns[] array. If multi-turn matters for extraction quality, that's an unresolved spec gap.
+- Retention: possible **30-day query retention** contract clause (AI-1213 comment, Saksham 6/22 — "we'll need to store embeddings with Databricks since we'll lose the queries"). No follow-up ticket found.
+
+### 3. Requirements (latency / throughput / timeline)
+
+- **No formal SLA exists for the pCIV call.** The numbers in circulation: Jul 10 kickoff — **P99 < 2s** ("that's been verbally communicated"), **100–200 QPS**, "focus on bounding the latency — we don't want 2-3% of queries going to 5 seconds"; Steven Wu 7/10 DM: "Homie said two seconds 😢"; Qwant **Flash Answer ~3s end-to-end budget** (AS-13402 timeout-inventory spike — note pCIV is not yet a hop in that inventoried chain). v3.0 SLT (P90 100ms AMP-internal) applies to normal ad serving, not the LLM path.
+- Volume context: ghost phase = ~2M queries/day across US/UK/CA/FR (~23 QPS avg → 100–200 QPS is peak/growth allowance). AI-1540 sizing note: **900K distinct queries** (down from 2.5M).
+- **Timeline** (reconciled): contract signed ~7/1 · ghost phase live 7/6 (45 days) · Qwant ghost 3.0 endpoint live by **7/31** (Maxime; AS-13389 "V1 Qwant Launch 07/24" = ghost-mode 3.0) · API-call-structure decision **7/31** (Norbert, needs Qwant Pierre) · ad formats/placements **8/3** · launch-readiness review 8/3 · production launch **Aug 24** ("Decision made" — Claire 7/23; supersedes 8/15 in tracker/ops-report and the "Aug 6 or 24" external doc) · ramp 25%→50% (~+5d)→75%→100% (~9/11) · Germany Sept · AI-1213 epic due 8/15 (stale vs 8/24 decision). CIV Collaboration meeting with Qwant: 8/6 (tracker) — matches the 7/8 kickoff "minimum context in August, CIV-like solution to follow in September" and the Sept feature roadmap (GPC-L3, intent type, ranking use).
+
+### 4. Architecture plan of record
+
+From AI-1535 (Varun's spike, Done) + Jul 10 kickoff + 7/8-7/14 Slack threads — no formal TDD exists:
+
+- **Base = llm-evaluator-service** (FastAPI/k8s; dev/stage/prod behind `{env}-llm-evaluator-service.ric1.admarketplace.net`). Varun 7/8: "a new domain on the existing service will be best of both worlds" — Dhaval: "Ok" (caveat: separate Datadog APMs; his worry: service "gets pounded by the databricks pipelines so definitely not the same deployment"). Saksham 7/14: "1. separate deployment with params (timeouts, batching) configured differently… I'd start by option 1 until we face limitations." Yaarit 7/22: "we can add another domain in the llm-eval-service for pciv." → **Same codebase, new domain, separate deployment + config, own Datadog/APM.**
+- **What the online path needs** (AI-1535 verbatim): single-query mode (`max_group_size: 1` config); in-network serving — "Moving to something Bedrock-based in-network is the biggest latency lever" (today: Databricks AI Gateway, out of network); resiliency — "currently max_retries=0, 60s timeout. For live we'd want a tight timeout + a graceful fallback so a single LLM hiccup doesn't block serving." Plus (Jul 10): drop batch mode, forced structured JSON output.
+- **New domain vs new eval config** (from code read, 2026-07-23): new eval config = 1 json edit + prompt file but locks into civ_extraction's shape (single `qt` string in, query-level CivExtraction out) — wrong shape for conversation-level input and the demo-style output (different intent types: demo `discovery|investigational|transactional|executional` vs offline `product|category|brand|discovery`; nested targets[] vs flat lists). **New domain (~6 files: router/service/schemas/llm/eval_configs.json/prompt + 2 registry lines) is structurally correct and cheap**; eval configs then do model/prompt A/B *within* it. All infra (OAuth invokers, Datadog, DynamoDB cache) reusable; `binary_intent_classification` is the smallest copy template. No streaming exists in the service — fine for extract-and-return JSON.
+- **Caller**: SSP (not DSP) calls the service. The ticket wiring SSP's logged `intent.*` payload into a call to the online service **does not exist yet** (AS-13400 explicitly defers downstream transit; AS-13384 "integrate with pCIV" epic is an empty shell). Where extraction slots in the serving chain (blocking the auction? async enrich?) is unrecorded anywhere.
+- Offline pipeline for contrast: continuous Spark streaming job → chunks → `POST /v1/intent/civ` (batch 200, max_concurrency 320, timeout 300s) → MERGE into `llm_evals.ad_request_civ`; active evalIds governed by Databricks table `llm_evals.civ_config`.
+
+### 5. Model selection (OPEN)
+
+- Today (offline civ): gpt-5-4-nano (evalId 2, batch 40) / gpt-5-mini (4) / gpt-5-2 (5) via Databricks AI Gateway per-domain endpoints (`civ-gpt-5-4-nano` etc.). Observed ~5s/LLM-call under batch; demo (2.4k prompt, nano) TTFT p50 ~575ms, cold≈warm.
+- Proposals: Dhaval 7/14 — "experiment with **Llama 4 Maverick 17B on Bedrock**" (only explicit candidate); Saksham — OpenAI-direct or Bedrock over DBX for latency; Varun — same-region matters ("Bedrock will be AWS, so same us-east"); Dhaval — "Bedrock vs Databricks equally easy… langchain… can coexist in the same code base." Bedrock gpt-5-series availability was "needs investigation" (AI-1535).
+- In flight: **AI-1540** (Steven Wu, In Review) "model analysis provided, need to adjust to 900K distinct queries"; **AI-1542 comment** (Steven 7/20): "Need to create evaluation dataset on pCIV for Qwant queries and compare model performance"; **AI-1556** (Bhupesh): build representative Qwant US/FR + LLM-generated query sets.
+- Known model quirks: gpt-5.4-nano sometimes leaks pCIV into the visible reply / skips the answer in the one-shot demo (Dhaval 7/7; not seen on mini/mistral) — moot for a dedicated extraction call. gpt-5.4-* rejects `max_tokens` (use `max_completion_tokens`; langchain handles it). DBX wrapper endpoints other than gpt-5-mini/nano currently rate-limited to near-zero (prod `ai-gpt-5-2` ~56 reqs then 100% 429s; increase ask drafted in REVIEW.md 7/23). Qwant runs Mistral-small-2603/"Small 4" — their extraction-quality complaints were on *their* setup (French system prompt hypothesis, never resolved).
+- Latency adjacents: AI-1545 Vespa 3.0-vs-2.0 reversed on rerun (3.0 slower: p99 196ms vs 36ms; second methodology sounder); AS-12368 formal 3.0 load test was Rejected — perf validation is piecemeal.
+
+### 6. What exists today (code)
+
+- **pciv-demo-service** (~300-line Quart, SSE `/api/message`, turns[] in): one-shot reply+DELIM+pCIV; server-side GPC enrichment; models gpt-5.4-nano (default)/mini/mistral-small-2603; no JSON mode/tool calling; prompt = 3 concat files, now 3,563 tokens after taxonomy expansion (75→213 GPC entries, local commit c139471 on `dev-taxonomy-full-l2`, **unpushed** as of 7/23 morning). Known 2–4% DELIM-drop failure mode. AI-1531 "two-shot" = Jira-only, **no code anywhere**. The extraction prompt, enrichment table, and flat JSON schema are directly liftable into a new service domain.
+- **llm-evaluator-service**: domain architecture (router/service/schemas/llm/eval_configs.json per domain; registry.py one-liner registration; llm/README.md has an "Adding a New Domain" guide). `/v1/intent/civ` is already sync HTTP; batch-tuned (group≤40, 60s timeout, retries 0, uvicorn limit-concurrency 150); DynamoDB `civ_label` cache keyed sha256(evalId|qt); Datadog per evalId/domain/endpoint. Deployment manifests live in a separate CD repo (not local). Prod deployment exists.
+- **nest tools/pciv**: latency/regression A/B harness (TTFT/reply-done/total + true cache state + pCIV parse/GPC validity grading); `generate_gpc_assets.py` (single-source taxonomy→prompt+json). Findings: A-vs-A noise ~47ms p50; cold prefill ≈ free on nano; regression A/B (warm 200/arm + cold 50/arm) was mid-run 7/23 → `state/pciv-regression-ab-20260723.jsonl`.
+
+### 7. Ticket map (as of 2026-07-23)
+
+- **Core build**: AI-1213 (epic, Emerging Qwant support, Bhupesh, due 8/15) → AI-1538 (deploy online pCIV service, **Varun**, Not Started, empty) · AI-1542 (optimize latency, **Varun**, In Progress, empty; anchor) · AI-1540 (evaluate online LLM offerings, Steven, In Review) · AI-1556 (3.0 pCIV request sets, Bhupesh, Not Started) · AI-1535 (live-path spike, Varun, Done — holds the plan) · AI-1532 (closed dup).
+- **SSP/API**: AS-13389 (V1 Qwant ghost launch 07/24, Pinkel) → AS-13400 (intent.response/source — payload spec, RfQA) · AS-13399 (privacy mode) · AS-13401 (null suppression) · AS-13402 (timeout inventory / ~3s budget, In Prog) · AS-13403 (header inventory). AS-13384 (3.0×pCIV integration epic) = **empty shell**.
+- **Vespa/retrieval**: AI-1546 (user prompt as qt; fallback chains: product `product.name→chat.topic→prompt`, adjacent `chat.topic→target→prompt`; the "2 Qwant flows" comment) · AI-1545 (3.0-vs-2.0 latency, contradictory runs) · AI-1171/AI-1513 (pCIV in AAS/retrieval phases).
+- **Pre-pivot/publisher-side**: AI-1313 (epic) · AI-1397/1323/1483/1484 (prompt/snippet/backend/guide, Done) · AI-1531 (two-shot demo, In Prog, no code) · DPR-3258/3259, INFRA-3421/3422, DPR-3263, DBR-6025 (demo infra).
+- **Adjacent**: AI-1474 (offline GPC-L3 reclassification — model-tier debate = precedent for online choice) · AI-1512 (intent definitions + backfill) · AI-1136 (offline CIV for online queries — "lower priority" fallback idea) · OPS-5493/AD-8850 (Qwant traffic anomalies, unowned).
+
+### 8. Key docs / channels / people
+
+- Docs: v3.0 spec [INTERNAL] `1BgpjQCdppo…` (full text mirrored at scratchpad `discover_v3.md`, 7/23 session) · EXTERNAL Qwant/AMP Ad Integration + Qwant 7/20 proposal `1-FfoHnnPSJ5…` · Online pCIV 7/10 kickoff notes `1gjv3AJNm1…` · PCIV Extraction Guide `1r9OcVG27…` · Qwant<>CIV Questions `1JrzSig7…` · War-room notes `1a0er16kI…` · external meeting notes (3/18, 6/17, 7/8, 7/17) `12gAqc5Tz…` · Qwant AI Project Tracker sheet `1h5F_twS8…` · CIV Post-Mortem `1LYdAkylaf…` (lessons: output-token blowup from null fields, no batch testing, no contractual interface) · Binary-intent TDD `18zKO8-2x…`.
+- Slack: #pub-onboarding-qwant-ai (C0AUE5JBTAP, main) · #proj-pciv-pub-integration-xfn-wg (C0BDK04NLA0, where the pivot happened) · #proj-amp-discover-3-0 (C0ATZNKJCTG, API) · #team-relevance-yield (C08GKCC9742) · group DM C0BJPQHFFGC (taxonomy) · Gong summaries in #gongtest.
+- People: Varun (owns AI-1538/1542) · Saksham Bhatla (drove pivot, filed tickets) · Dhaval Shah (product push) · Steven Wu (model eval) · Rama Mukkamalla (Bedrock infra per 7/10; ticket since moved) · Bhupesh Hada (epic, query sets) · Norbert Tamas (3.0 API) · Pinkel Gurung (SSP epics) · Artem Dippel (Vespa qt) · Yaarit Even (prompts/ML) · Claire Conklin (PM) · Camille Baudou (Qwant liaison) · Qwant: Sacha Fontaine (PTO→8/14), Maxime Tresal-Mauroz (backup, writing data spec), Julien, Pierre, Odilon, Mickael.
+
+### 9. Open questions / gaps (as of 2026-07-23)
+
+1. **No formal latency SLA** for the pCIV hop — P99<2s is verbal; AS-13402's chain inventory doesn't include a pCIV hop. Where extraction sits in the serving chain (blocking vs async) is undocumented.
+2. **Model undecided** — blocked on eval dataset (AI-1542 comment) + AI-1540 analysis; Bedrock gpt-5 availability uninvestigated; Bedrock-vs-DBX final call unmade (7/10 says Bedrock; nothing implemented).
+3. **Input shape gap**: spec = single prompt+response, early framing = full multi-turn history. Matters for prompt design and the eval dataset.
+4. **Output schema unpinned**: which targets[] fields, GPC level (demo=L2, offline=L3), intent-type vocabulary (demo vs offline vocab differ), null handling (post-mortem: nulls inflated output tokens/cost).
+5. **No bridge ticket** SSP logged-payload → online-pCIV call (AS-13400 defers transit; AS-13384 empty). Who files it — Pinkel's team or AI?
+6. Flash **prompt-only at launch** possibility (Dhaval 7/17) — if so, launch-day online pCIV input is just the query; source/response arrive later. A/B plan (CIV-extraction vs raw-prompt Vespa query) implied but unticketed.
+7. 30-day retention clause — unconfirmed, no follow-up ticket.
+8. `source.items[].snippets` field shape — Qwant proposal, not agreed; do we consume it?
+9. Qwant commerciality flag pass-through (they have it for Flash; "looks like they can" send — unconfirmed). If sent, online pCIV needn't re-derive commerciality for Flash.
+10. AI-1213 epic due date (8/15) vs launch decision (8/24) — epic date stale.

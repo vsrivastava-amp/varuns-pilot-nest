@@ -50,3 +50,27 @@ Context: Varun asked for an independent investigation of Artem's 2.0-vs-3.0 resu
 > Happy to share the stage A/B scripts if useful.
 
 **Disposition:** pending Varun — ✅ post (via Rovo `addCommentToJiraIssue`) / ❌ drop / ✏️ edit
+
+## 2026-07-23 — laptop — ticket change — Jira AI-1542 + AI-1538 descriptions
+
+Context: both online-pCIV tickets are yours (reassigned 7/22) and both are **empty** — no description, no acceptance criteria. Full research dossier now in `log/pciv-online-service.md`. Draft descriptions below so the tickets carry their own context (Steven/Bhupesh/Saksham reference them, and the epic is due mid-Aug). Posting = Jira write → your call (Rovo `editJiraIssue` ready, or paste manually).
+
+**AI-1538 "Deploy an online pCIV service" — proposed description:**
+
+> Build and deploy the AMP-side online pCIV extraction service for the Qwant 3.0 launch (epic AI-1213; production launch Aug 24, ghost 3.0 endpoints 7/31).
+>
+> Background: Qwant declined publisher-side pCIV extraction (June 26, cost/latency/UX). Plan of record (Jul 8 xfn-wg thread + Jul 10 kickoff + AI-1535 spike): Qwant sends conversational context on /di (`intent.prompt` + `intent.source` ContextSummary; `intent.response` on FR AI-Chat — AS-13400); SSP calls an AMP service that extracts pCIV in real time.
+>
+> Approach: new domain in llm-evaluator-service — same codebase, separate deployment and eval config (max_group_size=1, tight timeout, graceful fallback, no batch), own Datadog APM. Bedrock-based in-network serving identified as the biggest latency lever (vs current Databricks AI Gateway). Model selection tracked in AI-1540/AI-1542; eval query sets in AI-1556.
+>
+> Open items: output schema (GPC level, intent-type vocab, null handling), single- vs multi-turn input, SSP→service integration ticket (AS-13400 defers downstream transit), formal latency SLA (verbal: P99 < 2s @ 100–200 QPS within Qwant's ~3s Flash budget).
+
+**AI-1542 "Optimize online pCIV service for latency" — proposed description:**
+
+> Bound end-to-end latency of the online pCIV service (AI-1538) to fit Qwant serving: verbal target P99 < 2s at 100–200 QPS, inside the ~3s Flash Answer budget (AS-13402). Goal is bounded tail latency, not just fast p50 ("we don't want 2-3% of queries going to 5 seconds" — 7/10 kickoff).
+>
+> Levers identified: in-network model serving (Bedrock vs DBX gateway), model choice (AI-1540; needs Qwant-query eval dataset per Steven's comment — sets in AI-1556), prompt size/prefix caching (offline civ: 16.4k-tok prompt, 93–97% cache reads; demo harness: cold prefill ≈ free at p50 on nano), single-query config, tight timeouts + fallback (today: 60s timeout, retries=0).
+>
+> Reference numbers in `pilots-nest`: tools/pciv harness — nano TTFT p50 ~575ms on 2.4k-tok prompt; observed offline civ ~5s/call under batch.
+
+**Disposition:** pending Varun — ✅ post both / ✏️ edit / ❌ keep tickets bare
