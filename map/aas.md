@@ -9,9 +9,11 @@ New Java 25 / Spring WebFlux service that runs ad selection as a DAG of steps
 the full auction** and becomes "the ad selection engine," absorbing
 responsibilities from DSP-engine and sunsetting SASS (Shopping Ads Search
 Service). **Current reality: the auction is split between AAS and DSP** — the
-ownership boundary is mid-migration and movable per-request via experiment
-config (`aasRoutingLevel`, strangler-fig cutover; see `docs/experiment-cutover.md`
-in the repo).
+ownership boundary is mid-migration; the design is a movable per-request
+cut-line (strangler-fig; `docs/experiment-cutover.md`) — but **it is design-only,
+not yet in AAS code**: no `aasRoutingLevel` key is read anywhere (the platform-service
+*defines* `aasRoutingLevelPA/TA` config fields, AAS just doesn't consume them yet).
+See [experimentation-platform.md](experimentation-platform.md) for the full A/B stack.
 
 - Lead: **Joseph Deferio** (146 commits + 38 as jdeferio-amp; away week of 7/20–7/24, back ~7/27)
 - Other contributors: Artem Dippel (65+11 — Discover 3.0 / text ads), John Exantus (repo transfer + CI/CD, INFRA-3149)
