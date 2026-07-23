@@ -20,3 +20,5 @@ Tagged by privilege tier: `no-auth` / `session` / `sudo`. Dated on entry. Move t
 ## sudo
 
 (none — see needs-sudo.md)
+- 2026-07-23 — **Bedrock roster + access sweep** (feeds AI-1540/AI-1542 model choice + Bedrock-vs-DBX decision): needs Varun to run `aws sso login --profile dev` first (human-gated). Then `/model-selection` §1b: list models + inference profiles in us-east-1, check model-access grants, answer "is gpt-5-family on Bedrock?", record roster snapshot in playbooks/llm-eval-system.md. `session`-tier.
+- 2026-07-23 [session] Verify Bitbucket read access once Varun adds token to .env (BITBUCKET_API_TOKEN or Bitbucket-scoped ATLASSIAN_API_KEY); then write playbooks/bitbucket.md (auth, clone pattern, repo inventory: dsp-engine, ssp-engine, amp-discover-model, experimentation-platform-service, qe-dsp-engine-api-tests) + update CLAUDE.md status. Context: runs/2026-07-23-aas-context.md; first use = read DSP auction/pricing source (AS half of map/aas.md formula).
