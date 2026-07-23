@@ -1,5 +1,0 @@
-The CIV prompt is 3,307 of the 3,563. The other ~250 is the demo's chat persona (48) and the output protocol (192).
-
-Yes, we can reduce. I've built a compacted candidate and measured it: drop Business & Industrial subcategories and the Mature vertical, prune disambiguation rules the full list made redundant, tighten the examples and rule text. That takes the CIV prompt from 3,307 to 2,371. The compact examples also shorten the model's responses themselves. It needs a regression pass (same A/B as yesterday) before it ships — can have that done quickly.
-
-If we need to go lower: the category list itself is ~1,300 of what remains, and it's machine-generated — so a per-pub subset (e.g. Qwant consumer verticals only) is cheap to produce and stays in sync automatically. If Qwant can tell us which verticals they care about, I can turn that around quickly.

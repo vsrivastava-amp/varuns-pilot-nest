@@ -6,11 +6,11 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ---
 
-## 2026-07-23 — laptop — message draft — group DM C0BJPQHFFGC — reply to Dhaval's prompt-size questions (12:01 EDT)
+## 2026-07-23 — laptop — message draft — group DM C0BJPQHFFGC — reply to Elisa (16:51: OK to tell client L2s? json to share?)
 
-Context: Dhaval asked (1) opportunities to reduce prompt size — Qwant will balk at 3.5k; (2) is 3,563 CIV-only or CIV+glue+pub — he only cares about CIV. Measured answers (tiktoken o200k_base, on the dev branch): CIV alone = 3,307; glue = 240. Section + cut-candidate counts in `runs/2026-07-22-pciv-taxonomy-gap.md`. Draft offers 3 measured cuts (→ ~2,890) + the per-pub-subset lever (generator makes variants cheap). Any accepted cut re-runs the A/B before ship.
+Context: Elisa hasn't told the client what we support yet. Sequencing risk: THIS client counts categories (they caught 74 vs 190); if she shares the 213-entry json now and Dhaval's live size push then drops B&I/Mature, the client gets a second, smaller list. Current json also contains 773:Erotic + 780:Weapons — client-facing content call nobody has made. Draft: green-light the "full L2 coverage" message now, hold the file until the trim decision, same-day delivery after. (Prompt-size draft entry retired — Varun sent his own version 15:18 EDT; compact candidate with measured −936 remains available in `state/pciv-extraction-compact-candidate-20260723.txt`.)
 
-Body: `review/2026-07-23-gpc-prompt-size-reply.txt`
+Body: `review/2026-07-23-elisa-json-reply.txt`
 
 **Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
 
