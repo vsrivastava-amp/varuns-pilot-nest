@@ -35,3 +35,8 @@ BASE="https://admarketplace.atlassian.net/rest/api/3"
 ## Landscape (2026-07-21 snapshot — re-derive, don't trust stale)
 
 ~40 projects visible. Ones that matter here: **AI** (Artificial Intelligence — PCIV core), **AS** (Ad Selection), **DPR** (Data Products & Reporting), **INFRA**, **PUB** (Publisher Onboarding), **DATABRICKS**, **RELEASE**.
+
+## Comment threading (learned 2026-07-23)
+
+- Jira Cloud **UI supports threaded replies** on issue comments. The **REST API does not** (as of 2026-07): no `parentId` on POST, and UI-made replies read back as flat comments (Atlassian RFC pending for API support). Rovo MCP's addCommentToJiraIssue is equally flat.
+- Consequence: agent-posted "replies" = new comment + @mention of the person (ADF `mention` node with accountId). If true threading matters, Varun posts by hand in the UI.
