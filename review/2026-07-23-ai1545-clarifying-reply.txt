@@ -1,0 +1,5 @@
+Two clarifications worth pinning for anyone reading the headline numbers (cc @Saksham):
+
+1. The avg/p99 comparison is computed over the 177/1000 rows where both sides returned a full page of 100 ads. That's a fair way to isolate query cost, but it also concentrates on the slowest slice — the 3.0 requests that returned 0 ads were fast (~12ms avg), and across all 1000 rows the two sides average about the same (3.0 ~19ms vs 2.0 ~21ms). So "3.0 is ~55% slower" describes that full-page subset, not expected latency across traffic.
+
+2. All of this ran on stage, which has a much smaller vector store than prod (and possibly different compute). The numbers could look different at prod scale — probably worth a prod-shadow run before these feed any latency-budget decisions.
