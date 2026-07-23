@@ -1,12 +1,5 @@
-Good questions. Breakdown first: the 3,563 is the full demo system prompt, but the demo glue is tiny — output protocol 192 tokens + demo chat persona 48. The CIV prompt itself is 3,307, so what pubs embed is essentially all of it.
+The CIV prompt is 3,307 of the 3,563 — demo glue is only ~240 tokens.
 
-Inside the CIV prompt (exact tokenizer counts): GPC category list 1,536 | examples 595 | target extraction rules 394 | disambiguation rules 277 | type rules 215 | schema 165 | header 103.
+Yes, we can reduce. Three low-risk cuts: drop Business & Industrial's 25 subcategories (−179), drop the Mature vertical (−12), trim examples from 5 to 3 (−~230). That lands the CIV prompt at ~2,900; we'd re-run the A/B before shipping.
 
-Reduction opportunities, measured:
-1. Drop Business & Industrial's 25 subcategories, keep only its top-level ID: −179. Consumer pub traffic essentially never needs that granularity.
-2. Drop the Mature vertical (erotic/weapons): −12. Probably right for pub packets regardless of size.
-3. Trim examples from 5 to 3: −~230.
-
-Those three take CIV to ~2,890 with low regression risk — we'd re-run the A/B (same 200-samples-per-arm setup as yesterday) before calling it shipped. Beyond that we're into compressing category names or restructuring the list, where accuracy risk goes up fast for small savings.
-
-One thing worth being direct about: the GPC list is 1,536 of the 3,307 — the size increase IS the full coverage Qwant asked for. If a pub wants both complete categories and a small prompt, the honest lever is which verticals their traffic actually uses. The list is now machine-generated from one source file, so producing a per-pub subset (e.g. Qwant-consumer verticals only) is cheap and stays in sync automatically. Happy to cut one if you can get me a verticals list from their side.
+The bigger lever: the category list is 1,536 tokens because it's now the complete set. Since it's machine-generated, we can cheaply produce a per-pub subset — e.g. Qwant consumer verticals only — which would cut it well below 3k while keeping their categories complete. If Qwant can tell us which verticals they care about, I can turn that around quickly.
