@@ -22,3 +22,4 @@ Tagged by privilege tier: `no-auth` / `session` / `sudo`. Dated on entry. Move t
 (none — see needs-sudo.md)
 - 2026-07-23 — ~~**Bedrock roster + access sweep**~~ ✅ done 2026-07-23 (SSO login by Varun in-session): access verified end-to-end, roster snapshot in `playbooks/llm-eval-system.md` §Bedrock. Headline: NO gpt-5 family on Bedrock (only gpt-oss); Llama4/Qwen3/DeepSeek/GLM/Mistral/Anthropic all invocable.
 - 2026-07-23 — ~~Verify Bitbucket read access~~ ✅ done 2026-07-23 same-day: no token needed — laptop already had a dedicated SSH key (`~/.ssh/bitbucket` via ssh config). `playbooks/bitbucket.md` written; dsp-engine cloned + 2.0 auction formula verified against source (map/aas.md updated).
+- 2026-07-23 — **Online pCIV dev deployment (AI-1538)** — multi-session checklist at `tasks/pciv-online-deploy.md` (claim individual items there, not this line). Phase A blocked on Varun: app name + akeyless/SA reuse decision. `session`-tier.
