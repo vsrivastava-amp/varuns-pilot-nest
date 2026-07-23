@@ -162,3 +162,9 @@ Prompt-design implication (Yaarit's task): flash use case input = query + SERP t
 - **Current Qwant text ads are Bing-syndicated** — status bar on ad hover shows `bing.com/aclick` redirect (context for "other ad partners stop by month-end": we're replacing Microsoft on these surfaces).
 - **Target UX (the Google AI Mode analogy, ~1:23)**: Sponsored block *inside* the AI answer — "Sponsored ⋮ / For daily training or racing on the road, here are some options from Nike." — product carousel with prices/ratings/merchant. Adjacent placement below/within answer flow; this is the FR AI Chat target experience.
 - Flash module detail (0:40): module has source-site chips (runrepeat.com, forbes.com — the `intent.source.items`), error disclaimer, thumbs up/down, and the "View the detailed response" button; "Other searches" suggestions sit below it in the rail.
+
+## 2026-07-23 — Priority call (Varun, in-session): Flash Answer placement first
+
+- The garbled US detailed-flash output is Qwant's product problem, not ours — but the product being bad right now is context to carry into build/prototyping (don't over-fit to today's payload quality/shape).
+- **Priority: the Flash Answer placement is the one to iterate on first** (majority traffic). Detailed Flash / FR AI Chat are second-order for now.
+- Build implications: primary input shape = `prompt` + `source` (ContextSummary + items) with **no LLM response** — prompt design (Yaarit), the new domain's request schema, and the eval work should target that shape first; response-bearing prompts (detailed/chat) come after. Conveniently the golden set (short query terms) is closest to the flash shape; the gap to fill first is SERP-context-bearing eval rows (AI-1556 sets), not conversation rows.
