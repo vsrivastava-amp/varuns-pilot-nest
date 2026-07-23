@@ -37,16 +37,6 @@ Context: Slack Claude retired today (`log/nest--laptop.md`). No operational need
 - 2026-07-23 — **Draft: rate-limit increase request to Databricks (AI-1474)** — for Varun to send via the usual DBX channel/rep:
   > We need a rate-limit increase on the AI Gateway serving endpoint **`ai-gpt-5-2`** in our **prod** workspace (workspace id 5702410742425796, dbc-1b885e51-40bc.cloud.databricks.com). Yesterday (2026-07-22 ~20:28 UTC) a batch job hit it and the endpoint admitted only ~56 requests before returning 429 for everything else (7,776 throttled requests in 2.5 min, avg 10ms — bounced at the gateway). We have a one-time backfill of ~223k requests (~10 queries each, ~18.5k input tokens/request of which ~95% should be prompt-cache reads after warmup, ~100–700 output tokens/request). To finish in 8–12h we need **sustained ~400–600 requests/min** (≈7–10 QPS) on that endpoint, i.e. roughly 8–12M input tokens/min mostly cached. Happy to schedule the run for off-peak hours if that helps. Could you raise the endpoint's rate limit accordingly (temporarily is fine)?
 
-## 2026-07-23 — laptop (ai1545-latency) — Jira comment draft — AI-1545
-
-Context: Varun asked for an independent investigation of Artem's 2.0-vs-3.0 result reversal. I verified his run-2 numbers from the attached CSVs, then ran controlled A/Bs against stage VSS. Full evidence: `runs/2026-07-23-ai1545-vespa-latency.md`.
-
-Plain-language background for Varun (not part of the comment): many products in the Vespa index have no category set. When a 3.0 request filters by category, VSS deliberately generates "category starts with X **OR category is empty**" so those uncategorized products aren't excluded. Measured on stage: each half of that OR alone is fast (~20-23ms), but the combined OR — what production sends — is 63ms for a common category and 140ms for a rare one. And for rare categories the "starts with X" half matches ~nothing, so the whole returned page is uncategorized products: the slowest queries pay the most for a filter doing the least. This also explains the run-1/run-2 reversal: run 1's requests carried a brand filter (from a real ad), and narrow brand filters take a different, fast path in Vespa; run 2's were mostly category-without-brand — the slow shape.
-
-**Draft comment** (v3 — scoped to what Varun can honestly own; no Vespa-internals claims): `review/2026-07-23-ai1545-jira-comment.txt`
-
-**Disposition:** pending Varun — ✅ post (via Rovo `addCommentToJiraIssue`) / ❌ drop / ✏️ edit
-
 ## 2026-07-23 — laptop — ticket change — Jira AI-1542 + AI-1538 descriptions
 
 Context: both online-pCIV tickets are yours (reassigned 7/22) and both are **empty** — no description, no acceptance criteria. Full research dossier now in `log/pciv-online-service.md`. Draft descriptions below so the tickets carry their own context (Steven/Bhupesh/Saksham reference them, and the epic is due mid-Aug). Posting = Jira write → your call (Rovo `editJiraIssue` ready, or paste manually).

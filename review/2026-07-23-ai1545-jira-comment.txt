@@ -1,7 +1,0 @@
-Hey Artem — dug through the CSVs on the ticket. The latency increase looks concentrated in rows where we pass a GPC filter but no brand filter — for all other rows, 3.0 is about the same or even faster than 2.0.
-
-Why? Our current filter logic matches "attribute = X OR attribute not populated." So filters only exclude contradictions — a product with no category set passes every category filter. I could reproduce the slowdown on stage by adding just a GPC filter to an otherwise identical query, and it goes away if the "or not populated" part is removed from the generated YQL.
-
-Want to check a couple things:
-- Is the exclude-contradictions behavior intended?
-- ~600/1000 of the 3.0 requests returned 0 ads, vs ~290 for 2.0 — was that expected, given how the requests are built from CIV fields?
