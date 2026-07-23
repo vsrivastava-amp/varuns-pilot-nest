@@ -39,3 +39,7 @@ Bedrock has three on-demand tiers: **standard**, **flex** (~50% off, latency-tol
 - **Prompt size is THE lever on Bedrock**: input dominates every OSS row (≥80% of cost). The online prompt is not yet designed — demo=3,563 tok (L2 GPC), offline=16.4k (L3+IAB); the slimmed pub prompt precedent was ~1.6k. Halving the prompt ≈ halving Bedrock cost. (Conversely on DBX-with-caching, prompt size barely matters for cost.)
 - Anthropic current-gen rows are missing/stale in the price API here — Bedrock charges ≈ Anthropic list (Haiku 4.5: $1/$5 per 1M, cache read ~$0.10) ⇒ ~$4.9k/1M req uncached-prompt equivalent… with cache ≈ $1.7k/1M req std. Cross-check on aws.amazon.com/bedrock/pricing before quoting externally.
 - All numbers exclude the choice of *where the service runs* (same either way) and assume us-east-1 on-demand.
+
+## CORRECTION (same day, 2026-07-23)
+
+The "structural finding" above is right for the **bedrock-runtime** surface only. Closed-weight **GPT-5.4/5.5/5.6 (Sol/Terra/Luna) ARE on Bedrock** via the separate **Mantle** endpoint (Responses API, Bedrock API key) with **prompt caching at 90% cached-input discount** and OpenAI first-party pricing — none of which appears in the AWS Price List API used here. A cached Luna/Terra column would land near the DBX-nano cost class, not in the uncached-OSS band above. See `state/bedrock-capacity-memo-20260723.md` §6 + `log/pciv-online-service.md` correction entry. Also per that memo: Gemma 4 on Mantle has automatic implicit caching; Llama/Ministral/Mistral remain uncached.
