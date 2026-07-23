@@ -118,3 +118,5 @@ Context: AS-13400 accepts+logs `intent.*` but explicitly defers downstream trans
 
 - 2026-07-23 — **AI-1474 Databricks ask v5 (FINAL, prod-only — dev split was unfounded; pilots + backfill all run via prod service → prod gateway):**
   > Hi @Sixuan, we're adding two new models for an offline task. Could we get limits set for gpt-5.6-luna and gemini-3-6-flash on prod (5702410742425796): ITPM 10,000,000 / OTPM 1,000,000 each. Thanks!
+
+- 2026-07-23 — **AI-1474 asks, SENT-STATE TRACKER:** INFRA-3462 created (endpoints, Pun, no rate-limit config needed). Databricks ask v6 (final): dev + prod, ITPM 10M / OTPM 1M each for gpt-5-6-luna + gemini-3-6-flash. Pun ping + Sixuan message drafted for Varun to send in Slack.
