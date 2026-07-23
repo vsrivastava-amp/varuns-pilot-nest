@@ -31,7 +31,8 @@ SSP (ssp-engine, /di) → DSP (dsp-engine) → AAS (POST /api/v1/ad-auctions)
 ```
 
 SASS (wrapper over VSS + Redis caches) is being deprecated — AAS 2.0 product
-path now goes direct-to-VSS. KVSS remains as-is behind AAS. Auction math at
+path now goes direct-to-VSS. KVSS remains as-is behind AAS (its own map entry
+now: [kvss.md](kvss.md) — from the 7/15–7/22 KT sessions). Auction math at
 DSP (Discover 3.0, per 7/23 sync): `unifiedScore * CTR * CPC`.
 
 ## Repos & endpoints
