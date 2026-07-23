@@ -141,3 +141,16 @@ From AI-1535 (Varun's spike, Done) + Jul 10 kickoff + 7/8-7/14 Slack threads —
 - **Assignments** (Saksham): **Yaarit** — build the LLM prompt(s) for these use cases ("We don't have to use all of the data provided to us, but it's worth considering"); **Varun** — online pCIV service, "this would leverage the prompts". Also tagged: Artem, Joseph.
 - **Architecture asks**: placement-level awareness in VSS/AAS for choosing the text+product mix; likely **placement-aware prompt switching** (flash vs detailed use case) — maps cleanly onto per-placement eval configs within the new pciv domain (one evalId per placement/prompt), reinforcing the new-domain design.
 - Vespa changes for combined text+product retrieval named as in-scope for "our work here".
+
+## 2026-07-23 — Qwant-product-walkthrough.mp4 transcript + screenshots (Varun-supplied; video by Saksham, 2:28)
+
+UX-to-surface mapping (finally concrete — reconciles the 7/20 proposal's three surfaces with what users see):
+
+1. **Flash Response placement** (the big one). Qwant SERP for "nike running shoe": classic product carousel + text ads in main column (today's 2.1-era ads), **Flash Response module in the right rail** — AI summary text (e.g. "The Nike Pegasus 42 is a top pick…") with source-site chips (runrepeat.com, forbes.com) and a **"View the detailed response"** button. Our ad placement sits inside/adjacent to this module, as a **separate placement**. Saksham on available data (0:28–1:05): "we will have the search query (typically not very large), the titles… a pretty big list, then you'll have the Flash response, **I believe**, along with the snippets of RAG data used to build this response. We have quite a lot of information. It is TBD how much we want to use — that's part of this effort."
+   - ⚠️ The "I believe" matters: whether the flash-response *text itself* arrives (vs only prompt + SERP titles/snippets per Qwant's 7/20 proposal, where response is absent on the Flash surface) is still the open payload question — now scoped precisely to that one field.
+2. **FR-only AI Chat placement**: "like AI mode in Gemini" (he demos Google AI Mode as the stand-in since FR Qwant isn't visible from US) — sponsored **carousel at the bottom** of the AI response. "This will have the actual LLM response." Lower traffic.
+3. **US/EN "View the detailed response"**: clicking the button on the flash module opens a detailed view — another placement, ads possible at the bottom. = the 7/20 proposal's "Detailed Flash Answer" surface (response = previous flash answer). Saksham: "not likely used by a lot of people… I see a lot of things that are broken in this."
+
+Both placements: **mix of product + text ads, adjacent NOT inline** (Intent Adjacent per spec definitions) — "these two things are very important to remember."
+
+Prompt-design implication (Yaarit's task): flash use case input = query + SERP titles (+snippets +maybe flash text); detailed/chat use case = + actual LLM response. Placement-aware prompt switch confirmed as the likely design → per-placement eval configs in the new domain.
