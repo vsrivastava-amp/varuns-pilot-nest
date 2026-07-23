@@ -7,10 +7,25 @@ term.)*
 
 ## What it is
 
-Semantic **vector search for text ads**, replacing the legacy lexical search
-(Solr). Part of the "Positive Keywords" project revamping the text-ad search
-flow. Sits **behind AAS on the text-ad path** (`AAS → KVSS`; product ads go
-`AAS → VSS`, a separate service) — see [aas.md](aas.md). Backed by Vespa.
+Semantic **vector search for text ads**, added **alongside** the legacy lexical
+keyword-matching flow (the "Keyword Matching Service," **Elasticsearch**-backed —
+*not* Solr; see corrected caveat at bottom). Sits **behind AAS on the text-ad
+path** (`AAS → KVSS`; product ads go `AAS → VSS`, a separate service) — see
+[aas.md](aas.md). Backed by Vespa — **repo-code internals (endpoints, schema,
+rank profiles, thresholds, YQL) live in [vespa.md](vespa.md)**; this entry is the
+semantics / product-behavior / history view.
+
+**Canonical sources** (prefer these over the KT Gemini-notes this entry was seeded from):
+- Confluence **"Keyword vector search service (KVSS) - SC227"** (Technology space) —
+  service/runbook page: prod/stage/dev hosts, live curl example, dependency risks.
+- **TDD "Text Ads Vector Search"** by **Roberto Simoes** (Google Doc
+  `1iQD9iLIxLcFgoS-DYi11VqWR3OIBGbIcr7eC7rqovng`), tracked under Jira **SRS-1570**
+  (project **SRS = "Search Relevancy Squad"** — KVSS's Jira home). Reporter of the
+  SRS build tickets was contractor Yauheni Dzmitryieu (now deactivated).
+- Requirements: "AMP Discover — Pub GTM & Ad Selection Ideal State" (Norbert Tamas, 2025-09-30).
+- Repos are **Bitbucket** (per SC227): `keyword-vector-search-service`,
+  `qe-kvss-performance-test`; Vespa app package (schema `keyword_ad.sd`) in
+  `database-vespa`. (vespa.md notes a Bitbucket→GitHub migration in flight.)
 
 The core idea: keywords are embedded into vectors; an incoming query is matched
 by vector similarity, and **relevance-score thresholds** decide which *match
@@ -59,15 +74,24 @@ broad** when the site/KVS passes none. Primary implementation fn:
 
 ## Request / response contract
 
-**Request** carries: query terms, intent classification (brand/non-brand),
-conquesting flag, **audience ID** (= ad group in Amplify) for filtering, and
-optional **diagnostics** flag.
+Endpoint (Confluence SC227 live curl, mirrors VSS's `/product-ads/vector`):
+**`POST /api/v1/search/text-ads/vector`**. *(vespa.md's repo read lists the base
+as `/api/v1/search` — treat the `/text-ads/vector` sub-path as the callable one;
+reconcile against the controller if it matters.)*
 
-**Response is metadata, NOT creatives** — KVSS returns `{keyword ID, ad
-group / audience ID, score}`. The DSP then enriches, selects a creative from the
-ad group (precedence hierarchy for destination URLs), and does the final
-ad-serving decision (auction etc.). **Dedup happens in the DSP** (picks best
-keyword by cosine-similarity score), not in KVSS.
+**Request** (per TDD): `queryTerms[]` (searched in parallel), optional `requestId`
+(trace id SSP/DSP→KVSS), `limit` (text ads per QT, **default 20**),
+`filter.audienceIds[]` (= ad groups in Amplify), `enableDiagnostics` (default
+false). The runtime request has since grown intent/brand fields and
+`allowConquesting` (see vespa.md `VectorSearchRequest`).
+
+**Response is keyword-level metadata, NOT ad creatives.** `keywordMatchings[]`,
+each: `audienceId`, `score` (raw cosine), `keywordId`, `keyword`, `keywordType`
+(e.g. `"vector"`), `keywordMatchType` (`broad`/`phrase`/`exact`), `queryTerm`,
+`destinationUrl`, `mobileDestinationUrl`, `useUtm`. Plus per-QT `diagnostics`
+(`databaseLatencyMillis`, `searchResultsSize`). The DSP enriches from this,
+selects a creative from the ad group, and runs the final auction. **Dedup happens
+in the DSP** (best keyword by cosine score), not in KVSS.
 
 - **Conquesting** (bidding on competitor keywords): ignored **by default**;
   only honored when the placement has the feature enabled. Publisher-level flag
@@ -116,9 +140,20 @@ keyword by cosine-similarity score), not in KVSS.
 Campaign managers → Amplify (upload keywords) → MySQL → replicate → Databricks
    → Kafka → Vector Feed Service → Vespa
 ```
-The **feed service is a clone of the (product) Vespa feed service** on a
-different cluster + document set. Validates messages are well-formed and carry
-minimum required attributes; reported **no processing errors yet** as of KT3.
+The **feed service (KVFS / keyword-vector-feed-service)** is a clone of the
+product Vespa feed service — a second consumer on a different cluster + document
+set. Validates messages are well-formed and carry minimum required attributes;
+reported **no processing errors yet** as of KT3.
+
+- **Kafka topic:** `ric1.audience-keyword-targeting-embeddings` (from SRS-1684).
+- **Message contract** (TDD): key = `id`; value carries `audience_id`, `keyword`,
+  `keyword_type_id`, `keyword_match_type_id`, `keyword_status_id`,
+  `destination_url`, `mobile_destination_url`, `use_utm`, `batch_id`, timestamps,
+  and the `embeddings[]` vector. **`keyword_status_id`: 1 → upsert into Vespa; 0
+  or 2 → delete.** Only a dedicated `keyword_type` (vector-eligible) is pulled
+  into this stream; the legacy Elasticsearch indexer ignores it.
+- Embedding is generated at ingest by the **embedding service (EGS)** — text uses
+  model **`gte`** (768-dim); see vespa.md for the embedder details.
 
 **Request path:**
 ```
@@ -144,11 +179,25 @@ placements. KVSS receives an already sanitized/expanded/labeled query and does
 **no further classification** — it just runs the exact search and filters by
 DSP-provided audience IDs.
 
+**Design lineage (why the notes and the TDD disagree).** The Nov-2025 TDD
+described an earlier phase: brand intent stayed in the **existing Redis flow**
+(vector ran only when Redis missed), and there was **no query expansion**
+("treat the tokens provided as full query terms"). By the Jul-2026 KT sessions —
+and confirmed in Slack (Artem Dippel, #proj-amp-discover-3-0, 7/01: *"KVSS
+requires the caller to pass IntentType per query term … BRAND → EXACT search,
+NON_BRAND → VECTOR search"*) — brand handling and partial expansion had moved
+into the Intent Classifier + KVSS exact path. So KT reflects the current state;
+the TDD reflects the MVP it grew out of. Backing tables exist in Databricks
+(`amp` schema: `brand_keyword`, `intent_type`, `query_term_expansion`;
+`model_registry` schema: `model_relevancy_threshold`, `vector_search_profile`).
+
 ## Publisher lever deprecation (a real decision, KT1)
 
 The team **removed publisher-side match-type levers** — deemed an unnecessary
 feature. Match type is now driven **exclusively by advertiser-side definitions**
-(via the threshold model above). Worth remembering as a settled design choice.
+(via the threshold model above). The Amplify/SSP side of this is tracked as
+**"Proj California Roll"** (WF-16732: *"Deprecate Keyword Type Placement Config
+in SSP,"* P0). Worth remembering as a settled design choice.
 
 ## The KT sessions
 
@@ -170,9 +219,10 @@ Gemini notes docs: [KT1](https://docs.google.com/document/d/17DNfoYmR5kLAxeVWjlP
 
 ## Open items / not-yet-covered
 
-- **Embedding model was never covered** across the three sessions (flagged for
-  follow-up in KT1 and never reached). Also outstanding for a future session:
-  full Vespa **schema** walk-through and **data dashboards** (KT2/KT3 next-steps).
+- **Embedding model was never covered** in the sessions, but the TDD + repo
+  answer it: text uses **`gte`** (768-dim float16 `documentVector`) via EGS — see
+  vespa.md. Still outstanding for a future session: full Vespa **schema**
+  walk-through and **data dashboards** (KT2/KT3 next-steps).
 - Code example contrasting `keyword` vs `keyword attribute` fields (KT2 owed).
 - **2.1 API default settings** for publisher ad requests when both product &
   text ads are involved (KT1 group action).
@@ -181,7 +231,12 @@ Gemini notes docs: [KT1](https://docs.google.com/document/d/17DNfoYmR5kLAxeVWjlP
 
 ## Transcription caveats (Gemini mis-hears — do not propagate)
 
-- **"Solar" = Solr** (the legacy lexical engine being replaced).
+- **"Solar" ≠ Solr — the legacy text-ad keyword engine is Elasticsearch.** The
+  Keyword Matching Service (Confluence SC85) and the TDD's "current state" are
+  Elasticsearch-backed (consistent with the `elasticScore` signal noted in
+  aas.md). "Solar" is a Gemini mis-hear (or the presenter loosely saying "Solr").
+  A *separate* Amplify Solr→Vespa migration does exist (WF-16565, per vespa.md) —
+  but that is not the KVSS-replaced path. Treat KVSS's legacy as **Elasticsearch**.
 - **"Vaspuff" = Vespa.**
 - **"Digital Signal Processing (DSP)" = Demand-Side Platform** (`dsp-engine`).
 - **"Service Selection Platform (SSP)"** — Gemini's expansion; the real term is
