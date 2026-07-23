@@ -11,6 +11,30 @@ Snapshot deposited 2026-07-22 by Varun (source: `adMarketplace_org_chart_nested_
 - Other tech branches under Yudin: Kfir Shay (VP Technology — infra/SRE/security/IT) and Norbert Tamas (Chief Technologist → Pinkel Gurung → Ankit Shah's team)
 - Product org (separate, under Adam Epstein): Sam Cox (CPO) → Amarachi Miller (Director PM) et al.
 
+## Project ownership (from Build Tracker — 6/3–7/20 snapshot, 2026-07-23)
+
+Cross-ref only — re-derive current owners via Slack/Jira. Source: "2026 Build
+Project Tracker – NT" (`1oVcSyWvEqWZ30Ved_7cTrdf5AU1EFG0Mjo7K5pszEUk`); resource
+allocation sheet `1WzzXnht1d7a6yPxdH-rKEqGtzzzM5YwUfPIUATwr5wI`; Gantt folder
+`1VZoWFWZISJFwCv9SJlXVQ2_hkBERo0bB`. "Build Accountable" = build owner, not always
+the eng TL. Allocation model: 50% Eng / 70% Product to Top Themes, 25/20% to Team
+Roadmaps, 25/10% held for on-call + innovation.
+
+- **Dhaval Shah** — Relevance Quality Upgrade (ARES/CIV), Experimentation Platform,
+  Increase Ad Matching Coverage, Ranking & Pricing – AMP Discover, Ad Auction
+  Re-architecture (w/ Norbert), Keyword Cleanup
+- **Norbert Tamas** — AMP Discover 3.0 API, 3rd Party Feeds, Text Ads Positive
+  Keywords, Global Serving & Scaling, Amazon Projects, AI-First Projects
+- **Alex Kharlamov** — AMPlify Platform Upgrade, Enterprise Data Model (EDM),
+  Media segment taxonomy
+- **Pinkel Gurung** — Ranking & Pricing – AMP Find, ValKey migration, Tech Debt Reduction
+- **Munjal Thakkar** — External Reporting Access, ELME Pricing Audit Dashboard
+- **Emily Clifford** — California Roll (trafficking workflow)
+- **Kfir Shay** — Infrastructure Projects (separate tracker `1fUarFfNdv5c7Co99b1q9UE7kT9D7Tc-4dscIqXSzOnc`)
+- Milestone TLs of note: **Varun** (ARES v1.1 Text Ads ✅), Joseph Deferio (AAS
+  M1–M4), Roberto Simoes (AAS M5 DSP redesign), Saksham Bhatla (Qwant relevance),
+  Viktor Strokan (3rd-party feeds M2.x)
+
 ## Full chart (as supplied)
 
 # adMarketplace org chart - nested reporting structure

@@ -10,7 +10,10 @@ Experimentation platform surfaced through Databricks dashboards. Agent job: pull
 - SQL warehouses: dev `634ea83b5df3a556` (PipelineDevelopers), stage `664db01689f76734`
 - CLI mechanics: see `playbooks/databricks.md`
 - Dashboards / jobs of interest: TBD
-- Owner: TBD
+- Owner: **Dhaval Shah** (Build Accountable, per Build Tracker); team Relevance & Yield
+- Build tracker: project "**Experimentation Platform**" (Relevance & Yield),
+  status **Done** — M1 v1.0 + M2 Support Multiple Targets both Done. Slack
+  **#proj-experimentation-platform**. Doc `1oVcSyWvEqWZ30Ved_7cTrdf5AU1EFG0Mjo7K5pszEUk`
 
 ## Agent posture
 

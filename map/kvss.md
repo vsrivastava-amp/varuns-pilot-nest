@@ -26,6 +26,12 @@ semantics / product-behavior / history view.
 - Repos are **Bitbucket** (per SC227): `keyword-vector-search-service`,
   `qe-kvss-performance-test`; Vespa app package (schema `keyword_ad.sd`) in
   `database-vespa`. (vespa.md notes a Bitbucket→GitHub migration in flight.)
+- **Build tracker** PM view = project "**Text Ads – Positive Keywords**" (Norbert
+  Tamas, Theme: Ad Selection; card 7/2/2026): M0 Retail Brand Intent Dictionary →
+  M1 Match Type Semantics Redesign → M2 Data Migration & Cleanup → M3 Service
+  Decommissioning, **all Done**. Slack **#proj-positive-keywords**. Doc
+  `1oVcSyWvEqWZ30Ved_7cTrdf5AU1EFG0Mjo7K5pszEUk`. (This is the lexical→semantic
+  transition the KT sessions below describe, from the delivery side.)
 
 The core idea: keywords are embedded into vectors; an incoming query is matched
 by vector similarity, and **relevance-score thresholds** decide which *match

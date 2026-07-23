@@ -10,6 +10,29 @@ Live integration effort; ownership in flux (Steven Wu as of week of 2026-07-20).
 - Owner: **Varun** owns both build tickets since 2026-07-22 (Saksham reassigned AI-1538 Rama→Varun, AI-1542 Steven→Varun)
 - Launch: Qwant 3.0 production launch **Aug 24** (decided 7/23); ghost 3.0 endpoints by 7/31
 
+## Build tracker context (2026-07-23)
+
+This effort is the serving side of tracker project **Relevance Quality Upgrade →
+Milestone 7 "Qwant (French/German) Relevance"** (TL **Saksham Bhatla**, PL Amarachi
+Miller, status 🟡; card updated 6/8/2026). Owners differ by layer: Saksham is the
+milestone TL, **Varun owns the online-pCIV build tickets** (AI-1538/1542).
+
+- **Dates aren't in conflict:** tracker "contract date **Aug 15**" = Qwant
+  contract-signature target; nest "**Aug 24** launch" = production go-live (ghost
+  3.0 endpoints by 7/31). Sharing the prepared PCIV artifacts (Implementation
+  Guide, Prompt Breakdown, refined 2-shot prompt) is **gated on contract
+  signature** per Supply-team guidance.
+- Tracker **risks** (verbatim intent): relevancy-score improvement is written into
+  the Qwant contract; low relevancy/CTR risks deal points; **low PLA demand
+  liquidity + PLA category bias in EU** creates the impression of lower relevance;
+  latency too high; token cost too high. Latency dependency: Fastly backbone (Kfir
+  Shay).
+- Tracker **next-step paths** for CIV extraction: (1) Qwant does it in-house;
+  (2) AMP supports them with the 2-shot prompt (integration doc + sample code
+  already provided); (3) unlikely — "2.1 API with just user query."
+- Decision-point doc: "Qwant / AMP – Ad Integration – NT – 20260717".
+- Tracker doc: `1oVcSyWvEqWZ30Ved_7cTrdf5AU1EFG0Mjo7K5pszEUk`.
+
 ## Agent posture
 
 - 2026-07-21: monitor + summarize only. All drafted replies → REVIEW.md, never sent directly.

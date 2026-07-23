@@ -135,6 +135,23 @@ rank on `normalizedScore`, uniform across types (`DiscoverRankingStep`):
   (Pinkel sync note 7/23) — same shape as 2.0 with score := unified retrieval score.
 - `DiscoverAuctionStep` is response assembly only ("bid and price resolution not yet wired").
 
+## Build tracker (project-management view)
+
+Norbert's **2026 Build Project Tracker** card "**Ad Auction Re-architecture**"
+(Node: Relevance & Yield; **Build Accountable: Dhaval Shah + Norbert Tamas** —
+distinct from eng TL Joseph Deferio; card updated 6/8/2026):
+- Milestone TLs: M1–M4 **Joseph Deferio** (PL Amarachi Miller); **M5 "Ad Auction
+  – DSP Redesign" TL Roberto Simoes** (⚫ not started). M5 = the DSP-thinning end
+  state this map calls the goal split; tracker cites epics **AI-1172, AI-1175** on
+  it — verify against the AI-1550/1432 hierarchy below, as the tracker's milestone
+  numbering predates the 7/20–7/22 re-parenting.
+- Tracker Z/A/B corroborates the goal state above (Z = "AAS has taken full
+  ownership of search, CTR, pricing, and auction/reranking"; B = "DSP calls AAS
+  without a feature flag, SASS deprecated").
+- Tracker doc: `1oVcSyWvEqWZ30Ved_7cTrdf5AU1EFG0Mjo7K5pszEUk`. Card carries no
+  Google-Doc/Confluence design link — matches the "design lives in repo `docs/`,
+  not Jira" gotcha below.
+
 ## Key Jira (AI project = Relevance & Yield; AS = Ad Selection/engines)
 
 Hierarchy: AI-1550 (Initiative, Saksham, created 7/20, empty — children
