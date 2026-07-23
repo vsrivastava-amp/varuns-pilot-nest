@@ -1,0 +1,9 @@
+# Run — 2026-07-23 — morning-routine
+
+- 2026-07-23 ~10:30–10:50 EDT — Morning routine v2, all-connector path (Slack + Rovo probes OK; calendar/gmail direct). Delta window: since 2026-07-22 13:26 EDT (cb56345 afternoon delta).
+- 2026-07-23 — Jira leg via background Rovo subagent (read-only, ~114k tokens). Bulk-noise this time: Saksham re-parenting 7 epics under new initiative AI-1549 (17:55–17:58 ET 7/22 identical stamps) — pattern confirmed again, changelog check on one issue is the cheap verifier.
+- 2026-07-23 — Digest written to `state/digest-2026-07-23.md`, delivered in chat. Headliners: AI-1474 run+model decision due (Wed/Thu commitment); AI-1545 latency conclusion REVERSED (3.0 slower, p99 196ms); Qwant 3.0 launch moved Aug 15→24 (resolves Aug-10-vs-24 ambiguity); V1 launch still 7/24 (AS-13389).
+- 2026-07-23 — REVIEW.md: retired the Saksham prompt-size/storage draft — Varun sent the storage paragraph himself in-thread (~pre-cutoff unknown exact ts; visible in thread 1784739438.331709); prompt-size answer went to the other channel. Saksham followed up with a promptID/single-location storage recommendation ("not a priority") — captured in digest flag #7; no queue entry made (Saksham's own words: keep in mind for future).
+- 2026-07-23 — Gotchas folded into `playbooks/morning-routine.md`: machine clock now reports EDT (CLAUDE.md says Pacific — flagged, not edited; CLAUDE.md fix is Varun's call); Slack search `<@Uxxxx>` mention syntax returns nothing (use keyword name search or channel reads); Gong bot summaries in #gongtest are the best same-morning source for external Qwant calls.
+- 2026-07-23 — needs-human Q-2026-07-21-01 (locale/timezone): no new signal this sweep; still open, HOLD recommendation stands.
+- Not covered this run (same as yesterday): git history leg, Databricks job status (queue item still open).

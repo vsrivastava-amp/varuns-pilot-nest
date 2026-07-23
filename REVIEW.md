@@ -20,16 +20,6 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 **Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
 
-## 2026-07-22 — laptop — message draft — Slack reply to Saksham in #team-relevance-yield (thread ts 1784739438.331709)
-
-Context: Saksham (12:57 EDT) quoted the "66 vs 192 L2 GPCs" line and asked (1) was the prompt size misleading / how much will it grow, (2) how are prompts stored today. Revised ~13:45 EDT per Varun: own up that it was partially misleading, and complement Yaarit's thread replies (13:38–13:39 EDT: pointed to Varun's size update in the other channel; eval service stores only offline civ prompts as txt, different structure from pCIV) rather than repeat them.
-
-> Yes — partially misleading, that's on us: the size we quoted was measured on a prompt with an incomplete taxonomy (66 L2s instead of 192). Corrected numbers: the demo system prompt goes from ~2.2k to ~3k tokens (+~800, ~+35%), plus maybe 100–300 more when we rework the disambiguation rules. The effective cost hit is much smaller than that sounds, since the system prompt is a fixed prefix and OpenAI prefix caching absorbs most of it (the offline civ service measures 93–97% of input tokens as cache reads). We're also scoping a latency check since sparse demo traffic may often miss the cache.
->
-> To add to Yaarit's point on storage: the pCIV demo prompt is a txt file in the pciv-demo-service repo (`prompts/pciv_extraction.txt`, with `taxonomy/gpc_taxonomy.json` alongside — the current mismatch is exactly because those two have to change together). No Google Docs in the loop — everything's in git, and on the eval-service side each evalId maps to a model + prompt file in the repo.
-
-**Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
-
 ## 2026-07-22 — laptop — message draft (optional) — Slack Claude's session — stand-down note
 
 Context: Slack Claude retired today (`log/nest--laptop.md`). No operational need — it only acts when prompted, and all its deposits landed. This is just closing the loop kindly if you'd rather not leave it hanging; totally fine to drop.
