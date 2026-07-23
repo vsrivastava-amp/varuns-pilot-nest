@@ -115,3 +115,6 @@ Context: AS-13400 accepts+logs `intent.*` but explicitly defers downstream trans
   > - dev (4731856320192987): ITPM 5,000,000 / OTPM 500,000 each
   > Thanks!
   (Sizing: 10M ITPM ≈ 7h for the 223k-call backfill; OTPM non-binding.)
+
+- 2026-07-23 — **AI-1474 Databricks ask v5 (FINAL, prod-only — dev split was unfounded; pilots + backfill all run via prod service → prod gateway):**
+  > Hi @Sixuan, we're adding two new models for an offline task. Could we get limits set for gpt-5.6-luna and gemini-3-6-flash on prod (5702410742425796): ITPM 10,000,000 / OTPM 1,000,000 each. Thanks!
