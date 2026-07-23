@@ -6,14 +6,11 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ---
 
-## 2026-07-23 — laptop — message draft — group DM C0BJPQHFFGC — GPC fix status + Winston cc
+## 2026-07-23 — laptop — message draft — group DM C0BJPQHFFGC — reply to Dhaval's prompt-size questions (12:01 EDT)
 
-Context: Varun-directed (in-session): status reply now instead of the full bundle; tag Winston; say we're ready for the updated bundle. Regression PASS details in `runs/2026-07-22-pciv-taxonomy-gap.md`. Corrects the earlier ~3k/+800 token estimate to measured 3,563/+1,142. Branch `dev-taxonomy-full-l2` pushed to Bitbucket (PR not opened yet).
+Context: Dhaval asked (1) opportunities to reduce prompt size — Qwant will balk at 3.5k; (2) is 3,563 CIV-only or CIV+glue+pub — he only cares about CIV. Measured answers (tiktoken o200k_base, on the dev branch): CIV alone = 3,307; glue = 240. Section + cut-candidate counts in `runs/2026-07-22-pciv-taxonomy-gap.md`. Draft offers 3 measured cuts (→ ~2,890) + the per-pub-subset lever (generator makes variants cheap). Any accepted cut re-runs the A/B before ship.
 
-Body: `review/2026-07-23-gpc-fix-status-groupdm.txt`
-
-⚠️ Winston is NOT a member of this group DM — the mention will render but won't notify him. Consider a separate DM to him or moving to a channel thread.
-Open item (pre-merge): full L2 list includes Mature (773:Erotic|780:Weapons) — currently IN the branch; strip via one-line generator exclusion if desired.
+Body: `review/2026-07-23-gpc-prompt-size-reply.txt`
 
 **Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
 
