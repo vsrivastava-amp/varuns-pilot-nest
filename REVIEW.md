@@ -108,3 +108,10 @@ Context: AS-13400 accepts+logs `intent.*` but explicitly defers downstream trans
   > Could you create two AI gateway endpoints for the keyword-classification work (AI-1474), in dev (4731856320192987) and prod (5702410742425796): **civ-gpt-5-6-luna** → external model gpt-5.6-luna, and **civ-gemini-3-6-flash** → external model gemini-3.6-flash. Same setup pattern as civ-gpt-5-mini / civ-gpt-5-4-nano. (Rate limits are being requested from Databricks separately.)
   **(b) To Sixuan He / Databricks (external Slack channel)** — per-workspace per-model token limits:
   > Hi Sixuan — following the GPT-5.4-nano increases: we're adding two models for a keyword-classification project and need ITPM/OTPM set for them. On **prod (5702410742425796)**: **gpt-5.6-luna** and **gemini-3.6-flash**, requesting **ITPM 30,000,000 / OTPM 3,000,000 each** (same as the nano staging ticket you filed). On **dev (4731856320192987)**: same two models at **ITPM 10,000,000 / OTPM 1,000,000** for pre-production testing. Usage shape: same shopping-intents use case as the nano traffic — ~18.5k input tokens/request (~95% prompt-cache reads) and 100–700 output tokens/request; one-time backfill of ~223k requests per model plus modest ongoing traffic. Quick question: does ITPM count cache-read tokens, or only fresh input? That changes how much headroom we actually need.
+
+- 2026-07-23 — **AI-1474 Databricks ask, FINAL (v4 — Varun trimmed v3; Pun endpoint ask unchanged):**
+  > Hi @Sixuan, we're adding two new models for an offline task. Could we get limits set for gpt-5.6-luna and gemini-3.6-flash:
+  > - prod (5702410742425796): ITPM 10,000,000 / OTPM 1,000,000 each
+  > - dev (4731856320192987): ITPM 5,000,000 / OTPM 500,000 each
+  > Thanks!
+  (Sizing: 10M ITPM ≈ 7h for the 223k-call backfill; OTPM non-binding.)
