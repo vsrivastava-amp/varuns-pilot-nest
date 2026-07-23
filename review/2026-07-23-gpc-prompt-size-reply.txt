@@ -1,4 +1,4 @@
-The CIV prompt is 3,307 of the 3,563. The rest is demo-only glue (chat persona 48 + output protocol 192), which pubs don't inherit as-is.
+The CIV prompt is 3,307 of the 3,563. The other ~250 is the demo's chat persona (48) and the output protocol (192).
 
 Yes, we can reduce — measured cuts: drop Business & Industrial's 25 subcategories (−179), drop the Mature vertical (−12), compact the examples (3 instead of 5, single-line JSON: −330), fold the L1 IDs into the category headers (−81). That lands the CIV prompt around 2,700, and the compact examples also shorten the model's responses themselves. We'd re-run the A/B before shipping.
 
