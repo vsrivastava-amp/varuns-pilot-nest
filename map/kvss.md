@@ -77,6 +77,13 @@ broad** when the site/KVS passes none. Primary implementation fn:
   six-plus 0.85/0.70/0.70), targetHits default **5000** (KT2 said 500), search
   timeout **0.5s** (KT2 said 50ms). Likely prod env-var overrides vs repo
   defaults — verify against deployment config before relying on either set.
+- 2026-07-23 (app-package check): a *third* value-set exists — schema-level
+  defaults in database-vespa `keyword_ad.sd` (`keyword_ad_base` inputs):
+  exact **0.85** / phrase **0.80** / broad **0.70**. These apply only when KVSS
+  omits `minScoreExact/Phrase/Broad` from the request; the effective values are
+  whatever KVSS sends. Mechanism confirmed in-schema: `matchTypeThreshold()`
+  filters per-document by the stored `keywordMatchType` attribute (drop, not
+  reorder — as KT2 described).
 
 ## Request / response contract
 

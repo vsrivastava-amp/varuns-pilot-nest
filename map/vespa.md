@@ -20,7 +20,7 @@ Vector search over ad inventory, hosted on **Vespa Cloud** (managed, vendor = Ve
 |---|---|---|
 | VSS (vespa-search-service) | Product-ads ANN search; called by AAS/SASS | github.com/admarketplace-gh/vespa-search-service (canonical was bitbucket.org/admarketplace/vespa-search-service; deployment migrating to GitHub — AI-1494 In Review, AI-1496/1497 queued) |
 | KVSS (keyword-vector-search-service) | Text-ads search: intent-classified exact vs vector; hybrid NN+lexical | github.com/admarketplace-gh/keyword-vector-search-service |
-| database-vespa | The Vespa app package (services.xml, schemas, rank profiles) | github.com/admarketplace-gh/database-vespa (product schema: `apps/vector-search.default/src/main/application/schemas/product_ad_green.sd`); Bitbucket original still referenced in Slack PRs |
+| database-vespa | The Vespa app package (services.xml, schemas, rank profiles, DedupSearcher) | **Canonical: bitbucket.org/admarketplace/database-vespa** (main→prod, dev→dev; active PRs through 7/22). GitHub copy exists but is a stale migration snapshot (default branch `github_migration`, last push 6/24) — don't read it. Layout: `src/main/application/…` |
 | locust-vector-performance-framework | John Exantus's load-test harness (used by AI-1545) | github.com/admarketplace-gh/locust-vector-performance-framework |
 | vespa-feed-service (+ -green) | Feeds product docs (Databricks job pulls from RDS → feed) | bitbucket (migration ticket INFRA-3343 Not Started) |
 | keyword-vector-feed-service | Text-ads keyword feeding (mTLS to Vespa via akeyless, INFRA-3032) | — |
@@ -29,7 +29,7 @@ Vector search over ad inventory, hosted on **Vespa Cloud** (managed, vendor = Ve
 | vespa-search-service-api-client | Shared DTO jar (`com.admarketplace`, JFrog): VectorSearchRequest/Response etc. — the contract both services share with callers | separate repo (KVSS pins 1.0.75, VSS 1.1.17) |
 | model_registry (MySQL) | Model config for VSS: namespace/schema, rankProfile, thresholds per model; cron-refreshed 5min | external DB, resolved via experimentation SDK |
 
-**⚠️ Neither service repo contains the Vespa app package.** No `.sd` schemas, `services.xml`, rank expressions, or HNSW config in either — all of that lives in **`database-vespa`**. VSS's only `.sd` is an integration-test probe that explicitly defers to database-vespa. Any ANN/ranking-tuning question bottoms out there. All three repos migrated Bitbucket→GitHub recently; *deployment* migration is separate and in flight (AI-1494/1496/1497).
+**⚠️ Neither service repo contains the Vespa app package.** No `.sd` schemas, `services.xml`, rank expressions, or HNSW config in either — all of that lives in **`database-vespa`** (see its section below). VSS's only `.sd` is an integration-test probe that explicitly defers to database-vespa. Any ANN/ranking-tuning question bottoms out there. The two *service* repos migrated Bitbucket→GitHub; database-vespa has not (its GitHub copy is stale). *Deployment* migration is separate and in flight (AI-1494/1496/1497).
 
 ## VSS internals (repo-verified 2026-07-23)
 
@@ -62,9 +62,25 @@ Same stack/port (8217), package also `com.adm.vespa_search_service`. Owner by co
 - Multi-term parallel fan-out supported (16/64 executor) but not used in prod (per KT2).
 - Curiosity: KVSS's test fixture `vespa_response.json` contains PLA/product docs with `coverage.documents ≈ 146M` over 8 nodes — copied from the product side; don't trust fixtures as ground truth for either corpus size.
 
+## database-vespa internals (app package, repo-verified 2026-07-23 @ main 006b406)
+
+The ground truth for everything Vespa-side. Bitbucket Pipelines: build on push, **manual "Deploy to PROD" gate** (Vespa CLI `vespa prod deploy`, app `admarketplace.vector-search.default`, `VESPA_APPLICATION` var for multi-app); rollback = re-trigger an older run's deploy step. `main`→prod, `dev` branch→dev instance.
+
+**Topology (`services.xml`)** — four clusters:
+- `default` (query container, 2vcpu/8GB, autoscale 2–8/region): search chains — `product_ads` chain adds **`com.adm.searcher.DedupSearcher`**, a custom Java searcher in this repo that dedups grouped hits by `dedupParams` (no-op when absent; this is VSS's dedup search chain). Threadpool 200, queue 5.
+- `default-write` (feed container, 2vcpu/8GB local, 2–8): document-api + document-processing.
+- `content_green` (product): min-redundancy 2, coverage-policy node, 8vcpu/**64GB**/474GB arm64 local. **West = grouped (2 groups × 7); East = still flat (count 14, 1 group)** — the group-topology migration is visible mid-flight in the file. Feeding concurrency 0.3, 2 request-threads persearch.
+- `content_keywords` (text): min-redundancy 1, 4vcpu/8GB/237GB arm64, **2 groups × 6 in both regions** (already grouped). Feeding concurrency 0.6.
+
+**Deployment (`deployment.xml`)**: prod endpoints are **private-link only** (zone endpoints disabled; AWS acct 292586329439) — explains the `*.z.vespa-app.cloud` mTLS endpoint in the services. Rollout order: **us-west-2a → 20min delay → us-east-1c**. `block-change` blocks revisions AND maintenance mon–fri 5–22 ET.
+
+**Schemas** (only two are deployed; `product_ad.sd`, `pla_original.sd`, `pla_finetuned.sd` sit in the tree unreferenced by services.xml — decommissioned generations, all also 768-dim):
+- `product_ad_green.sd`: `documentVector tensor<bfloat16>(d[768])`, distance-metric **angular**, HNSW **max-links-per-node 128, neighbors-to-explore-at-insert 1024** (heavy/high-recall graph). Rank profile `product_ad_vector` inherits `product_ad_base`: first-phase `if (cosine() <= query(minRankingScore), -1, cosine())`, `cosine() = cos(distance(field, documentVector))`, match-features cosine. Tuning @ main: **approximate-threshold 0.01, filter-first-threshold 0.115, filter-first-exploration 0.008, post-filter-threshold 1.0** — note older docs (rank-profile research, playbooks/vespa.md pre-correction) quote 0.015/0.3; values moved. Field tuning: brand/condition/gender/ageGroup/availability/plaFeedId/currency/country/language = fast-search + rank:filter; **googleProductCategory = fast-search only (no rank:filter)**; price/salePrice = plain attribute (no fast-search).
+- `keyword_ad.sd`: HNSW **max-links 32, explore-at-insert 512** (lighter than product). `keyword` field = index + **enable-bm25**; synthetic `keyword_attribute` = `input keyword | attribute`, fast-search, **match: exact** (the brand-exact path). Profiles: `keyword_ad_vector` (legacy, global minRankingScore), `keyword_ad_native` (`nativeRank(keyword)` — the exact-search profile), **`keyword_ad_vector_mt_threshold`** — per-document cutoff `if (cosine() < matchTypeThreshold(), -1, cosine())` where `matchTypeThreshold()` picks by the *stored* `keywordMatchType` attribute. Schema-default thresholds: **exact 0.85 / phrase 0.80 / broad 0.70** — a third value-set alongside KT2's (0.88/0.74/0.70) and KVSS's committed word-buckets; the *effective* values are whatever KVSS sends per request, schema defaults apply only when omitted. approximate-threshold 0.01, filter-first-threshold 0.3.
+
 ## Ranking posture (as of 2026-07)
 
-Both services: retrieval signal == ranking signal (cosine retrieves and ranks; single-phase with threshold cutoff, `rank-score-drop-limit: 0`, `approximate-threshold: 0.015`, `filter-first-threshold: 0.3` on product side). Acknowledged wasted headroom; second-phase / LTR / hybrid BM25 scoring are explored in the rank-profile research + hybrid POC docs, not in prod. Corpus size quoted variously as 70M/75M/146M docs and 8 vs 14 content nodes across docs of different vintages — re-derive from the Vespa console, don't cite these.
+Both services: retrieval signal == ranking signal (cosine retrieves and ranks; single-phase with threshold cutoff, `rank-score-drop-limit: 0`; current tuning values in the database-vespa section above). Acknowledged wasted headroom; second-phase / LTR / hybrid BM25 scoring are explored in the rank-profile research + hybrid POC docs, not in prod. Corpus size quoted variously as 70M/75M/146M docs and 8 vs 14 content nodes across docs of different vintages — re-derive from the Vespa console, don't cite these.
 
 ## Ownership (recurring, from Jira + Slack, 2026-07)
 
