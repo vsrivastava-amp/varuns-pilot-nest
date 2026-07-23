@@ -24,6 +24,7 @@
 - **Prompt caching is real and huge**: the civ system prompt (~16.4k tok — embeds full GPC tree with IDs + IAB taxonomy) is resent per LLM call; OpenAI-side auto prefix caching (≥1024 tok) gives **93–97% of input tokens as cache reads** (verified in `system.ai_gateway.usage.token_details.cache_read_input_tokens`). The `cache_control: ephemeral` block in `invoker_unstructured.py` is Anthropic-style and a no-op for OpenAI models. Cost estimates that ignore this run ~10× high.
 - **Observed civ latency** ≈ 5s/LLM-call (gateway telemetry, nano and mini alike).
 - Civ LLM returns integer GPC leaf IDs; `llm.py` resolves them to path strings via `resources/gpc_taxonomy.json`; `validation.py` drops paths not in `taxonomy.en-US.txt`.
+- **Local dev auth (undocumented in the README — trips new setups):** running the service locally against the dev AI Gateway needs `DATABRICKS_CLIENT_ID` / `DATABRICKS_CLIENT_SECRET` — a **service principal, not a personal PAT** (`providers.py` hard-requires it). The team's **shared dev SP** lives in **Keeper: record "ml-llm-dev DBx OAuth [DEV]"** (Varun shares it per-person); drop the two values into your local `.env`. It's already scoped to the dev gateway, so no need to mint a new one. If a fresh SP is ever needed, gateway SPs/endpoints are provisioned by **infra (Pun Tong)**. (Surfaced 2026-07-23 when Yaarit hit this on a new laptop.)
 
 ## Model gateway / registry (how models get onto the eval service)
 
