@@ -22,7 +22,7 @@ Rule of thumb: **infrastructure probably exists; facts are probably stale.** Reu
 | `runs/` | What each session did + review outcomes | One file per session; compacted weekly |
 | `playbooks/` | Living how-to docs per tool (auth, CLI patterns, gotchas) | Update in place as knowledge improves |
 | `tasks/queue.md` | Open work, tagged `no-auth` / `session` / `sudo` | Claim before working (below) |
-| `REVIEW.md` | Outbound drafts awaiting Varun | Append; Varun disposes |
+| `REVIEW.md` | Outbound drafts awaiting Varun (entry = metadata + pointer; body lives as one bare `.txt` per draft in `review/`, so Varun can `cat`/copy it) | Append; Varun disposes |
 | `needs-human.md` | Varun's decision inbox: conflicts/decisions only human conversation resolves | Append entry; Varun answers inline; steward harvests to log/map |
 | `needs-sudo.md` | Pre-staged sudo work for elevation windows | Staged commands, ready to paste |
 

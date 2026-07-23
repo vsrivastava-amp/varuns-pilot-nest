@@ -2,7 +2,7 @@
 
 Outbound artifacts awaiting Varun's review. Agents append; Varun marks ✅ approved / ❌ rejected / ✏️ edit-and-approve, then the acting agent executes and moves the entry to `runs/`.
 
-Format per entry: date, agent, type (message draft / PR / ticket change), target, body or link.
+Format per entry: date, agent, type (message draft / PR / ticket change), target, context, disposition — **but the draft body itself goes in its own plain-text file under `review/`** (Varun's preference, 2026-07-23: one `.txt` per response, exactly what gets pasted, nothing else — so `cat review/<file>.txt` shows it and copies trivially). Entry here links the path. Delete the `.txt` when the entry is disposed.
 
 ---
 
@@ -37,19 +37,7 @@ Context: Varun asked for an independent investigation of Artem's 2.0-vs-3.0 resu
 
 Plain-language background for Varun (not part of the comment): many products in the Vespa index have no category set. When a 3.0 request filters by category, VSS deliberately generates "category starts with X **OR category is empty**" so those uncategorized products aren't excluded. Measured on stage: each half of that OR alone is fast (~20-23ms), but the combined OR — what production sends — is 63ms for a common category and 140ms for a rare one. And for rare categories the "starts with X" half matches ~nothing, so the whole returned page is uncategorized products: the slowest queries pay the most for a filter doing the least. This also explains the run-1/run-2 reversal: run 1's requests carried a brand filter (from a real ad), and narrow brand filters take a different, fast path in Vespa; run 2's were mostly category-without-brand — the slow shape.
 
-**Draft comment for AI-1545** (v2 — scoped to what Varun can honestly own; no Vespa-internals claims):
-
-> Nice harness — I pulled the CSVs off the ticket and could reproduce your run-2 summary numbers exactly. I dug into the per-row data a bit and found something that might be useful: the slowdown doesn't seem to be the 3.0 path itself, it looks concentrated in one specific filter.
->
-> - Rows with no filters at all: 3.0 ≈ 2.0 (~22ms avg). Rows with a brand filter: 3.0 is actually *faster* (~12ms).
-> - The entire avg/p99 gap comes from rows with a **category (GPC) filter and no brand** — all of the 15 slowest rows are that shape, with rare categories (Home & Garden \*) at 140-220ms.
-> - I could reproduce this against stage VSS directly: same query goes from ~20ms unfiltered to ~63ms (common category) / ~140ms (rare category) just by adding the GPC filter.
->
-> One more thing from the raw data that seemed worth flagging: on the rare-category queries, the returned ads are almost entirely products with *no category set* (the generated query intentionally also matches products whose category field is empty). So the slowest requests are also the ones where the filter isn't narrowing much — might be relevant for whoever owns the VSS query generation.
->
-> Also noticed 600/1000 of the independent 3.0 requests returned 0 ads (vs ~290 for 2.0) — possibly relevant to the AI-1556 request-construction work.
->
-> Happy to share my analysis scripts if useful — and curious whether this matches what you saw.
+**Draft comment** (v3 — scoped to what Varun can honestly own; no Vespa-internals claims): `review/2026-07-23-ai1545-jira-comment.txt`
 
 **Disposition:** pending Varun — ✅ post (via Rovo `addCommentToJiraIssue`) / ❌ drop / ✏️ edit
 
