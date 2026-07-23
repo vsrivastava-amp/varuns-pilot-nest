@@ -6,7 +6,16 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ---
 
-## 2026-07-22 — laptop — message draft — Slack DM to Claire Conklin (cc/or Camille Baudou) — re: Q-2026-07-21-01
+## 2026-07-23 — laptop — message draft — group DM C0BJPQHFFGC — GPC fix status + Winston cc
+
+Context: Varun-directed (in-session): status reply now instead of the full bundle; tag Winston; say we're ready for the updated bundle. Regression PASS details in `runs/2026-07-22-pciv-taxonomy-gap.md`. Corrects the earlier ~3k/+800 token estimate to measured 3,563/+1,142. Branch `dev-taxonomy-full-l2` pushed to Bitbucket (PR not opened yet).
+
+Body: `review/2026-07-23-gpc-fix-status-groupdm.txt`
+
+⚠️ Winston is NOT a member of this group DM — the mention will render but won't notify him. Consider a separate DM to him or moving to a channel thread.
+Open item (pre-merge): full L2 list includes Mature (773:Erotic|780:Weapons) — currently IN the branch; strip via one-line generator exclusion if desired.
+
+**Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
 
 **Send condition (Varun decides):** HOLD unless pCIV extraction / eval code actually consumes locale or timezone from Qwant requests. Dhaval + Camille are already working this in-channel; it may self-resolve. If it does concern our extraction assumptions, send — the tracker calcifying "cannot" is the risk.
 

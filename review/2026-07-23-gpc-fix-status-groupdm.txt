@@ -1,0 +1,9 @@
+Update on the GPC taxonomy fix — done and regression-tested, sitting on `dev-taxonomy-full-l2` in pciv-demo-service, ready for review/merge.
+
+What changed: `gpc_taxonomy.json` and the extraction prompt now carry the full 21 L1 + 192 L2 = 213 categories, generated from the same source of truth as the offline service (so the file and the prompt can't drift apart again — there's a sync check that can run in CI).
+
+Numbers, measured this time: prompt is 3,563 tokens after the update, up from 2,421 (+1,142 — a bit above the ~3k I estimated earlier; this is the exact tokenizer count). Cost conclusion unchanged: caching absorbs most of it. We also A/B-tested old vs new prompt (200+ samples per arm): extraction failure rate and latency are unchanged.
+
+cc Winston Wang — branch is ready for your eyes whenever.
+
+Once it's merged, we're ready to do the updated bundle for the pub packet.
