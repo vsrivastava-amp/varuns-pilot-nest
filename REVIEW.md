@@ -30,3 +30,23 @@ Context: Slack Claude retired today (`log/nest--laptop.md`). No operational need
 
 - 2026-07-23 — **Draft: rate-limit increase request to Databricks (AI-1474)** — for Varun to send via the usual DBX channel/rep:
   > We need a rate-limit increase on the AI Gateway serving endpoint **`ai-gpt-5-2`** in our **prod** workspace (workspace id 5702410742425796, dbc-1b885e51-40bc.cloud.databricks.com). Yesterday (2026-07-22 ~20:28 UTC) a batch job hit it and the endpoint admitted only ~56 requests before returning 429 for everything else (7,776 throttled requests in 2.5 min, avg 10ms — bounced at the gateway). We have a one-time backfill of ~223k requests (~10 queries each, ~18.5k input tokens/request of which ~95% should be prompt-cache reads after warmup, ~100–700 output tokens/request). To finish in 8–12h we need **sustained ~400–600 requests/min** (≈7–10 QPS) on that endpoint, i.e. roughly 8–12M input tokens/min mostly cached. Happy to schedule the run for off-peak hours if that helps. Could you raise the endpoint's rate limit accordingly (temporarily is fine)?
+
+## 2026-07-23 — laptop (ai1545-latency) — Jira comment draft — AI-1545
+
+Context: Varun asked for an independent investigation of Artem's 2.0-vs-3.0 result reversal. I verified his run-2 numbers from the attached CSVs, then ran controlled A/Bs against stage VSS (~350 sequential requests, `testingParameters.yql` clause isolation). Full evidence: `runs/2026-07-23-ai1545-vespa-latency.md`. Draft below posts as Varun on Artem's ticket — collegial, additive.
+
+**Draft comment for AI-1545:**
+
+> Great harness — I was able to reproduce your run-2 numbers exactly from the attached CSVs, and then isolate *where* the 3.0 slowdown comes from with some controlled A/Bs against stage VSS. Three findings that might be useful for the writeup:
+>
+> **1. It's not the 3.0 path itself — it's specifically the GPC filter clause.** Unfiltered 3.0 ≈ 2.0 (18.5 vs 21ms avg on stage). Brand/gender filters are cheap (brand actually makes queries *faster* — it's selective enough to flip Vespa into exact-search mode, which also explains why run 1, whose requests carried brand+price from a real ad, showed 3.0 faster). In your run-2 data the entire mean/p99 gap sits in GPC-present/brand-absent rows (avg 42.5ms, all top-15 slowest); median paired diff across the 177 rows is only +2ms.
+>
+> **2. Within the GPC clause, the cost is the null-sentinel OR, not the prefix match.** Using `testingParameters.yql` to vary just the where-clause on stage ("shoes", limit 100): prefix-only 23ms, exact-only 22ms, exact+sentinel 35ms, **prefix + `OR googleProductCategory IN ("")` (the production clause) 63ms** — and 140ms for a sparse category (Home & Garden > Cookware). Each branch alone is cheap; the OR defeats Vespa's filter fast-path, and the cost is flat in targetHits. (Schema note: `googleProductCategory` also lacks `rank: filter`, unlike brand/gender/condition.)
+>
+> **3. Semantic flag: for sparse categories the sentinel is doing all the matching.** "cookware set" + GPC H&G>Cookware: the prefix branch alone returns ~0 hits — the full page of 100 comes entirely from products with *no category set*. So on exactly the slow queries, the filter pays ~6x latency while doing ~zero category narrowing. Whether unset-GPC products should match feels like the real product decision here; if the sentinel semantics are kept, a dedicated has-category bitvector field (or materialized ancestor-path array + exact IN) should make the whole clause ~free.
+>
+> One more data point from the full 1000-row set: 600/1000 independent 3.0 requests returned 0 ads (vs 293 for 2.0) — probably worth a look alongside the AI-1556 request-construction work.
+>
+> Happy to share the stage A/B scripts if useful.
+
+**Disposition:** pending Varun — ✅ post (via Rovo `addCommentToJiraIssue`) / ❌ drop / ✏️ edit
