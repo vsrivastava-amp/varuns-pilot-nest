@@ -93,3 +93,29 @@ From AI-1535 (Varun's spike, Done) + Jul 10 kickoff + 7/8-7/14 Slack threads —
 8. `source.items[].snippets` field shape — Qwant proposal, not agreed; do we consume it?
 9. Qwant commerciality flag pass-through (they have it for Flash; "looks like they can" send — unconfirmed). If sent, online pCIV needn't re-derive commerciality for Flash.
 10. AI-1213 epic due date (8/15) vs launch decision (8/24) — epic date stale.
+
+## 2026-07-23 (later) — Glossary (grounded in the v3.0 spec's Definitions section + Qwant Implementation Notes + external docs)
+
+**Qwant surfaces** (4 launch placements = {Qwant, Lilo} × {Flash Answer, AI Chat}; Lilo = lilo.org, a partner search engine riding Qwant's stack):
+
+- **Flash Answer** — Qwant's AI-generated instant answer on the search results page (think Google AI Overviews): "concise AI-generated summary shown on the results page, built from search context." Answer source = current SERP context only; **no multi-turn**. Main rail + side rail (side rail only when product ads available, per 3/18 notes). Available in all Qwant geos; it's SERP-only (no AI chat) in US/UK/CA/DE. **Latency-sensitive: AMP CIV extraction must fit the ~3s timeout.** Majority of Qwant's traffic.
+- **Detailed Flash Answer** — the expansion when a user clicks "see detailed response" on a flash answer (EN/CA/US flow). In the ad request, `intent.response` = the *previous* flash answer text. "Not a common use case" (Sacha, 7/17).
+- **AI Chat** — Qwant's conversational assistant: **multi-turn**, uses web-search context when available (~30% of answers are direct from the LLM, no web search). Launch scope FR-only for the response-sharing flow. "Higher latency tolerance → AMP can extract CIV."
+- **ContextSummary** — the string Qwant constructs from search results *instead of waiting for the LLM answer*: "Here are the results I found for X on Qwant: 1: <title> 2: <title>…" (meta descriptions also available; snippets under negotiation). Arrives as `intent.source.summary`. This — not a conversation summary — is the "summary" in circulation.
+
+**CIV stack** (spec Definitions, verbatim where quoted):
+
+- **Resolved Intent** — "the current representation of the user's intent, derived from the current prompt, AI response, and LLM memory, reconstructed after each prompt."
+- **CIV — Context & Intent Vector** — structured data representing user intent, extracted from the resolved intent. (⚠️ the 7/8 Gong kickoff summary expands it "Commercial Intent Vector" — the spec's "Context & Intent Vector" is authoritative.)
+- **pCIV (Publisher CIV)** — the CIV *as extracted and provided by the publisher*. Strictly speaking, "online pCIV" (AMP-side extraction) is a naming carryover: what the online service produces is a CIV derived from publisher-sent raw signals, slotting into the request where a pCIV would have gone (`targets[]` etc.).
+- **CIV Prompt** — the standardized AMP-provided prompt template publishers use to extract a pCIV (what the demo/pub-packet ships).
+- **ARP (AMP Response Payload)** — the standardized ad response object (ads, metadata, tracking, rendering fields).
+- **Intent Inline / Intent Adjacent** — ad positions: inline = sponsored links attached to monetizable terms inside the LLM response; adjacent = carousel/side-rail/bottom module near the response.
+- **Prompt < Chat < Session hierarchy** — Prompt = one user message; Chat = sequence of prompt/response pairs on a topic (publisher-generated `chat.id`; `chat.topic` = concise title/summary of the chat); Session = continuous interaction context spanning chats (30-min inactivity ⇒ new session). **LLM Memory** = publisher-side conversational memory used in resolved-intent generation — AMP never sees it directly.
+
+**Process/infra terms**: **Ghost phase** — Qwant mirrors live traffic to AMP (since 7/6, ~2M queries/day, 45 days); ads are returned + logged for measurement but not shown to users; ghost placements become the production endpoints. **`/di`** — the Discover API endpoint on ssp-engine that receives all of the above. **3.0 / AMP Discover API** — the OpenRTB-inspired AI-native ad API ("not a literal OpenRTB bidstream replacement"); 2.1 is the classic search-ads API Qwant launched ghost on. **One-shot vs two-shot** — one LLM call emitting reply+DELIM+pCIV (demo) vs a separate extraction-only second call (what an AMP-side online service is, in effect). **GPC** — Google Product Category taxonomy (L1>L2>L3; demo=L2, offline civ=L3). **IAB** — IAB Content Taxonomy v3.1 (offline civ extracts it; demo doesn't).
+
+## 2026-07-23 (later) — Model-direction note (Varun, in-session)
+
+- Dhaval's Llama-4-Maverick-17B suggestion: Varun reads the broader point as **"explore open-source models"** for online pCIV — that intent is adopted (candidates via Bedrock/DBX rosters), the specific model is not endorsed. Feeds AI-1540/AI-1542 eval work.
+- Bedrock exploration: AWS CLI profiles exist on the laptop (dev/sandbox/stage/ML_Role/prod) but all SSO sessions expired — login is human-gated (never automated, per guardrails). `/model-selection` skill now has a Bedrock section with the post-login sweep commands; queue task filed.

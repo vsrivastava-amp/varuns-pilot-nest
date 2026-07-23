@@ -1,6 +1,6 @@
 ---
 name: model-selection
-description: Choose an LLM for a workload on the Databricks gateway, estimate its real cost (prompt-caching-aware), compare recency/capability, and keep the nest knowledge base current on available models. Use when picking or comparing models, pricing a batch/pipeline job, answering "what's the newest model we can use", or when a model decision lands on a Jira ticket.
+description: Choose an LLM for a workload on the Databricks gateway or AWS Bedrock, estimate its real cost (prompt-caching-aware), compare recency/capability, and keep the nest knowledge base current on available models. Use when picking or comparing models, pricing a batch/pipeline job, answering "what's the newest model we can use", or when a model decision lands on a Jira ticket.
 ---
 
 # Model selection, pricing, and roster upkeep
@@ -19,6 +19,25 @@ databricks api get "/api/2.0/serving-endpoints" -p dbc-562d27e2-d74d \
 - `FOUNDATION_MODEL_API` endpoints named `databricks-<model>` are the pay-per-token catalog; sort by `creation_timestamp` for recency.
 - The eval service calls separate **named wrapper endpoints** (`ai-*`, `civ-*`, `ares-*`) mapped in `llm-evaluator-service`'s `llm/config/models.json`. A model on the catalog is NOT automatically usable by the service — it needs a models.json entry + eval config + deploy.
 - Dev roster may lead prod. Verify prod (workspace `5702410742425796`) before promising a model; laptop CLI has no prod access — check via the prod UI or ask Varun.
+
+## 1b. AWS Bedrock path (second gateway — in-network candidate for online/low-latency serving)
+
+Chosen direction for the online pCIV service (Jul 10 kickoff: "Bedrock over Databricks" — in-network, same us-east region as serving). Laptop has AWS CLI profiles (`dev`, `sandbox`, `stage`, `ML_Role`, `prod`) but they're **SSO-based and expire**: probe with `aws sts get-caller-identity --profile dev`; if expired, ask Varun to run `aws sso login --profile <profile>` (auth is human-gated — never automate SSO). Status 2026-07-23: all profiles expired, roster sweep pending first login.
+
+Once live:
+
+```bash
+aws bedrock list-foundation-models --profile dev --region us-east-1 \
+  | jq -r '.modelSummaries[] | [.modelId, .providerName, (.inferenceTypesSupported|join(","))] | @tsv'
+aws bedrock list-inference-profiles --profile dev --region us-east-1 \
+  | jq -r '.inferenceProfileSummaries[].inferenceProfileId'      # cross-region "us." profiles — often required for ON_DEMAND on newer models
+```
+
+- Check `inferenceTypesSupported`: many newer models are ON_DEMAND only via a cross-region inference profile id (`us.<modelId>`), not the bare modelId.
+- Also check the region actually used for serving (RIC1 ≈ us-east) and whether the account has model-access grants (`aws bedrock get-foundation-model-availability` or console "Model access" page — grants are per-account/per-model and may need an INFRA ask).
+- Pricing: AWS Bedrock pricing page per provider; cached-input pricing exists for some providers (verify per model). Same cost formula as §3.
+- Integration: the eval service is langchain-based; Bedrock coexists with the DBX path (`ChatBedrockConverse`) — "equally easy… can coexist in the same code base" (Dhaval, 7/14). A Bedrock model still needs a models.json-style entry + eval config in the service.
+- Open question to resolve on first sweep: are OpenAI gpt-5-family models available on Bedrock at all (AI-1535 flagged "needs investigation"), or is Bedrock effectively Anthropic/Meta/Mistral/Amazon-family — which would couple the Bedrock-vs-DBX choice to the model choice.
 
 ## 2. Get current pricing — never from memory
 
