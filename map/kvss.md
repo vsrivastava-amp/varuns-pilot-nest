@@ -50,6 +50,13 @@ the 0.70/0.74/0.88 decimals from KT2 are the real defaults.) Thresholds are
 broad** when the site/KVS passes none. Primary implementation fn:
 `keyword attribute base`.
 
+- 2026-07-23 (repo check, see [vespa.md](vespa.md)): the *committed*
+  `application.yml` defaults differ from the KT2 numbers — thresholds are
+  per-word-count buckets (e.g. one-word exact/phrase/broad 0.88/0.72/0.72,
+  six-plus 0.85/0.70/0.70), targetHits default **5000** (KT2 said 500), search
+  timeout **0.5s** (KT2 said 50ms). Likely prod env-var overrides vs repo
+  defaults — verify against deployment config before relying on either set.
+
 ## Request / response contract
 
 **Request** carries: query terms, intent classification (brand/non-brand),
