@@ -55,3 +55,13 @@
 ## Release verification pattern that worked
 
 Seed/clear waterline → run job → check: new rows in `llm_evals.ad_relevance` / `ad_request_civ` filtered by `modified_timestamp > run start`, grouped by `eval_id` (must match config table), failures table flat, waterline advanced. Local tests: `PYTHONPATH=src/main/python:src/test/python .venv/bin/python -m pytest src/test/python` with `JAVA_HOME=/opt/homebrew/opt/openjdk@21/...` and `PYSPARK_PYTHON=$PWD/.venv/bin/python` (421 tests).
+
+## AWS Bedrock (second gateway — verified 2026-07-23)
+
+- **Access confirmed end-to-end** on the `dev` profile (account 564079877134, PowerUserAccess via SSO, us-east-1): `bedrock-runtime converse` returns tokens for Meta, Mistral, Anthropic, Qwen with no extra grant work. Auth: `aws sso login --profile dev` (human-gated, expires); probe with `aws sts get-caller-identity --profile dev`.
+- **Catalog snapshot 2026-07-23** (121 models, 17 providers; regen: `/model-selection` §1b): **NO gpt-5 family** — OpenAI on Bedrock = open-weight `gpt-oss-120b/20b` (+safeguard) only. So Bedrock-vs-DBX is coupled to model choice: gpt-5-nano/mini stay DBX-only; Bedrock's pitch is open-source + Anthropic + Mistral in-network.
+  - Open-source highlights: `meta.llama4-maverick-17b / llama4-scout-17b` (INFERENCE_PROFILE → call as `us.<modelId>`), `qwen.qwen3-32b / qwen3-next-80b-a3b`, `deepseek.v3.2`, `zai.glm-5 / glm-4.7-flash`, `moonshotai.kimi-k2.5`, `minimax.minimax-m2.5`, `mistral.ministral-3-{3b,8b,14b}` / `magistral-small-2509` / `mistral-large-3-675b`.
+  - Anthropic current: `claude-fable-5`, `opus-4-8`, `sonnet-5`, `sonnet-4-6`, `haiku-4-5` (all INFERENCE_PROFILE → `us.` prefix).
+  - Note: Qwant runs Mistral-small; `ministral-3-*` on Bedrock enables like-for-like extraction-quality comparison.
+- **First latency taste** (laptop → us-east-1, 3-token converse, single sample — NOT a benchmark): ministral-3-8b 370ms, qwen3-32b 373ms, haiku-4-5 904ms (us. profile), llama4-maverick OK. In-network from RIC1 should match or beat this.
+- Gotchas: laptop CLI is `aws-cli/2.16.3` (June 2024) — **lacks `bedrock list-inference-profiles`**; use the `us.<modelId>` convention for INFERENCE_PROFILE models, or upgrade the CLI. `INFERENCE_TYPE` per model in `list-foundation-models` output tells you which need the prefix.

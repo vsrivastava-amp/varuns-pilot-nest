@@ -28,13 +28,15 @@ Once live:
 
 ```bash
 aws bedrock list-foundation-models --profile dev --region us-east-1 \
-  | jq -r '.modelSummaries[] | [.modelId, .providerName, (.inferenceTypesSupported|join(","))] | @tsv'
-aws bedrock list-inference-profiles --profile dev --region us-east-1 \
-  | jq -r '.inferenceProfileSummaries[].inferenceProfileId'      # cross-region "us." profiles — often required for ON_DEMAND on newer models
+  | jq -r '.modelSummaries[] | [.modelId, .providerName, (.inferenceTypesSupported|join(",")), .modelLifecycle.status] | @tsv'
+# smoke-test access + rough latency (3-token call, pennies):
+aws bedrock-runtime converse --profile dev --region us-east-1 --model-id "$MODEL" \
+  --messages '[{"role":"user","content":[{"text":"hi"}]}]' --inference-config '{"maxTokens":3}' \
+  | jq '{ok:(.output!=null), latencyMs:.metrics.latencyMs, usage}'
 ```
 
-- Check `inferenceTypesSupported`: many newer models are ON_DEMAND only via a cross-region inference profile id (`us.<modelId>`), not the bare modelId.
-- Also check the region actually used for serving (RIC1 ≈ us-east) and whether the account has model-access grants (`aws bedrock get-foundation-model-availability` or console "Model access" page — grants are per-account/per-model and may need an INFRA ask).
+- `inferenceTypesSupported=INFERENCE_PROFILE` ⇒ call as `us.<modelId>` (cross-region profile), bare modelId 400s. The laptop's aws-cli 2.16.3 lacks `bedrock list-inference-profiles` — the `us.` prefix convention works without it.
+- Verified 2026-07-23: dev account (564079877134) has broad model-access grants — Meta/Mistral/Anthropic/Qwen all invocable, no INFRA ask needed. Roster snapshot + headline findings (incl. **no gpt-5 family on Bedrock**): `playbooks/llm-eval-system.md` §Bedrock.
 - Pricing: AWS Bedrock pricing page per provider; cached-input pricing exists for some providers (verify per model). Same cost formula as §3.
 - Integration: the eval service is langchain-based; Bedrock coexists with the DBX path (`ChatBedrockConverse`) — "equally easy… can coexist in the same code base" (Dhaval, 7/14). A Bedrock model still needs a models.json-style entry + eval config in the service.
 - Open question to resolve on first sweep: are OpenAI gpt-5-family models available on Bedrock at all (AI-1535 flagged "needs investigation"), or is Bedrock effectively Anthropic/Meta/Mistral/Amazon-family — which would couple the Bedrock-vs-DBX choice to the model choice.
