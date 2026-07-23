@@ -8,7 +8,7 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ## 2026-07-23 — laptop — message draft — group DM C0BJPQHFFGC — reply to Elisa (16:51: OK to tell client L2s? json to share?)
 
-Context: Elisa hasn't told the client what we support yet. Sequencing risk: THIS client counts categories (they caught 74 vs 190); if she shares the 213-entry json now and Dhaval's live size push then drops B&I/Mature, the client gets a second, smaller list. Current json also contains 773:Erotic + 780:Weapons — client-facing content call nobody has made. Draft: green-light the "full L2 coverage" message now, hold the file until the trim decision, same-day delivery after. (Prompt-size draft entry retired — Varun sent his own version 15:18 EDT; compact candidate with measured −936 remains available in `state/pciv-extraction-compact-candidate-20260723.txt`.)
+Context: Elisa hasn't told the client what we support yet. Angle per Varun (in-session): share the full list NOW with an explicit TBD caveat about possible trims — transparency over sequencing-hold. File staged for attach: `~/Desktop/gpc_taxonomy_L1_L2.json` (213 entries, from dev branch). Residual note: json includes 773:Erotic + 780:Weapons (Mature) — deliberately not named in the message; drop the Mature rows from the Desktop copy before attaching if you'd rather not put "Erotic" in front of the client while it's still TBD.
 
 Body: `review/2026-07-23-elisa-json-reply.txt`
 
