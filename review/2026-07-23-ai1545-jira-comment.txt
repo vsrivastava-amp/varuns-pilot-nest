@@ -1,11 +1,7 @@
-Nice harness — I pulled the CSVs off the ticket and could reproduce your run-2 summary numbers exactly. I dug into the per-row data a bit and found something that might be useful: the slowdown doesn't seem to be the 3.0 path itself, it looks concentrated in one specific filter.
+Hey Artem — dug through the CSVs on the ticket. The latency increase looks concentrated in rows where we pass a GPC filter but no brand filter — for all other rows, 3.0 is about the same or even faster than 2.0.
 
-- Rows with no filters at all: 3.0 is about the same as 2.0 (~22ms avg). Rows with a brand filter: 3.0 is actually faster (~12ms).
-- The entire avg/p99 gap comes from rows with a category (GPC) filter and no brand — all of the 15 slowest rows are that shape, with rare categories (Home & Garden > ...) at 140-220ms.
-- I could reproduce this against stage VSS directly: the same query goes from ~20ms unfiltered to ~63ms (common category) / ~140ms (rare category) just by adding the GPC filter.
+Why? Our current filter logic matches "attribute = X OR attribute not populated." So filters only exclude contradictions — a product with no category set passes every category filter. I could reproduce the slowdown on stage by adding just a GPC filter to an otherwise identical query, and it goes away if the "or not populated" part is removed from the generated YQL.
 
-One more thing from the raw data that seemed worth flagging: on the rare-category queries, the returned ads are almost entirely products with no category set (the generated query intentionally also matches products whose category field is empty). So the slowest requests are also the ones where the filter isn't narrowing much — might be relevant for whoever owns the VSS query generation.
-
-Also noticed 600/1000 of the independent 3.0 requests returned 0 ads (vs ~290 for 2.0) — possibly relevant to the AI-1556 request-construction work.
-
-Happy to share my analysis scripts if useful — and curious whether this matches what you saw.
+Want to check a couple things:
+- Is the exclude-contradictions behavior intended?
+- ~600/1000 of the 3.0 requests returned 0 ads, vs ~290 for 2.0 — was that expected, given how the requests are built from CIV fields?
