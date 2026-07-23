@@ -37,14 +37,6 @@ Context: Slack Claude retired today (`log/nest--laptop.md`). No operational need
 - 2026-07-23 — **Draft: rate-limit increase request to Databricks (AI-1474)** — for Varun to send via the usual DBX channel/rep:
   > We need a rate-limit increase on the AI Gateway serving endpoint **`ai-gpt-5-2`** in our **prod** workspace (workspace id 5702410742425796, dbc-1b885e51-40bc.cloud.databricks.com). Yesterday (2026-07-22 ~20:28 UTC) a batch job hit it and the endpoint admitted only ~56 requests before returning 429 for everything else (7,776 throttled requests in 2.5 min, avg 10ms — bounced at the gateway). We have a one-time backfill of ~223k requests (~10 queries each, ~18.5k input tokens/request of which ~95% should be prompt-cache reads after warmup, ~100–700 output tokens/request). To finish in 8–12h we need **sustained ~400–600 requests/min** (≈7–10 QPS) on that endpoint, i.e. roughly 8–12M input tokens/min mostly cached. Happy to schedule the run for off-peak hours if that helps. Could you raise the endpoint's rate limit accordingly (temporarily is fine)?
 
-## 2026-07-23 — laptop (ai1545-latency) — Jira comment draft #2 — AI-1545 clarifying reply (cc Saksham)
-
-Context: Varun wants the headline numbers scoped before they travel: (1) the 34-vs-22ms comparison covers only the 177/1000 full-page rows — over all 1000, 3.0 averaged slightly *faster* (19.1 vs 21.1ms; the 600 zero-ad rows are ~12ms); (2) everything ran on stage (smaller vector store than prod, possibly different compute). Numbers verified this session (`runs/2026-07-23-ai1545-vespa-latency.md`). Type the @Saksham mention in Jira's editor so it pings.
-
-Body: `review/2026-07-23-ai1545-clarifying-reply.txt`
-
-**Disposition:** pending Varun — ✅ post / ❌ drop / ✏️ edit
-
 ## 2026-07-23 — laptop — ticket change — Jira AI-1542 + AI-1538 descriptions
 
 Context: both online-pCIV tickets are yours (reassigned 7/22) and both are **empty** — no description, no acceptance criteria. Full research dossier now in `log/pciv-online-service.md`. Draft descriptions below so the tickets carry their own context (Steven/Bhupesh/Saksham reference them, and the epic is due mid-Aug). Posting = Jira write → your call (Rovo `editJiraIssue` ready, or paste manually).
