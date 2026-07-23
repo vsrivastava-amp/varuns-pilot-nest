@@ -101,3 +101,7 @@ Context: AS-13400 accepts+logs `intent.*` but explicitly defers downstream trans
 > Dependencies: Ticket 1, AI-1546 (in review), AI-1171. Success criteria: extracted CIV measurably changes retrieval for ghost traffic; A/B dashboards show both arms.
 
 **Disposition:** pending Varun — ✅ create both as drafted (say where) / ✏️ edit / ❌
+
+- 2026-07-23 — **UPDATED Databricks ask (supersedes the ai-gpt-5-2 draft above) — AI-1474, models chosen: gpt-5.6-luna + gemini-3.6-flash (Dhaval, 12:40 ET):**
+  > We're standing up keyword-classification workloads on two newer models and need gateway endpoints with real capacity in our prod workspace (5702410742425796, dbc-1b885e51-40bc.cloud.databricks.com):
+  > 1. **civ-gpt-5-6-luna** (external model gpt-5.6-luna) and 2. **civ-gemini-3-6-flash** (external model gemini-3.6-flash) — please provision (or raise limits on equivalents) to sustain **~600 requests/min each** (≈10 QPS; ~18.5k input tokens/request of which ~95% are prompt-cache reads, ~100–700 output tokens/request). Context: a one-time backfill of ~223k requests per model that we'd like to finish in <12h, plus modest ongoing traffic after. For reference, our existing civ-gpt-5-4-nano endpoint sustains 3,700+ req/min, while other model endpoints throttle at ~50 requests total (e.g. ai-gpt-5-2 on 2026-07-22 ~20:28 UTC: 56 admitted, 7,776× 429 in 2.5 min). Off-peak scheduling is fine if that helps.
