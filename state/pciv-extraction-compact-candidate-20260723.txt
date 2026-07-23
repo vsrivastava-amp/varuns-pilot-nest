@@ -1,0 +1,88 @@
+PUBLISHER CIV (pCIV) EXTRACTION — V1
+
+Define the commercial intent (pCIV) of the FULL conversation (all prior turns + the reply just written) as JSON per SCHEMA; omit missing/null fields. Output ordering/delimiting per the output protocol above.
+
+=== SCHEMA ===
+
+{"commercial":bool,"type":"discovery|investigational|transactional|executional","topic":str,"targets":[{"gpc":[int],"sellers":[str],"price_min":num,"price_max":num,"price_target":num,"price_currency":str,"product_name":str,"brand":str,"gender":"male|female|unisex","age_group":"newborn|infant|toddler|kids|adult","condition":"new|used|refurbished|open_box|collectible"}]}
+
+commercial : true if any commercial relevance; false → omit type, topic, and targets.
+topic      : one-line summary of the user's query (max 10 words). Omit when commercial:false.
+targets    : cap at 5 total. See TARGET RULES.
+
+=== TYPE RULES ===
+
+discovery        Learning WHAT something is / HOW it works / WHETHER it's worth it.
+                 → "is GORE-TEX worth it"
+
+investigational  Deciding WHICH product/brand — recommendation-seeking or comparing options ("best for X", "help me pick", named comparisons).
+                 → "Dyson V15 vs Shark Stratos"
+
+transactional    Ready to buy — seeking availability, price, or fulfillment.
+                 → "cheapest PS5 near me"
+
+executional      Delegating purchase to an agent to execute.
+                 → "buy me everything to start beekeeping"
+
+commercial:false ONLY when zero connection to any commercial topic (math, geography, creative writing).
+Any question about a product, service, technology, travel, or lifestyle → commercial:true.
+
+=== TARGET RULES ===
+
+1. One target from the USER QUERY (what the user explicitly asked for).
+2. Additional targets from the ASSISTANT RESPONSE — one per specific brand/product named that was NOT in the user query. Cap total at 5.
+
+For discovery: target may contain only gpc (no product_name required) when no specific product is named.
+gpc           : one or more L2 IDs; use multiple when the product spans categories (e.g. gaming headset→[223,1294]). L1 if no L2 exists. Omit for pure brand-only queries or when the query is too broad to imply a category (e.g. "gift ideas for X"). Do not assign GPC based on recipient age or relationship alone.
+sellers       : only when user explicitly names a store. Never infer.
+price_min/price_max/price_target/price_currency : "under $X"→price_max; "over $X"→price_min; "around $X"→price_target.
+product_name  : type stripped of brand AND condition words ("refurbished Nike running shoes"→"running shoes"; "used iPhone 15"→"iPhone 15").
+brand         : from query or assistant response; infer well-known implicit brands (iPhone→Apple).
+condition     : used/pre-owned/vintage→used; refurbished/renewed→refurbished; open box→open_box. Omit if not stated — never add condition:"new".
+age_group     : baby/infant→infant; toddler→toddler; kids/children/teen or age under 18→kids. Only from explicit user words.
+gender        : men's/for men→male; women's/for women/ladies→female. Only from explicit user words.
+
+=== GPC ===
+
+Animals&PetSupplies(1): 3237:LiveAnimals|2:PetSupplies
+Apparel&Accessories(166): 1604:Clothing|167:ClothingAccessories|184:Costumes&Accessories|6552:Handbag&WalletAccessories|6551:Handbags,Wallets&Cases|188:Jewelry|1933:ShoeAccessories|187:Shoes
+Arts&Entertainment(8): 499969:EventTickets|5710:Hobbies&CreativeArts|5709:Party&Celebration
+Baby&Toddler(537): 4678:BabyBathing|5859:BabyGiftSets|5252:BabyHealth|540:BabySafety|2847:BabyToys&ActivityEquipment|2764:BabyTransport|4386:BabyTransportAccessories|548:Diapering|561:Nursing&Feeding|6952:PottyTraining|6899:Swaddling&ReceivingBlankets
+Cameras&Optics(141): 2096:Camera&OpticAccessories|142:Cameras|156:Optics|39:Photography
+Electronics(222): 3356:ArcadeEquipment|223:Audio|3702:CircuitBoards&Components|262:Communications|1801:Components|278:Computers|2082:ElectronicsAccessories|3895:GPSAccessories|339:GPSNavigationSystems|6544:GPSTrackingDevices|340:MarineElectronics|342:Networking|345:Print,Copy,Scan&Fax|912:RadarDetectors|500091:SpeedRadars|4488:TollCollectionDevices|386:Video|1270:VideoGameConsoleAccessories|1294:VideoGameConsoles
+Food,Beverages&Tobacco(412): 413:Beverages|422:FoodItems|435:TobaccoProducts
+Furniture(436): 554:Baby&ToddlerFurniture|6433:Beds&Accessories|441:Benches|6356:Cabinets&Storage|442:Carts&Islands|7248:ChairAccessories|443:Chairs|457:EntertainmentCenters&TVStands|6345:FurnitureSets|6860:FutonFrames|2786:FutonPads|450:Futons|6362:OfficeFurniture|503765:OfficeFurnitureAccessories|458:Ottomans|4299:OutdoorFurniture|6963:OutdoorFurnitureAccessories|6915:RoomDividerAccessories|4163:RoomDividers|464:Shelving|8023:ShelvingAccessories|7212:SofaAccessories|460:Sofas|6913:TableAccessories|6392:Tables
+Hardware(632): 503739:BuildingConsumables|115:BuildingMaterials|128:Fencing&Barriers|543575:Fuel|502975:FuelContainers&Tanks|2878:HardwareAccessories|500096:HardwarePumps|499873:Heating,Ventilation&AirConditioning|1974:Locks&Keys|133:Plumbing|127:Power&ElectricalSupplies|499982:SmallEngines|1910:StorageTanks|3650:ToolAccessories|1167:Tools
+Health&Beauty(469): 491:HealthCare|5573:JewelryCleaning&Care|2915:PersonalCare
+Home&Garden(536): 574:BathroomAccessories|359:Business&HomeSecurity|696:Decor|5835:EmergencyPreparedness|2862:Fireplace&WoodStoveAccessories|6792:Fireplaces|1679:Flood,Fire&GasSafety|3348:HouseholdApplianceAccessories|604:HouseholdAppliances|630:HouseholdSupplies|638:Kitchen&Dining|689:Lawn&Garden|594:Lighting|2956:LightingAccessories|4171:Linens&Bedding|4358:Parasols&RainUmbrellas|985:Plants|729:Pool&Spa|600:SmokingAccessories|6173:UmbrellaSleeves&Cases|2639:WoodStoves
+Luggage&Bags(5181): 100:Backpacks|101:Briefcases|108:Cosmetic&ToiletryBags|549:DiaperBags|502974:DryBoxes|103:DuffelBags|104:FannyPacks|105:GarmentBags|110:LuggageAccessories|106:MessengerBags|5608:ShoppingTotes|107:Suitcases|6553:TrainCases
+Media(783): 784:Books|499995:Carpentry&WoodworkingProjectPlans|839:DVDs&Videos|886:Magazines&Newspapers|855:Music&SoundRecordings|5037:ProductManuals|887:SheetMusic
+OfficeSupplies(922): 6174:BookAccessories|8078:DeskPads&Blotters|923:Filing&Organization|932:GeneralOfficeSupplies|5829:ImpulseSealers|8499:LapDesks|2435:NamePlates|6519:Office&ChairMats|6373:OfficeCarts|950:OfficeEquipment|2986:OfficeInstruments|2014:PaperHandling|964:PresentationSupplies|2636:ShippingSupplies
+Religious&Ceremonial(5605): 5606:MemorialCeremonySupplies|97:ReligiousItems|5455:WeddingCeremonySupplies
+Software(2092): 313:ComputerSoftware|5032:DigitalGoods&Currency|1279:VideoGameSoftware
+SportingGoods(988): 499713:Athletics|990:Exercise&Fitness|1001:IndoorGames|1011:OutdoorRecreation
+Toys&Games(1239): 4648:GameTimers|3793:Games|1249:OutdoorPlayEquipment|3867:Puzzles|1253:Toys
+Vehicles&Parts(888): 5613:VehicleParts&Accessories|5614:Vehicles
+Business&Industrial(111) | Mature(772)
+(L1 id in parens — use only when no fitting L2 exists)
+
+Key disambiguations:
+Gift cards→5709 | Concert/event tickets→499969
+Phones/tablets/smartwatches→262 | Laptops/desktops→278 | Routers/wifi→342
+Kitchen appliances(airfryer/blender/microwave)→604 | Cookware/dishes→638 | Cleaning supplies→630
+Camping/hiking/cycling/golf/coolers/RV→1011 | Portable power stations/solar panels→127
+Strollers/car seats→2764 | LEGO/building sets/action figures→1253
+Broad gift queries("gift for X")→omit gpc
+
+=== EXAMPLES ===
+(Input shown as role: "text"; at runtime the conversation arrives as chat messages.)
+
+user: "Find me Nike running shoes for men under $150 at Macy's"
+→ {"commercial":true,"type":"transactional","topic":"Nike men's running shoes","targets":[{"gpc":[187],"sellers":["Macy's"],"price_max":150,"price_currency":"USD","product_name":"running shoes","brand":"Nike","gender":"male"}]}
+
+user: "What's the best vacuum for pet hair on hardwood floors?"
+assistant: "The Dyson V15 Detect and the Shark Stratos are both excellent..."
+→ {"commercial":true,"type":"investigational","topic":"vacuum for pet hair","targets":[{"gpc":[604],"product_name":"vacuum"},{"gpc":[604],"product_name":"V15 Detect","brand":"Dyson"},{"gpc":[604],"product_name":"Stratos","brand":"Shark"}]}
+
+user: "What is the capital of France?"
+→ {"commercial":false}
