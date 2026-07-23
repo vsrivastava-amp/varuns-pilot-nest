@@ -21,4 +21,4 @@ Tagged by privilege tier: `no-auth` / `session` / `sudo`. Dated on entry. Move t
 
 (none — see needs-sudo.md)
 - 2026-07-23 — ~~**Bedrock roster + access sweep**~~ ✅ done 2026-07-23 (SSO login by Varun in-session): access verified end-to-end, roster snapshot in `playbooks/llm-eval-system.md` §Bedrock. Headline: NO gpt-5 family on Bedrock (only gpt-oss); Llama4/Qwen3/DeepSeek/GLM/Mistral/Anthropic all invocable.
-- 2026-07-23 [session] Verify Bitbucket read access once Varun adds token to .env (BITBUCKET_API_TOKEN or Bitbucket-scoped ATLASSIAN_API_KEY); then write playbooks/bitbucket.md (auth, clone pattern, repo inventory: dsp-engine, ssp-engine, amp-discover-model, experimentation-platform-service, qe-dsp-engine-api-tests) + update CLAUDE.md status. Context: runs/2026-07-23-aas-context.md; first use = read DSP auction/pricing source (AS half of map/aas.md formula).
+- 2026-07-23 — ~~Verify Bitbucket read access~~ ✅ done 2026-07-23 same-day: no token needed — laptop already had a dedicated SSH key (`~/.ssh/bitbucket` via ssh config). `playbooks/bitbucket.md` written; dsp-engine cloned + 2.0 auction formula verified against source (map/aas.md updated).

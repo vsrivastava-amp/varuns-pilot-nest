@@ -62,3 +62,4 @@ Rule of thumb: **infrastructure probably exists; facts are probably stale.** Reu
 
 - 2026-07-21 — Bootstrap phase. Live: nest repo (github.com/vsrivastava-amp/varuns-pilot-nest), Jira API (see `playbooks/jira.md`), Databricks CLI dev profile (see `playbooks/databricks.md`). Pending: Slack Claude access to this repo (Varun verifying), Datadog keys, pilot digest.
 - 2026-07-22 — claude.ai MCP connectors live on laptop sessions: Calendar, Gmail, Drive, Atlassian Rovo, Slack (per-session `/mcp` handshake required — see `playbooks/google.md`). **Slack Claude retired** (see `log/nest--laptop.md`); morning routine v2 runs all sweeps laptop-side (`playbooks/morning-routine.md`). Still pending: Datadog keys.
+- 2026-07-23 — Bitbucket read access live: laptop SSH key covers all `bitbucket.org/admarketplace` repos (dsp-engine, ssp-engine, …) — clone-to-scratchpad freely, see `playbooks/bitbucket.md`. Varun OK'd local clones for exploration (in-chat 2026-07-23).

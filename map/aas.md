@@ -104,10 +104,12 @@ DSP (Discover 3.0, per 7/23 sync): `unifiedScore * CTR * CPC`.
 
 ## Auction formula (read from code 2026-07-23)
 
-**2.0 suggest auction** (prod formula lives in DSP; read here from the AAS
-port on branch `AI-1518`, which carries explicit DSP-parity notes + 98/98
-parity suite). Gate, both ad types: `useYield = discoverAuction=="yield"
-experiment && any candidate has non-null CTR`.
+**2.0 suggest auction** (prod formula lives in DSP; read from the AAS port on
+branch `AI-1518` and **verified against dsp-engine source 2026-07-23**
+(`com.adm.dsp.workflow.auction.AdAuctionComparatorFactory` — identical, incl.
+DEFAULT_CTR and null-sentinel handling); see `playbooks/bitbucket.md`). Gate,
+both ad types: `useYield = discoverAuction=="yield" experiment && any
+candidate has non-null CTR`.
 
 - Yield mode, primary sort key — **identical formula for text and product**:
   `relevanceScore × CTR × advertiserBid(CPC)`, descending (`AuctionComparators.pricingScoreRanking`;
@@ -117,9 +119,11 @@ experiment && any candidate has non-null CTR`.
   - **Product**: **no dedup**; creativeYield enriched first from the *real* CTR
     (`(bid − payout) × ctr`, null if no real CTR); tie-breakers normalizedScore → creativeYield;
     optional per-queryTerm grouping (VECTOR_SEARCH_PRODUCT_ADS flag); stamped HIGH_YIELD.
-  - **Score input differs**: product = Vespa vector score; text in DSP =
-    elasticScore *or* keywordRelevanceScore chosen by keywordSource — AAS collapses
-    text to the single KVSS vector score (flagged in code as a potential shadow-compare divergence).
+  - **Score input differs**: product = Vespa vector score (null → 0.0); text in DSP
+    = elasticScore (keywordSource VECTOR) *or* keywordRelevanceScore (CACHE; always
+    ≥ 1 via KeywordScoreEnricher — a different scale than [0,1] vector scores) — AAS
+    collapses text to the single KVSS vector score (flagged in code as a potential
+    shadow-compare divergence).
 - No-yield fallback (experiment off or zero CTR signal): text = score desc → bid desc;
   product = ctrType (ELME/DEFAULT ≻ LEGACY/null) → normalizedScore → creativeYield. Stamped RELEVANCE.
 
