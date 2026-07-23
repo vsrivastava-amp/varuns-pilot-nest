@@ -133,6 +133,14 @@ rank on `normalizedScore`, uniform across types (`DiscoverRankingStep`):
 - text: `floor((a·rawKvssScore + b) × 1e6)`, defaults a=0.93, b=0; per-request
   overridable via experiment keys `kvssScoreLinearA/B` — this linear transform
   **is** the "unified retrieval score" from Saksham's 7/21 thread.
+  - Coefficient provenance (traced 2026-07-23): Artem Dippel, PR #44/AI-1435.
+    Born a=1 (7/10), then 0.8-in-Java vs 0.93-in-yaml simultaneously (7/14
+    "cleanup"), aligned to 0.93 after Joseph's CR flag (7/15). **No derivation
+    recorded anywhere** (commits/PR/Jira/Slack all silent); KvssProperties
+    javadoc still argues the rationale under "0.8" (discount text because VSS
+    full-title cosine > KVSS short-phrase signal). Treat as placeholder pending
+    calibration — ARES-by-ad-type (Tarun 7/13, product ≫ text) is a candidate
+    calibration signal.
 - Intent Adjacent (`placement.adCount` set): merge all targets, top adCount.
   Intent Inline: rank per target, top `target.adCount` (default 1).
 - Economic auction for 3.0 stays DSP-side for now: `unifiedScore × CTR × CPC`
