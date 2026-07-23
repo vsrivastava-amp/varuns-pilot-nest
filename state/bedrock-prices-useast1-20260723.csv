@@ -1,0 +1,876 @@
+model,provider,feature,inferenceType,unit,usd,usagetype
+GLM 4.7,Z AI,On-demand Inference,output tokens batch,1K tokens,0.0011,USE1-zai.glm-4.7-output-tokens-batch
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,,Output tokens flex,1K tokens,0.000325,USE1-nvidia.nemotron-super-3-120b-mantle-output-tokens-flex
+GLM 4.7 Flash,Z AI,On-demand Inference,Output tokens flex,1K tokens,0.0002,USE1-zai.glm-4.7-flash-output-tokens-flex
+google.gemma-4-e2b,Google,,Output tokens priority,1K tokens,0.00014,USE1-google.gemma-4-e2b-mantle-output-tokens-priority
+Nova Pro,,Model Customization,Prompt cache write input tokens,1K tokens,0.0,USE1-NovaPro-cache-write-input-token-count-custom-model
+Qwen3 Next 80B A3B,Qwen,,Input tokens flex,1K tokens,7e-05,USE1-qwen.qwen3-next-80b-a3b-instruct-mantle-input-tokens-flex
+Nova 2.0 Pro,,,Input Image Token Count,1K tokens,0.00125,USE1-Nova2.0Pro-input-image-token-count-cross-region-global
+Magistral Small 1.2,Mistral,,Input tokens flex,1K tokens,0.00025,USE1-mistral.magistral-small-2509-mantle-input-tokens-flex
+Voxtral Small 1.0,Mistral,,Input tokens,1K tokens,0.0001,USE1-mistral.voxtral-small-24b-2507-mantle-input-tokens-standard
+Kimi K2 Thinking,Moonshot AI,,Output tokens flex,1K tokens,0.00125,USE1-moonshotai.kimi-k2-thinking-mantle-output-tokens-flex
+Kimi K2.5,Moonshot AI,,input tokens batch,1K tokens,0.0003,USE1-moonshotai.kimi-k2.5-mantle-input-tokens-batch
+Voxtral Mini 1.0,Mistral,Batch Inference,Output tokens,1K tokens,2e-05,USE1-Voxtral-Mini-3B-2507-output-tokens-batch
+Nova 2.0 Omni,,On-demand Inference,Output Image Token Count,1K tokens,0.044,USE1-Nova2.0Omni-output-image-token-count
+Nova 2.0 Omni,,,Output Image Token Count,1K tokens,0.02,USE1-Nova2.0Omni-output-image-token-count-cross-region-global-batch
+NVIDIA Nemotron Nano 2,Nvidia,On-demand Inference,Output tokens priority,1K tokens,0.0004,USE1-Nemotron-Nano-9B-V2-output-tokens-priority
+Qwen3 Next 80B A3B,Qwen,On-demand Inference,Input tokens flex,1K tokens,7e-05,USE1-Qwen3Next-80B-A3B-input-tokens-flex
+GLM 4.7 Flash,Z AI,On-demand Inference,Output tokens,1K tokens,0.0004,USE1-zai.glm-4.7-flash-output-tokens
+Voxtral Small 1.0,Mistral,On-demand Inference,Output tokens priority,1K tokens,0.00052,USE1-Voxtral-Mini-24B-2507-output-tokens-priority
+R1,DeepSeek,On-demand Inference,Input tokens,1K tokens,0.00135,USE1-DeepSeek-R1-input-tokens
+Nova 2.0 Pro,,On-demand Inference,Text Input Token,1K tokens,0.001375,USE1-Nova2.0Pro-text-input-tokens
+Nova Lite,,Model Customization,Input tokens,1K tokens,6e-05,USE1-NovaLite-input-tokens-custom-model
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,,Input tokens priority,1K tokens,0.0002625,USE1-nvidia.nemotron-super-3-120b-mantle-input-tokens-priority
+GPT OSS Safeguard 20B,OpenAI,On-demand Inference,Input tokens priority,1K tokens,0.00012,USE1-GPT-OSS-Safeguard-20B-input-tokens-priority
+gpt-oss-120b,OpenAI,On-demand Inference,Output tokens flex,1K tokens,0.0003,USE1-gpt-oss-120b-output-tokens-flex
+Voxtral Small 1.0,Mistral,,input tokens batch,1K tokens,5e-05,USE1-mistral.voxtral-small-24b-2507-mantle-input-tokens-batch
+Minimax M2.1,Minimax AI,,Output tokens priority,1K tokens,0.0021,USE1-minimax.minimax-m2.1-mantle-output-tokens-priority
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,,Input tokens,1K tokens,0.00015,USE1-nvidia.nemotron-super-3-120b-mantle-input-tokens-standard
+Ministral 3B 3.0,Mistral,On-demand Inference,Output tokens priority,1K tokens,0.00017,USE1-Ministral-3-3b-Instruct-output-tokens-priority
+Qwen3 Coder Next,Qwen,On-demand Inference,Output tokens flex,1K tokens,0.0006,USE1-qwen.qwen3-coder-next-output-tokens-flex
+GPT OSS Safeguard 120B,OpenAI,Batch Inference,Output tokens,1K tokens,0.0003,USE1-GPT-OSS-Safeguard-120B-output-tokens-batch
+GPT OSS Safeguard 120B,OpenAI,On-demand Inference,Output tokens flex,1K tokens,0.0003,USE1-GPT-OSS-Safeguard-120B-output-tokens-flex
+gpt-oss-20b,OpenAI,,Output tokens flex,1K tokens,0.00015,USE1-openai.gpt-oss-20b-mantle-output-tokens-flex
+Voxtral Small 1.0,Mistral,On-demand Inference,Input tokens flex,1K tokens,5e-05,USE1-Voxtral-Mini-24B-2507-input-tokens-flex
+Minimax M2.1,Minimax AI,,Input tokens flex,1K tokens,0.00015,USE1-minimax.minimax-m2.1-mantle-input-tokens-flex
+Qwen3 Coder Next,Qwen,On-demand Inference,Output tokens,1K tokens,0.0012,USE1-qwen.qwen3-coder-next-output-tokens
+Mistral Large 3,Mistral,On-demand Inference,Output tokens,1K tokens,0.0015,USE1-Mistral-Large-3-675b-Instruct-output-tokens
+Ministral 3B 3.0,Mistral,,Output tokens flex,1K tokens,5e-05,USE1-mistral.ministral-3-3b-instruct-mantle-output-tokens-flex
+DeepSeek V3.1,DeepSeek,,Output tokens priority,1K tokens,0.00294,USE1-deepseek.v3.1-mantle-output-tokens-priority
+Claude 2.0,Anthropic,On-demand Inference,Input tokens,1K tokens,0.008,USE1-Claude2.0-input-tokens
+Nova 2.0 Pro,,On-demand Inference,Input Video Token Count Flex,1K tokens,0.0006875,USE1-Nova2.0Pro-input-video-token-count-flex
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,On-demand Inference,Input tokens flex,1K tokens,7.5e-05,USE1-nvidia.nemotron-super-3-120b-input-tokens-flex
+Llama 4 Maverick 17B,Meta,Batch Inference,Input tokens,1K tokens,0.00012,USE1-Llama4-Maverick-17B-input-tokens-batch
+google.gemma-4-26b-a4b,Google,,Output tokens priority,1K tokens,0.0007,USE1-google.gemma-4-26b-a4b-mantle-output-tokens-priority
+Minimax M2.1,Minimax AI,On-demand Inference,Output tokens flex,1K tokens,0.0006,USE1-minimax.minimax-m2.1-output-tokens-flex
+Qwen3 Coder Next,Qwen,,Input tokens,1K tokens,0.0005,USE1-qwen.qwen3-coder-next-mantle-input-tokens-standard
+GLM 4.7 Flash,Z AI,,output tokens batch,1K tokens,0.0002,USE1-zai.glm-4.7-flash-mantle-output-tokens-batch
+GLM 4.7,Z AI,,Input tokens,1K tokens,0.0006,USE1-zai.glm-4.7-mantle-input-tokens-standard
+DeepSeek v3.2,DeepSeek,,output tokens batch,1K tokens,0.000925,USE1-deepseek.v3.2-mantle-output-tokens-batch
+Llama 4 Scout 17B,Meta,On-demand Inference,Input tokens,1K tokens,0.00017,USE1-Llama4-Scout-17B-input-tokens
+Gemma 3 27B,Google,On-demand Inference,Output tokens priority,1K tokens,0.00067,USE1-Gemma-3-27B-IT-output-tokens-priority
+Nova Canvas,,On-demand Inference,I2I 2048 Standard,image,0.06,USE1-NovaCanvas-I2I-2048-Standard
+Minimax M2,Minimax AI,On-demand Inference,Output tokens priority,1K tokens,0.0021,USE1-Minimax-M2-output-tokens-priority
+Ministral 3B 3.0,Mistral,,Output tokens priority,1K tokens,0.00017,USE1-mistral.ministral-3-3b-instruct-mantle-output-tokens-priority
+Nemotron Nano 3 30B,Nvidia,,Input tokens priority,1K tokens,0.00011,USE1-nvidia.nemotron-nano-3-30b-mantle-input-tokens-priority
+Nova Micro,,Model Customization,Prompt cache read input tokens,1K tokens,8.75e-06,USE1-NovaMicro-cache-read-input-token-count-custom-model
+Qwen3 VL 235B A22B,Qwen,,Input tokens flex,1K tokens,0.00026,USE1-qwen.qwen3-vl-235b-a22b-instruct-mantle-input-tokens-flex
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,,Output tokens,1K tokens,0.00065,USE1-nvidia.nemotron-super-3-120b-mantle-output-tokens-standard
+Magistral Small 1.2,Mistral,On-demand Inference,Output tokens priority,1K tokens,0.00263,USE1-Magistral-Small-2509-output-tokens-priority
+Nova Pro,,Model Customization,,Model/month,1.95,USE1-NovaPro-Customization-Storage
+Qwen3 Coder 30B A3B,Qwen,,Output tokens flex,1K tokens,0.0003,USE1-qwen.qwen3-coder-30b-a3b-instruct-mantle-output-tokens-flex
+Qwen3 VL 235B A22B,Qwen,,Input tokens,1K tokens,0.00053,USE1-qwen.qwen3-vl-235b-a22b-instruct-mantle-input-tokens-standard
+GPT OSS Safeguard 20B,OpenAI,On-demand Inference,Input tokens,1K tokens,7e-05,USE1-GPT-OSS-Safeguard-20B-input-tokens
+Pixtral Large 25.02,Mistral,On-demand Inference,Input tokens,1K tokens,0.002,USE1-PixtralLarge2502-input-tokens
+Devstral,Mistral AI,On-demand Inference,input tokens batch,1K tokens,0.0002,USE1-mistral.devstral-2-123b-input-tokens-batch
+Nova 2.0 Omni,,,Output Image Token Count Priority,1K tokens,0.07,USE1-Nova2.0Omni-output-image-token-count-priority-cross-region-global
+Ministral 14B 3.0,Mistral,,Output tokens,1K tokens,0.0002,USE1-mistral.ministral-3-14b-instruct-mantle-output-tokens-standard
+DeepSeek v3.2,DeepSeek,,Input tokens flex,1K tokens,0.00031,USE1-deepseek.v3.2-mantle-input-tokens-flex
+Gemma 3 12B,Google,,Input tokens priority,1K tokens,0.00016,USE1-google.gemma-3-12b-it-mantle-input-tokens-priority
+NVIDIA Nemotron Nano 2 VL,Nvidia,On-demand Inference,Input tokens priority,1K tokens,0.00035,USE1-Nemotron-Nano-12B-V2-VL-BF16-input-tokens-priority
+Qwen3 Coder Next,Qwen,,Input tokens flex,1K tokens,0.00025,USE1-qwen.qwen3-coder-next-mantle-input-tokens-flex
+Mistral Large 3,Mistral,On-demand Inference,Input tokens priority,1K tokens,0.00088,USE1-Mistral-Large-3-675b-Instruct-input-tokens-priority
+Qwen3 Coder Next,Qwen,On-demand Inference,input tokens batch,1K tokens,0.00025,USE1-qwen.qwen3-coder-next-input-tokens-batch
+Nova Lite,,Provisioned Throughput Inference - 6 months,,hour,30.25,USE1-NovaLite-ProvisionedThroughput-6months-ModelUnits
+Nova 2.0 Omni,,,Input Video Token Count,1K tokens,0.0003,USE1-Nova2.0Omni-input-video-token-count-cross-region-global
+Nova Pro,,On-demand Inference,Prompt cache read input tokens,1K tokens,0.0002,USE1-NovaPro-cache-read-input-token-count
+Devstral,Mistral AI,,Input tokens flex,1K tokens,0.0002,USE1-mistral.devstral-2-123b-mantle-input-tokens-flex
+Minimax M2.1,Minimax AI,On-demand Inference,Output tokens priority,1K tokens,0.0021,USE1-minimax.minimax-m2.1-output-tokens-priority
+Minimax M2,Minimax AI,,Input tokens,1K tokens,0.0003,USE1-minimax.minimax-m2-mantle-input-tokens-standard
+Mistral Large,Mistral,On-demand Inference,Input tokens,1K tokens,0.004,USE1-MistralLarge-input-tokens
+GPT OSS Safeguard 20B,OpenAI,,Output tokens priority,1K tokens,0.00035,USE1-openai.gpt-oss-safeguard-20b-mantle-output-tokens-priority
+Llama 4 Scout 17B,Meta,On-demand Inference,Output tokens,1K tokens,0.00066,USE1-Llama4-Scout-17B-output-tokens
+Nova 2.0 Pro,,,Input Audio Token Count Flex,1K tokens,0.000625,USE1-Nova2.0Pro-input-audio-token-count-flex-cross-region-global
+GLM 4.7,Z AI,,Input tokens priority,1K tokens,0.00105,USE1-zai.glm-4.7-mantle-input-tokens-priority
+Ministral 8B 3.0,Mistral,,input tokens batch,1K tokens,7e-05,USE1-mistral.ministral-3-8b-instruct-mantle-input-tokens-batch
+DeepSeek v3.2,DeepSeek,On-demand Inference,Input tokens priority,1K tokens,0.001085,USE1-deepseek.v3.2-input-tokens-priority
+Kimi K2.5,Moonshot AI,On-demand Inference,Input tokens priority,1K tokens,0.00105,USE1-moonshotai.kimi-k2.5-input-tokens-priority
+Nova Premier,,On-demand Inference,Output tokens flex,1K tokens,0.00625,USE1-NovaPremier-output-tokens-flex
+Nova Micro,,Model Customization,Prompt cache write input tokens,1K tokens,0.0,USE1-NovaMicro-cache-write-input-token-count-custom-model
+Magistral Small 1.2,Mistral,,Output tokens,1K tokens,0.0015,USE1-mistral.magistral-small-2509-mantle-output-tokens-standard
+Nova Premier,,On-demand Inference,Prompt cache write input tokens flex,1K tokens,0.0,USE1-NovaPremier-cache-write-input-token-count-flex
+DeepSeek v3.2,DeepSeek,On-demand Inference,output tokens batch,1K tokens,0.000925,USE1-deepseek.v3.2-output-tokens-batch
+Nova Pro,,Model Customization,,1K tokens,0.008,USE1-NovaPro-Customization-Training
+Magistral Small 1.2,Mistral,,Output tokens flex,1K tokens,0.00075,USE1-mistral.magistral-small-2509-mantle-output-tokens-flex
+Nova Lite,,Model Customization,,1K tokens,0.002,USE1-NovaLite-Customization-Training
+Nova Canvas,,Model Customization,,Model/month,1.95,USE1-NovaCanvas-Customization-Storage
+Voxtral Small 1.0,Mistral,On-demand Inference,Input tokens priority,1K tokens,0.00017,USE1-Voxtral-Mini-24B-2507-input-tokens-priority
+Devstral,Mistral AI,,input tokens batch,1K tokens,0.0002,USE1-mistral.devstral-2-123b-mantle-input-tokens-batch
+Nova 2.0 Lite,,On-demand Inference,Input tokens priority,1K tokens,0.0005775,USE1-Nova2.0Lite-input-tokens-priority
+GLM 4.7,Z AI,,output tokens batch,1K tokens,0.0011,USE1-zai.glm-4.7-mantle-output-tokens-batch
+Voxtral Mini 1.0,Mistral,On-demand Inference,Input tokens,1K tokens,4e-05,USE1-Voxtral-Mini-3B-2507-input-tokens
+google.gemma-4-31b,Google,,Output tokens priority,1K tokens,0.0007,USE1-google.gemma-4-31b-mantle-output-tokens-priority
+gpt-oss-120b,OpenAI,On-demand Inference,Input tokens flex,1K tokens,7.5e-05,USE1-gpt-oss-120b-input-tokens-flex
+MiniMax M2.5,Minimax AI,On-demand Inference,Output tokens priority,1K tokens,0.0021,USE1-minimax.minimax-m2.5-output-tokens-priority
+Ministral 14B 3.0,Mistral,,Output tokens flex,1K tokens,0.0001,USE1-mistral.ministral-3-14b-instruct-mantle-output-tokens-flex
+Ministral 3B 3.0,Mistral,,Input tokens flex,1K tokens,5e-05,USE1-mistral.ministral-3-3b-instruct-mantle-input-tokens-flex
+Ministral 14B 3.0,Mistral,,Output tokens priority,1K tokens,0.00035,USE1-mistral.ministral-3-14b-instruct-mantle-output-tokens-priority
+Qwen3 VL 235B A22B,Qwen,,Input tokens priority,1K tokens,0.00093,USE1-qwen.qwen3-vl-235b-a22b-instruct-mantle-input-tokens-priority
+Nova Premier,,On-demand Inference,Input tokens priority,1K tokens,0.004375,USE1-NovaPremier-input-tokens-priority
+Nova 2.0 Pro,,,Input Image Token Count Flex,1K tokens,0.000625,USE1-Nova2.0Pro-input-image-token-count-flex-cross-region-global
+Qwen3 235B A22B 2507,Qwen,,Output tokens,1K tokens,0.00088,USE1-qwen.qwen3-235b-a22b-2507-mantle-output-tokens-standard
+Qwen3 Next 80B A3B,Qwen,,input tokens batch,1K tokens,7e-05,USE1-qwen.qwen3-next-80b-a3b-instruct-mantle-input-tokens-batch
+Llama 3 70B,Meta,On-demand Inference,Output tokens,1K tokens,0.0035,USE1-Llama3-70B-output-tokens
+Kimi K2.5,Moonshot AI,On-demand Inference,output tokens batch,1K tokens,0.0015,USE1-moonshotai.kimi-k2.5-output-tokens-batch
+Nova 2.0 Lite,,Batch Inference,Input tokens,1K tokens,0.000165,USE1-Nova2.0Lite-input-tokens-batch
+Qwen3 32B,Qwen,On-demand Inference,Input tokens,1K tokens,0.00015,USE1-Qwen3-32B-input-tokens
+Qwen3 Coder 30B A3B,Qwen,,Input tokens flex,1K tokens,7.5e-05,USE1-qwen.qwen3-coder-30b-a3b-instruct-mantle-input-tokens-flex
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,On-demand Inference,Input tokens,1K tokens,0.00015,USE1-nvidia.nemotron-super-3-120b-input-tokens
+Voxtral Small 1.0,Mistral,On-demand Inference,Input tokens,1K tokens,0.0001,USE1-Voxtral-Mini-24B-2507-input-tokens
+Mistral Small,Mistral,Batch Inference,Input tokens,1K tokens,0.0005,USE1-MistralSmall-input-tokens-batch
+Nova 2.0 Pro,,,Text Input Tokens,1K tokens,0.000625,USE1-Nova2.0Pro-text-input-tokens-cross-region-global-batch
+Llama 3.2 3B,Meta,On-demand Inference,Output tokens,1K tokens,0.00015,USE1-Llama3-2-3B-output-tokens
+Qwen3 Coder 30B A3B,Qwen,On-demand Inference,Input tokens priority,1K tokens,0.0002625,USE1-Qwen3Coder-30B-A3B-input-tokens-priority
+Qwen3 Next 80B A3B,Qwen,,Output tokens priority,1K tokens,0.0021,USE1-qwen.qwen3-next-80b-a3b-instruct-mantle-output-tokens-priority
+Nova Pro,,Provisioned Throughput Inference - 1 month,,hour,55.0,USE1-NovaPro-ProvisionedThroughput-1month-ModelUnits
+Llama 3.2 1B,Meta,On-demand Inference,Output tokens,1K tokens,0.0001,USE1-Llama3-2-1B-output-tokens
+MiniMax M2.5,Minimax AI,On-demand Inference,input tokens batch,1K tokens,0.00015,USE1-minimax.minimax-m2.5-input-tokens-batch
+Nova 2.0 Omni,,On-demand Inference,Text Input Token,1K tokens,0.0003,USE1-Nova2.0Omni-text-input-tokens
+Nova 2.0 Pro,,,Text Input Tokens Priority,1K tokens,0.0021875,USE1-Nova2.0Pro-text-input-tokens-priority-cross-region-global
+Minimax M2,Minimax AI,Batch Inference,Output tokens,1K tokens,0.0006,USE1-Minimax-M2-output-tokens-batch
+GPT OSS Safeguard 20B,OpenAI,On-demand Inference,Output tokens priority,1K tokens,0.00035,USE1-GPT-OSS-Safeguard-20B-output-tokens-priority
+Minimax M2.1,Minimax AI,,Output tokens flex,1K tokens,0.0006,USE1-minimax.minimax-m2.1-mantle-output-tokens-flex
+NVIDIA Nemotron Nano 2 VL,Nvidia,,Output tokens,1K tokens,0.0006,USE1-nvidia.nemotron-nano-12b-v2-mantle-output-tokens-standard
+Nemotron Nano 3 30B,Nvidia,,Input tokens flex,1K tokens,3e-05,USE1-nvidia.nemotron-nano-3-30b-mantle-input-tokens-flex
+DeepSeek v3.2,DeepSeek,On-demand Inference,input tokens batch,1K tokens,0.00031,USE1-deepseek.v3.2-input-tokens-batch
+Nova Pro,,Batch Inference,Input tokens,1K tokens,0.0004,USE1-NovaPro-input-tokens-batch
+NVIDIA Nemotron Nano 2 VL,Nvidia,,Input tokens flex,1K tokens,0.0001,USE1-nvidia.nemotron-nano-12b-v2-mantle-input-tokens-flex
+google.gemma-4-26b-a4b,Google,,output tokens batch,1K tokens,0.0002,USE1-google.gemma-4-26b-a4b-mantle-output-tokens-batch
+Kimi K2.5,Moonshot AI,On-demand Inference,Output tokens priority,1K tokens,0.00525,USE1-moonshotai.kimi-k2.5-output-tokens-priority
+Nova Premier,,On-demand Inference,Output tokens,1K tokens,0.0125,USE1-NovaPremier-output-tokens
+Minimax M2.1,Minimax AI,,output tokens batch,1K tokens,0.0006,USE1-minimax.minimax-m2.1-mantle-output-tokens-batch
+NVIDIA Nemotron Nano 2 VL,Nvidia,Batch Inference,Output tokens,1K tokens,0.0003,USE1-Nemotron-Nano-12B-V2-VL-BF16-output-tokens-batch
+GLM 4.7,Z AI,On-demand Inference,Output tokens,1K tokens,0.0022,USE1-zai.glm-4.7-output-tokens
+Nova 2.0 Omni,,On-demand Inference,Input Image Token Count Priority,1K tokens,0.0006,USE1-Nova2.0Omni-input-image-token-count-priority
+Nova 2.0 Lite,,Model Customization,Prompt cache read input tokens,1K tokens,7.5e-05,USE1-Nova2.0Lite-cache-read-input-token-count-custom-model
+Qwen3 Next 80B A3B,Qwen,,Output tokens flex,1K tokens,0.0006,USE1-qwen.qwen3-next-80b-a3b-instruct-mantle-output-tokens-flex
+GPT OSS Safeguard 20B,OpenAI,,Output tokens,1K tokens,0.0002,USE1-openai.gpt-oss-safeguard-20b-mantle-output-tokens-standard
+google.gemma-4-26b-a4b,Google,,Input tokens,1K tokens,0.00013,USE1-google.gemma-4-26b-a4b-mantle-input-tokens-standard
+Qwen3 235B A22B 2507,Qwen,,Input tokens priority,1K tokens,0.000385,USE1-qwen.qwen3-235b-a22b-2507-mantle-input-tokens-priority
+Ministral 8B 3.0,Mistral,,Input tokens priority,1K tokens,0.00026,USE1-mistral.ministral-3-8b-instruct-mantle-input-tokens-priority
+Writer Palmyra Vision 7B,Writer,On-demand Inference,Output tokens,1K tokens,0.0006,USE1-writer.palmyra-vision-7b-output-tokens
+gpt-oss-20b,OpenAI,On-demand Inference,Input tokens priority,1K tokens,0.0001225,USE1-gpt-oss-20b-input-tokens-priority
+Llama 4 Maverick 17B,Meta,Batch Inference,Output tokens,1K tokens,0.000485,USE1-Llama4-Maverick-17B-output-tokens-batch
+gpt-oss-120b,OpenAI,,Input tokens priority,1K tokens,0.0002625,USE1-openai.gpt-oss-120b-mantle-input-tokens-priority
+Voxtral Mini 1.0,Mistral,,Output tokens,1K tokens,4e-05,USE1-mistral.voxtral-mini-3b-2507-mantle-output-tokens-standard
+Nova Canvas,,Provisioned Throughput Inference - 1 month,,hour,55.0,USE1-NovaCanvas-ProvisionedThroughput-1month-ModelUnits
+Mistral Large 3,Mistral,,output tokens batch,1K tokens,0.00075,USE1-mistral.mistral-large-3-675b-instruct-mantle-output-tokens-batch
+Kimi K2.5,Moonshot AI,On-demand Inference,Output tokens flex,1K tokens,0.0015,USE1-moonshotai.kimi-k2.5-output-tokens-flex
+Nova Micro,,On-demand Inference,Prompt cache write input tokens,1K tokens,0.0,USE1-NovaMicro-cache-write-input-token-count
+NVIDIA Nemotron Nano 2 VL,Nvidia,,Output tokens priority,1K tokens,0.00105,USE1-nvidia.nemotron-nano-12b-v2-mantle-output-tokens-priority
+Minimax M2,Minimax AI,On-demand Inference,Output tokens,1K tokens,0.0012,USE1-Minimax-M2-output-tokens
+Nova Canvas,,On-demand Inference,I2I 1024 Premium,image,0.06,USE1-NovaCanvas-I2I-1024-Premium
+Ministral 8B 3.0,Mistral,Batch Inference,Output tokens,1K tokens,7e-05,USE1-Ministral-3-8b-Instruct-output-tokens-batch
+Nova Sonic 2.0,,On-demand Inference,Text output token,1K tokens,0.00275,USE1-NovaSonic2.0-text-output-tokens
+Nova 2.0 Pro,,On-demand Inference,Input Audio Token Count Priority,1K tokens,0.00240625,USE1-Nova2.0Pro-input-audio-token-count-priority
+Qwen3 32B,Qwen,,Output tokens,1K tokens,0.0006,USE1-qwen.qwen3-32b-mantle-output-tokens-standard
+Voxtral Small 1.0,Mistral,,Input tokens flex,1K tokens,5e-05,USE1-mistral.voxtral-small-24b-2507-mantle-input-tokens-flex
+Nova Pro,,Model Customization,Output tokens,1K tokens,0.0032,USE1-NovaPro-output-tokens-custom-model
+DeepSeek v3.2,DeepSeek,,Input tokens,1K tokens,0.00062,USE1-deepseek.v3.2-mantle-input-tokens-standard
+Nova Canvas,,On-demand Inference,T2I 2048 Standard,image,0.06,USE1-NovaCanvas-T2I-2048-Standard
+DeepSeek V3.1,DeepSeek,,Input tokens flex,1K tokens,0.00029,USE1-deepseek.v3.1-mantle-input-tokens-flex
+Qwen3 Coder 480B A35B,Qwen,,Output tokens flex,1K tokens,0.0009,USE1-qwen.qwen3-coder-480b-a35b-instruct-mantle-output-tokens-flex
+Gemma 3 12B,Google,Batch Inference,Output tokens,1K tokens,0.00015,USE1-Gemma-3-12B-IT-output-tokens-batch
+NVIDIA Nemotron Nano 2,Nvidia,On-demand Inference,Input tokens,1K tokens,6e-05,USE1-Nemotron-Nano-9B-V2-input-tokens
+xai.grok-4.3,,,,1M tokens,0.35,USE1-xai.grok-4.3-mantle-cache-read-tokens-priority
+Qwen3 32B,Qwen,On-demand Inference,Output tokens priority,1K tokens,0.00105,USE1-Qwen3-32B-output-tokens-priority
+Voxtral Small 1.0,Mistral,Batch Inference,Input tokens,1K tokens,5e-05,USE1-Voxtral-Mini-24B-2507-input-tokens-batch
+Devstral,Mistral AI,On-demand Inference,output tokens batch,1K tokens,0.001,USE1-mistral.devstral-2-123b-output-tokens-batch
+Gemma 3 4B,Google,On-demand Inference,Input tokens flex,1K tokens,2e-05,USE1-Gemma-3-4B-IT-input-tokens-flex
+Nova 2.0 Lite,,,Input tokens,1K tokens,0.00015,USE1-Nova2.0Lite-input-tokens-cross-region-global-batch
+Magistral Small 1.2,Mistral,,Input tokens,1K tokens,0.0005,USE1-mistral.magistral-small-2509-mantle-input-tokens-standard
+Nova Sonic 2.0,,On-demand Inference,Text Input Token,1K tokens,0.00033,USE1-NovaSonic2.0-text-input-tokens
+Devstral,Mistral AI,,Output tokens priority,1K tokens,0.0035,USE1-mistral.devstral-2-123b-mantle-output-tokens-priority
+Mistral Small,Mistral,On-demand Inference,Input tokens,1K tokens,0.001,USE1-MistralSmall-input-tokens
+Minimax M2.1,Minimax AI,On-demand Inference,Output tokens,1K tokens,0.0012,USE1-minimax.minimax-m2.1-output-tokens
+Mistral Large 3,Mistral,On-demand Inference,Input tokens flex,1K tokens,0.00025,USE1-Mistral-Large-3-675b-Instruct-input-tokens-flex
+Llama 4 Maverick 17B,Meta,On-demand Inference,Output tokens,1K tokens,0.00097,USE1-Llama4-Maverick-17B-output-tokens
+Ministral 14B 3.0,Mistral,,output tokens batch,1K tokens,0.0001,USE1-mistral.ministral-3-14b-instruct-mantle-output-tokens-batch
+google.gemma-4-e2b,Google,,Input tokens flex,1K tokens,2e-05,USE1-google.gemma-4-e2b-mantle-input-tokens-flex
+DeepSeek v3.2,DeepSeek,,input tokens batch,1K tokens,0.00031,USE1-deepseek.v3.2-mantle-input-tokens-batch
+Qwen3 Coder Next,Qwen,On-demand Inference,output tokens batch,1K tokens,0.0006,USE1-qwen.qwen3-coder-next-output-tokens-batch
+Llama 4 Scout 17B,Meta,Batch Inference,Input tokens,1K tokens,8.5e-05,USE1-Llama4-Scout-17B-input-tokens-batch
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,On-demand Inference,Output tokens flex,1K tokens,0.000325,USE1-nvidia.nemotron-super-3-120b-output-tokens-flex
+Mistral Large 3,Mistral,,Output tokens priority,1K tokens,0.00263,USE1-mistral.mistral-large-3-675b-instruct-mantle-output-tokens-priority
+GLM 5,Z AI,On-demand Inference,Output tokens,1K tokens,0.0032,USE1-zai.glm5-output-tokens
+Gemma 3 4B,Google,On-demand Inference,Input tokens priority,1K tokens,7e-05,USE1-Gemma-3-4B-IT-input-tokens-priority
+Nova 2.0 Pro,,Batch Inference,Text Input Tokens,1K tokens,0.0006875,USE1-Nova2.0Pro-text-input-tokens-batch
+Nova Premier,,Batch Inference,Input tokens,1K tokens,0.00125,USE1-NovaPremier-input-tokens-batch
+NVIDIA Nemotron Nano 2,Nvidia,,Output tokens,1K tokens,0.00023,USE1-nvidia.nemotron-nano-9b-v2-mantle-output-tokens-standard
+google.gemma-4-26b-a4b,Google,,Output tokens,1K tokens,0.0004,USE1-google.gemma-4-26b-a4b-mantle-output-tokens-standard
+google.gemma-4-31b,Google,,Input tokens priority,1K tokens,0.000245,USE1-google.gemma-4-31b-mantle-input-tokens-priority
+Voxtral Mini 1.0,Mistral,On-demand Inference,Input tokens priority,1K tokens,7e-05,USE1-Voxtral-Mini-3B-2507-input-tokens-priority
+xai.grok-4.3,,,,1M tokens,0.1,USE1-xai.grok-4.3-mantle-cache-read-tokens-flex
+Ministral 14B 3.0,Mistral,Batch Inference,Output tokens,1K tokens,0.0001,USE1-Ministral-3-14b-Instruct-output-tokens-batch
+Nova Pro,,On-demand Inference,Input tokens,1K tokens,0.0008,USE1-NovaPro-input-tokens
+Writer Palmyra Vision 7B,Writer,On-demand Inference,Input tokens priority,1K tokens,0.0002625,USE1-writer.palmyra-vision-7b-input-tokens-priority
+MiniMax M2.5,Minimax AI,,Output tokens,1K tokens,0.0012,USE1-minimax.minimax-m2.5-mantle-output-tokens-standard
+xai.grok-4.3,,,,1M tokens,0.625,USE1-xai.grok-4.3-mantle-input-tokens-flex
+Nova Premier,,On-demand Inference,Prompt cache read input tokens,1K tokens,0.000625,USE1-NovaPremier-cache-read-input-token-count
+Qwen3 235B A22B 2507,Qwen,,output tokens batch,1K tokens,0.00044,USE1-qwen.qwen3-235b-a22b-2507-mantle-output-tokens-batch
+GPT OSS Safeguard 20B,OpenAI,Batch Inference,Input tokens,1K tokens,3e-05,USE1-GPT-OSS-Safeguard-20B-input-tokens-batch
+Gemma 3 27B,Google,On-demand Inference,Input tokens,1K tokens,0.00023,USE1-Gemma-3-27B-IT-input-tokens
+Nova 2.0 Lite,,Batch Inference,Output tokens,1K tokens,0.001375,USE1-Nova2.0Lite-output-tokens-batch
+xai.grok-4.3,,,,1M tokens,2.1875,USE1-xai.grok-4.3-mantle-input-tokens-priority
+Qwen3 235B A22B 2507,Qwen,,Input tokens,1K tokens,0.00022,USE1-qwen.qwen3-235b-a22b-2507-mantle-input-tokens-standard
+Kimi K2.5,Moonshot AI,,Output tokens flex,1K tokens,0.0015,USE1-moonshotai.kimi-k2.5-mantle-output-tokens-flex
+Gemma 3 4B,Google,,Input tokens,1K tokens,4e-05,USE1-google.gemma-3-4b-it-mantle-input-tokens-standard
+Nova Canvas,,On-demand Inference,I2I 1024 Standard,image,0.04,USE1-NovaCanvas-I2I-1024-Standard
+Nova 2.0 Omni,,Batch Inference,Input Image Token Count,1K tokens,0.0002,USE1-Nova2.0Omni-input-image-token-count-batch
+Llama 3 8B,Meta,On-demand Inference,Output tokens,1K tokens,0.0006,USE1-Llama3-8B-output-tokens
+NVIDIA Nemotron Nano 2,Nvidia,On-demand Inference,Output tokens flex,1K tokens,0.00012,USE1-Nemotron-Nano-9B-V2-output-tokens-flex
+GPT OSS Safeguard 20B,OpenAI,On-demand Inference,Output tokens flex,1K tokens,0.0001,USE1-GPT-OSS-Safeguard-20B-output-tokens-flex
+MiniMax M2.5,Minimax AI,,Output tokens flex,1K tokens,0.0006,USE1-minimax.minimax-m2.5-mantle-output-tokens-flex
+DeepSeek V3.1,DeepSeek,,Output tokens flex,1K tokens,0.00084,USE1-deepseek.v3.1-mantle-output-tokens-flex
+Gemma 3 12B,Google,,Output tokens flex,1K tokens,0.00015,USE1-google.gemma-3-12b-it-mantle-output-tokens-flex
+gpt-oss-20b,OpenAI,On-demand Inference,Output tokens priority,1K tokens,0.000525,USE1-gpt-oss-20b-output-tokens-priority
+Minimax M2,Minimax AI,,Input tokens priority,1K tokens,0.00052,USE1-minimax.minimax-m2-mantle-input-tokens-priority
+Nova Micro,,Model Customization,Output tokens,1K tokens,0.00014,USE1-NovaMicro-output-tokens-custom-model
+Nova 2.0 Omni,,Batch Inference,Text Output Tokens,1K tokens,0.0014,USE1-Nova2.0Omni-text-output-tokens-batch
+GPT OSS Safeguard 120B,OpenAI,,Input tokens priority,1K tokens,0.00026,USE1-openai.gpt-oss-safeguard-120b-mantle-input-tokens-priority
+Nova Premier,,On-demand Inference,Output tokens priority,1K tokens,0.021875,USE1-NovaPremier-output-tokens-priority
+Qwen3 Next 80B A3B,Qwen,,Input tokens priority,1K tokens,0.00026,USE1-qwen.qwen3-next-80b-a3b-instruct-mantle-input-tokens-priority
+Nemotron Nano 3 30B,Nvidia,,output tokens batch,1K tokens,0.00012,USE1-nvidia.nemotron-nano-3-30b-mantle-output-tokens-batch
+Nova Pro Latency Optimized,,On-demand Inference,Output tokens,1K tokens,0.004,USE1-NovaPro-output-tokens-latency-optimized
+Ministral 14B 3.0,Mistral,,Input tokens flex,1K tokens,0.0001,USE1-mistral.ministral-3-14b-instruct-mantle-input-tokens-flex
+Gemma 3 4B,Google,Batch Inference,Input tokens,1K tokens,2e-05,USE1-Gemma-3-4B-IT-input-tokens-batch
+Gemma 3 12B,Google,On-demand Inference,Output tokens priority,1K tokens,0.00051,USE1-Gemma-3-12B-IT-output-tokens-priority
+Writer Palmyra Vision 7B,Writer,On-demand Inference,Output tokens flex,1K tokens,0.0003,USE1-writer.palmyra-vision-7b-output-tokens-flex
+Ministral 3B 3.0,Mistral,On-demand Inference,Input tokens priority,1K tokens,0.00017,USE1-Ministral-3-3b-Instruct-input-tokens-priority
+Minimax M2,Minimax AI,,Output tokens flex,1K tokens,0.0006,USE1-minimax.minimax-m2-mantle-output-tokens-flex
+Nova Pro,,On-demand Inference,Output tokens flex,1K tokens,0.0016,USE1-NovaPro-output-tokens-flex
+MiniMax M2.5,Minimax AI,On-demand Inference,Input tokens priority,1K tokens,0.000525,USE1-minimax.minimax-m2.5-input-tokens-priority
+Nova 2.0 Pro,,On-demand Inference,Input Video Token Count Priority,1K tokens,0.00240625,USE1-Nova2.0Pro-input-video-token-count-priority
+Nova 2.0 Omni,,On-demand Inference,Output Image Token Count Flex,1K tokens,0.022,USE1-Nova2.0Omni-output-image-token-count-flex
+Nova 2.0 Lite,,,Output tokens priority,1K tokens,0.004375,USE1-Nova2.0Lite-output-tokens-priority-cross-region-global
+Nemotron Nano 3 30B,Nvidia,,input tokens batch,1K tokens,3e-05,USE1-nvidia.nemotron-nano-3-30b-mantle-input-tokens-batch
+Ministral 8B 3.0,Mistral,,Input tokens,1K tokens,0.00015,USE1-mistral.ministral-3-8b-instruct-mantle-input-tokens-standard
+Voxtral Mini 1.0,Mistral,,input tokens batch,1K tokens,2e-05,USE1-mistral.voxtral-mini-3b-2507-mantle-input-tokens-batch
+GPT OSS Safeguard 120B,OpenAI,On-demand Inference,Output tokens priority,1K tokens,0.00105,USE1-GPT-OSS-Safeguard-120B-output-tokens-priority
+Nova Premier,,On-demand Inference,Input tokens,1K tokens,0.0025,USE1-NovaPremier-input-tokens
+GLM 4.7,Z AI,On-demand Inference,input tokens batch,1K tokens,0.0003,USE1-zai.glm-4.7-input-tokens-batch
+gpt-oss-120b,OpenAI,Batch Inference,Output tokens,1K tokens,0.0003,USE1-gpt-oss-120b-output-tokens-batch
+Nova Pro,,On-demand Inference,Output tokens,1K tokens,0.0032,USE1-NovaPro-output-tokens
+google.gemma-4-26b-a4b,Google,,input tokens batch,1K tokens,6.5e-05,USE1-google.gemma-4-26b-a4b-mantle-input-tokens-batch
+Magistral Small 1.2,Mistral,On-demand Inference,Input tokens priority,1K tokens,0.00088,USE1-Magistral-Small-2509-input-tokens-priority
+GLM 5,Z AI,,output tokens batch,1K tokens,0.0016,USE1-zai.glm5-mantle-output-tokens-batch
+NVIDIA Nemotron Nano 2 VL,Nvidia,,output tokens batch,1K tokens,0.0003,USE1-nvidia.nemotron-nano-12b-v2-mantle-output-tokens-batch
+Nova 2.0 Omni,,Batch Inference,Text Input Tokens,1K tokens,0.0002,USE1-Nova2.0Omni-text-input-tokens-batch
+Mistral Large 3,Mistral,,Input tokens priority,1K tokens,0.00088,USE1-mistral.mistral-large-3-675b-instruct-mantle-input-tokens-priority
+Ministral 3B 3.0,Mistral,On-demand Inference,Output tokens,1K tokens,0.0001,USE1-Ministral-3-3b-Instruct-output-tokens
+NVIDIA Nemotron Nano 2,Nvidia,On-demand Inference,Output tokens,1K tokens,0.00023,USE1-Nemotron-Nano-9B-V2-output-tokens
+Nova 2.0 Pro,,,Input Audio Token Count,1K tokens,0.00125,USE1-Nova2.0Pro-input-audio-token-count-cross-region-global
+Kimi K2 Thinking,Kimi AI,Batch Inference,Input tokens,1K tokens,0.0003,USE1-Kimi-K2-Thinking-input-tokens-batch
+GPT OSS Safeguard 20B,OpenAI,On-demand Inference,Input tokens flex,1K tokens,3e-05,USE1-GPT-OSS-Safeguard-20B-input-tokens-flex
+Mistral Small,Mistral,Batch Inference,Output tokens,1K tokens,0.0015,USE1-MistralSmall-output-tokens-batch
+Voxtral Mini 1.0,Mistral,,Input tokens priority,1K tokens,7e-05,USE1-mistral.voxtral-mini-3b-2507-mantle-input-tokens-priority
+google.gemma-4-e2b,Google,,Output tokens,1K tokens,8e-05,USE1-google.gemma-4-e2b-mantle-output-tokens-standard
+Gemma 3 27B,Google,On-demand Inference,Output tokens,1K tokens,0.00038,USE1-Gemma-3-27B-IT-output-tokens
+GLM 4.7 Flash,Z AI,,Output tokens flex,1K tokens,0.0002,USE1-zai.glm-4.7-flash-mantle-output-tokens-flex
+Minimax M2,Minimax AI,On-demand Inference,Input tokens flex,1K tokens,0.00015,USE1-Minimax-M2-input-tokens-flex
+Nova 2.0 Pro,,Batch Inference,Input Image Token Count,1K tokens,0.0006875,USE1-Nova2.0Pro-input-image-token-count-batch
+Nova 2.0 Lite,,,,1K tokens,0.0,USE1-Nova2.0Lite-cache-write-input-token-count-cross-region-global
+Mistral Large 3,Mistral,Batch Inference,Output tokens,1K tokens,0.00075,USE1-Mistral-Large-3-675b-Instruct-output-tokens-batch
+Kimi K2 Thinking,Kimi AI,On-demand Inference,Input tokens priority,1K tokens,0.00105,USE1-Kimi-K2-Thinking-input-tokens-priority
+Llama 3.1 8B,Meta,On-demand Inference,Input tokens,1K tokens,0.00022,USE1-Llama3-1-8B-input-tokens
+Voxtral Mini 1.0,Mistral,On-demand Inference,Output tokens,1K tokens,4e-05,USE1-Voxtral-Mini-3B-2507-output-tokens
+Voxtral Mini 1.0,Mistral,On-demand Inference,Input tokens flex,1K tokens,2e-05,USE1-Voxtral-Mini-3B-2507-input-tokens-flex
+Minimax M2.1,Minimax AI,,Input tokens,1K tokens,0.0003,USE1-minimax.minimax-m2.1-mantle-input-tokens-standard
+Gemma 3 12B,Google,On-demand Inference,Input tokens priority,1K tokens,0.00016,USE1-Gemma-3-12B-IT-input-tokens-priority
+Nova Sonic 2.0,,On-demand Inference,Speech Understanding input token,1K tokens,0.003,USE1-NovaSonic2.0-speech-input-tokens
+Nova 2.0 Lite,,,Output tokens flex,1K tokens,0.00125,USE1-Nova2.0Lite-output-tokens-flex-cross-region-global
+Nova Premier,,Batch Inference,Output tokens,1K tokens,0.00625,USE1-NovaPremier-output-tokens-batch
+Ministral 14B 3.0,Mistral,On-demand Inference,Output tokens priority,1K tokens,0.00035,USE1-Ministral-3-14b-Instruct-output-tokens-priority
+Minimax M2,Minimax AI,,input tokens batch,1K tokens,0.00015,USE1-minimax.minimax-m2-mantle-input-tokens-batch
+Nova Sonic,,On-demand Inference,Text output token,1K tokens,0.00024,USE1-NovaSonic-text-output-tokens
+Nova 2.0 Lite,,,,Requests,0.03,USE1-Nova2.0Lite-nova-grounding
+GLM 4.7 Flash,Z AI,,input tokens batch,1K tokens,3.5e-05,USE1-zai.glm-4.7-flash-mantle-input-tokens-batch
+Nova Lite,,On-demand Inference,Output tokens,1K tokens,0.00024,USE1-NovaLite-output-tokens
+Gemma 3 27B,Google,,input tokens batch,1K tokens,0.00012,USE1-google.gemma-3-27b-it-mantle-input-tokens-batch
+Nemotron Nano 3 30B,Nvidia,On-demand Inference,Output tokens flex,1K tokens,0.00012,USE1-Nemotron-Nano-3-30B-output-tokens-flex
+GLM 4.7 Flash,Z AI,,Input tokens flex,1K tokens,3.5e-05,USE1-zai.glm-4.7-flash-mantle-input-tokens-flex
+google.gemma-4-e2b,Google,,Output tokens flex,1K tokens,4e-05,USE1-google.gemma-4-e2b-mantle-output-tokens-flex
+Gemma 3 4B,Google,,Input tokens priority,1K tokens,7e-05,USE1-google.gemma-3-4b-it-mantle-input-tokens-priority
+Minimax M2,Minimax AI,,Input tokens flex,1K tokens,0.00015,USE1-minimax.minimax-m2-mantle-input-tokens-flex
+Nova 2.0 Pro,,,Text Output Token Flex,1K tokens,0.005,USE1-Nova2.0Pro-text-output-tokens-flex-cross-region-global
+Nova 2.0 Lite,,Model Customization,,1K tokens,0.00378,USE1-Nova2.0Lite-Customization-Training
+google.gemma-4-31b,Google,,input tokens batch,1K tokens,7e-05,USE1-google.gemma-4-31b-mantle-input-tokens-batch
+GPT OSS Safeguard 20B,OpenAI,,Input tokens,1K tokens,7e-05,USE1-openai.gpt-oss-safeguard-20b-mantle-input-tokens-standard
+Nova Pro,,On-demand Inference,Prompt cache write input tokens flex,1K tokens,0.0,USE1-NovaPro-cache-write-input-token-count-flex
+Nova 2.0 Omni,,,Text Output Tokens,1K tokens,0.0025,USE1-Nova2.0Omni-text-output-tokens-cross-region-global
+Nova 2.0 Pro,,,Text Input Tokens,1K tokens,0.00125,USE1-Nova2.0Pro-text-input-tokens-cross-region-global
+Nova 2.0 Pro,,Batch Inference,Input Audio Token Count,1K tokens,0.0006875,USE1-Nova2.0Pro-input-audio-token-count-batch
+Kimi K2.5,Moonshot AI,,Output tokens priority,1K tokens,0.00525,USE1-moonshotai.kimi-k2.5-mantle-output-tokens-priority
+Nova 2.0 Pro,,,Input Video Token Count Priority,1K tokens,0.0021875,USE1-Nova2.0Pro-input-video-token-count-priority-cross-region-global
+Ministral 3B 3.0,Mistral,On-demand Inference,Output tokens flex,1K tokens,5e-05,USE1-Ministral-3-3b-Instruct-output-tokens-flex
+Llama 3.3 70B,Meta,Batch Inference,Output tokens,1K tokens,0.00036,USE1-Llama3-3-70B-output-tokens-batch
+Qwen3 VL 235B A22B,Qwen,On-demand Inference,Input tokens,1K tokens,0.00053,USE1-Qwen3-VL-235B-A22B-input-tokens
+Qwen3 32B,Qwen,,Output tokens priority,1K tokens,0.00105,USE1-qwen.qwen3-32b-mantle-output-tokens-priority
+Ministral 3B 3.0,Mistral,,output tokens batch,1K tokens,5e-05,USE1-mistral.ministral-3-3b-instruct-mantle-output-tokens-batch
+Llama 3.2 90B,Meta,On-demand Inference,Output tokens,1K tokens,0.00072,USE1-Llama3-2-90B-output-tokens
+Nova 2.0 Pro,,On-demand Inference,Input Image Token Count Flex,1K tokens,0.0006875,USE1-Nova2.0Pro-input-image-token-count-flex
+Nova Premier,,On-demand Inference,Input tokens flex,1K tokens,0.00125,USE1-NovaPremier-input-tokens-flex
+Nova 2.0 Lite,,,Prompt cache write input tokens priority,1K tokens,0.0,USE1-Nova2.0Lite-cache-write-input-token-count-priority-cross-region-global
+Nemotron Nano 3 30B,Nvidia,On-demand Inference,Output tokens priority,1K tokens,0.00042,USE1-Nemotron-Nano-3-30B-output-tokens-priority
+MiniMax M2.5,Minimax AI,,Input tokens flex,1K tokens,0.00015,USE1-minimax.minimax-m2.5-mantle-input-tokens-flex
+Nova 2.0 Omni,,On-demand Inference,Text Input Tokens Priority,1K tokens,0.0006,USE1-Nova2.0Omni-text-input-tokens-priority
+Mixtral 8x7B,Mistral,On-demand Inference,Output tokens,1K tokens,0.0007,USE1-Mixtral8x7B-output-tokens
+Claude 2.1,Anthropic,On-demand Inference,Input tokens,1K tokens,0.008,USE1-Claude2.1-input-tokens
+Writer Palmyra Vision 7B,Writer,On-demand Inference,Input tokens flex,1K tokens,7.5e-05,USE1-writer.palmyra-vision-7b-input-tokens-flex
+Llama 3.1 8B,Meta,Batch Inference,Output tokens,1K tokens,0.00011,USE1-Llama3-1-8B-output-tokens-batch
+Nova 2.0 Omni,,,Input Image Token Count Flex,1K tokens,0.0002,USE1-Nova2.0Omni-input-image-token-count-flex-cross-region-global
+Nova Micro,,Model Customization,,Model/month,1.95,USE1-NovaMicro-Customization-Storage
+Gemma 3 4B,Google,On-demand Inference,Output tokens,1K tokens,8e-05,USE1-Gemma-3-4B-IT-output-tokens
+Gemma 3 12B,Google,On-demand Inference,Output tokens flex,1K tokens,0.00015,USE1-Gemma-3-12B-IT-output-tokens-flex
+Gemma 3 12B,Google,On-demand Inference,Output tokens,1K tokens,0.00029,USE1-Gemma-3-12B-IT-output-tokens
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,On-demand Inference,Output tokens priority,1K tokens,0.0011375,USE1-nvidia.nemotron-super-3-120b-output-tokens-priority
+GLM 4.7,Z AI,On-demand Inference,Input tokens,1K tokens,0.0006,USE1-zai.glm-4.7-input-tokens
+Nova 2.0 Pro,,,Input Video Token Count Flex,1K tokens,0.000625,USE1-Nova2.0Pro-input-video-token-count-flex-cross-region-global
+Nova Lite,,Provisioned Throughput Inference - 1 month,,hour,55.0,USE1-NovaLite-ProvisionedThroughput-1month-ModelUnits
+GPT OSS Safeguard 20B,OpenAI,,Input tokens flex,1K tokens,3e-05,USE1-openai.gpt-oss-safeguard-20b-mantle-input-tokens-flex
+Voxtral Small 1.0,Mistral,,Output tokens,1K tokens,0.0003,USE1-mistral.voxtral-small-24b-2507-mantle-output-tokens-standard
+Nova Pro,,Provisioned Throughput Inference - 6 months,,hour,30.25,USE1-NovaPro-ProvisionedThroughput-6months-ModelUnits
+Nova 2.0 Lite,,Provisioned Throughput Inference - 1 month,,hour,55.0,USE1-Nova2.0Lite-ProvisionedThroughput-1month-ModelUnits
+Nova 2.0 Lite,,On-demand Inference,Output tokens,1K tokens,0.00275,USE1-Nova2.0Lite-output-tokens
+Nova Lite,,Model Customization,Prompt cache write input tokens,1K tokens,0.0,USE1-NovaLite-cache-write-input-token-count-custom-model
+Voxtral Small 1.0,Mistral,On-demand Inference,Output tokens flex,1K tokens,0.00015,USE1-Voxtral-Mini-24B-2507-output-tokens-flex
+Nova 2.0 Omni,,,Input Audio Token Count,1K tokens,0.001,USE1-Nova2.0Omni-input-audio-token-count-cross-region-global
+Kimi K2 Thinking,Kimi AI,On-demand Inference,Output tokens flex,1K tokens,0.00125,USE1-Kimi-K2-Thinking-output-tokens-flex
+Nova 2.0 Pro,,,Input Audio Token Count Priority,1K tokens,0.0021875,USE1-Nova2.0Pro-input-audio-token-count-priority-cross-region-global
+Nova Pro,,On-demand Inference,Prompt cache read input tokens flex,1K tokens,0.0001,USE1-NovaPro-cache-read-input-token-count-flex
+Nova Canvas,,On-demand Inference,T2I 2048 Premium,image,0.08,USE1-NovaCanvas-T2I-2048-Premium
+GLM 4.7,Z AI,On-demand Inference,Input tokens flex,1K tokens,0.0003,USE1-zai.glm-4.7-input-tokens-flex
+Llama 3.3 70B,Meta,Batch Inference,Input tokens,1K tokens,0.00036,USE1-Llama3-3-70B-input-tokens-batch
+Nova 2.0 Omni,,,Text Output Tokens,1K tokens,0.0013,USE1-Nova2.0Omni-text-output-tokens-cross-region-global-batch
+Magistral Small 1.2,Mistral,On-demand Inference,Input tokens,1K tokens,0.0005,USE1-Magistral-Small-2509-input-tokens
+Voxtral Small 1.0,Mistral,,Input tokens priority,1K tokens,0.00017,USE1-mistral.voxtral-small-24b-2507-mantle-input-tokens-priority
+GLM 4.7,Z AI,On-demand Inference,Output tokens flex,1K tokens,0.0011,USE1-zai.glm-4.7-output-tokens-flex
+Voxtral Mini 1.0,Mistral,Batch Inference,Input tokens,1K tokens,2e-05,USE1-Voxtral-Mini-3B-2507-input-tokens-batch
+Gemma 3 27B,Google,Batch Inference,Output tokens,1K tokens,0.00019,USE1-Gemma-3-27B-IT-output-tokens-batch
+Writer Palmyra Vision 7B,Writer,,output tokens batch,1K tokens,0.0003,USE1-writer.palmyra-vision-7b-mantle-output-tokens-batch
+Qwen3 Coder 480B A35B,Qwen,,Output tokens,1K tokens,0.0018,USE1-qwen.qwen3-coder-480b-a35b-instruct-mantle-output-tokens-standard
+google.gemma-4-e2b,Google,,input tokens batch,1K tokens,2e-05,USE1-google.gemma-4-e2b-mantle-input-tokens-batch
+Qwen3 Next 80B A3B,Qwen,,output tokens batch,1K tokens,0.0006,USE1-qwen.qwen3-next-80b-a3b-instruct-mantle-output-tokens-batch
+Devstral,Mistral AI,On-demand Inference,Output tokens priority,1K tokens,0.0035,USE1-mistral.devstral-2-123b-output-tokens-priority
+Nova 2.0 Lite,,,Input tokens,1K tokens,0.0003,USE1-Nova2.0Lite-input-tokens-cross-region-global
+DeepSeek V3.1,DeepSeek,,input tokens batch,1K tokens,0.00029,USE1-deepseek.v3.1-mantle-input-tokens-batch
+GPT OSS Safeguard 120B,OpenAI,,input tokens batch,1K tokens,7e-05,USE1-openai.gpt-oss-safeguard-120b-mantle-input-tokens-batch
+gpt-oss-20b,OpenAI,,Input tokens,1K tokens,7e-05,USE1-openai.gpt-oss-20b-mantle-input-tokens-standard
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,On-demand Inference,input tokens batch,1K tokens,7.5e-05,USE1-nvidia.nemotron-super-3-120b-input-tokens-batch
+Kimi K2 Thinking,Moonshot AI,,output tokens batch,1K tokens,0.00125,USE1-moonshotai.kimi-k2-thinking-mantle-output-tokens-batch
+Qwen3 Next 80B A3B,Qwen,On-demand Inference,Output tokens flex,1K tokens,0.0006,USE1-Qwen3Next-80B-A3B-output-tokens-flex
+Devstral,Mistral AI,On-demand Inference,Output tokens flex,1K tokens,0.001,USE1-mistral.devstral-2-123b-output-tokens-flex
+Nova 2.0 Pro,,On-demand Inference,Text Input Tokens Priority,1K tokens,0.00240625,USE1-Nova2.0Pro-text-input-tokens-priority
+Nemotron Nano 3 30B,Nvidia,,Input tokens,1K tokens,6e-05,USE1-nvidia.nemotron-nano-3-30b-mantle-input-tokens-standard
+Writer Palmyra Vision 7B,Writer,,Output tokens priority,1K tokens,0.00105,USE1-writer.palmyra-vision-7b-mantle-output-tokens-priority
+Qwen3 32B,Qwen,,Input tokens priority,1K tokens,0.0002625,USE1-qwen.qwen3-32b-mantle-input-tokens-priority
+Nova 2.0 Pro,,,Input Audio Token Count,1K tokens,0.000625,USE1-Nova2.0Pro-input-audio-token-count-cross-region-global-batch
+google.gemma-4-31b,Google,,Output tokens,1K tokens,0.0004,USE1-google.gemma-4-31b-mantle-output-tokens-standard
+GPT OSS Safeguard 20B,OpenAI,,output tokens batch,1K tokens,0.0001,USE1-openai.gpt-oss-safeguard-20b-mantle-output-tokens-batch
+Llama 3.1 70B,Meta,Batch Inference,Output tokens,1K tokens,0.00036,USE1-Llama3-1-70B-output-tokens-batch
+Mistral Large 3,Mistral,On-demand Inference,Input tokens,1K tokens,0.0005,USE1-Mistral-Large-3-675b-Instruct-input-tokens
+GLM 4.7,Z AI,,Output tokens flex,1K tokens,0.0011,USE1-zai.glm-4.7-mantle-output-tokens-flex
+Qwen3 Coder 30B A3B,Qwen,,Output tokens priority,1K tokens,0.00105,USE1-qwen.qwen3-coder-30b-a3b-instruct-mantle-output-tokens-priority
+gpt-oss-20b,OpenAI,On-demand Inference,Output tokens,1K tokens,0.0003,USE1-gpt-oss-20b-output-tokens
+Kimi K2.5,Moonshot AI,,Input tokens flex,1K tokens,0.0003,USE1-moonshotai.kimi-k2.5-mantle-input-tokens-flex
+gpt-oss-120b,OpenAI,,output tokens batch,1K tokens,0.0003,USE1-openai.gpt-oss-120b-mantle-output-tokens-batch
+Minimax M2,Minimax AI,On-demand Inference,Output tokens flex,1K tokens,0.0006,USE1-Minimax-M2-output-tokens-flex
+Nova Pro,,On-demand Inference,Input tokens priority,1K tokens,0.0014,USE1-NovaPro-input-tokens-priority
+Gemma 3 27B,Google,On-demand Inference,Input tokens priority,1K tokens,0.0004,USE1-Gemma-3-27B-IT-input-tokens-priority
+MiniMax M2.5,Minimax AI,On-demand Inference,Input tokens flex,1K tokens,0.00015,USE1-minimax.minimax-m2.5-input-tokens-flex
+Nova Lite,,Batch Inference,Input tokens,1K tokens,3e-05,USE1-NovaLite-input-tokens-batch
+Nova 2.0 Pro,,,Input Video Token Count,1K tokens,0.00125,USE1-Nova2.0Pro-input-video-token-count-cross-region-global
+Qwen3 Coder 480B A35B,Qwen,,input tokens batch,1K tokens,0.000225,USE1-qwen.qwen3-coder-480b-a35b-instruct-mantle-input-tokens-batch
+Qwen3 VL 235B A22B,Qwen,Batch Inference,Input tokens,1K tokens,0.00026,USE1-Qwen3-VL-235B-A22B-input-tokens-batch
+Nova 2.0 Lite,,On-demand Inference,Prompt cache read input tokens priority,1K tokens,0.000144375,USE1-Nova2.0Lite-cache-read-input-token-count-priority
+Llama 3.2 1B,Meta,On-demand Inference,Input tokens,1K tokens,0.0001,USE1-Llama3-2-1B-input-tokens
+Nova 2.0 Omni,,On-demand Inference,Input Audio Token Count,1K tokens,0.0011,USE1-Nova2.0Omni-input-audio-token-count
+Nova 2.0 Lite,,,Prompt cache read input tokens priority,1K tokens,0.00013125,USE1-Nova2.0Lite-cache-read-input-token-count-priority-cross-region-global
+GLM 4.7 Flash,Z AI,On-demand Inference,Input tokens flex,1K tokens,3.5e-05,USE1-zai.glm-4.7-flash-input-tokens-flex
+Qwen3 32B,Qwen,,Input tokens flex,1K tokens,7.5e-05,USE1-qwen.qwen3-32b-mantle-input-tokens-flex
+GPT OSS Safeguard 20B,OpenAI,,Output tokens flex,1K tokens,0.0001,USE1-openai.gpt-oss-safeguard-20b-mantle-output-tokens-flex
+Devstral,Mistral AI,,Output tokens,1K tokens,0.002,USE1-mistral.devstral-2-123b-mantle-output-tokens-standard
+Llama 3.1 70B,Meta,On-demand Inference,Input tokens,1K tokens,0.00072,USE1-Llama3-1-70B-input-tokens
+Nova 2.0 Lite,,On-demand Inference,Input tokens,1K tokens,0.00033,USE1-Nova2.0Lite-input-tokens
+GPT OSS Safeguard 120B,OpenAI,Batch Inference,Input tokens,1K tokens,7e-05,USE1-GPT-OSS-Safeguard-120B-input-tokens-batch
+Nova Lite,,On-demand Inference,Prompt cache read input tokens,1K tokens,1.5e-05,USE1-NovaLite-cache-read-input-token-count
+Nova 2.0 Pro,,,Text Output Tokens Priority,1K tokens,0.0175,USE1-Nova2.0Pro-text-output-tokens-priority-cross-region-global
+xai.grok-4.3,,,,1M tokens,2.5,USE1-xai.grok-4.3-mantle-output-tokens-standard
+GLM 4.7 Flash,Z AI,,Output tokens,1K tokens,0.0004,USE1-zai.glm-4.7-flash-mantle-output-tokens-standard
+Minimax M2,Minimax AI,On-demand Inference,Input tokens priority,1K tokens,0.00052,USE1-Minimax-M2-input-tokens-priority
+Nova 2.0 Omni,,On-demand Inference,Output Image Token Count Priority,1K tokens,0.077,USE1-Nova2.0Omni-output-image-token-count-priority
+Qwen3 32B,Qwen,Batch Inference,Input tokens,1K tokens,7.5e-05,USE1-Qwen3-32B-input-tokens-batch
+Llama 4 Scout 17B,Meta,Batch Inference,Output tokens,1K tokens,0.00033,USE1-Llama4-Scout-17B-output-tokens-batch
+GLM 5,Z AI,On-demand Inference,Input tokens flex,1K tokens,0.0005,USE1-zai.glm5-input-tokens-flex
+NVIDIA Nemotron Nano 2 VL,Nvidia,,input tokens batch,1K tokens,0.0001,USE1-nvidia.nemotron-nano-12b-v2-mantle-input-tokens-batch
+GLM 5,Z AI,,Output tokens flex,1K tokens,0.0016,USE1-zai.glm5-mantle-output-tokens-flex
+Ministral 3B 3.0,Mistral,,Output tokens,1K tokens,0.0001,USE1-mistral.ministral-3-3b-instruct-mantle-output-tokens-standard
+Nova Reel,,On-demand Inference,T2V Medium fps HD Resolution,video,0.08,USE1-NovaReel-T2V-Medfps-HDRes
+Qwen3 Coder 480B A35B,Qwen,,Input tokens priority,1K tokens,0.0007875,USE1-qwen.qwen3-coder-480b-a35b-instruct-mantle-input-tokens-priority
+Mistral Large 3,Mistral,,Output tokens flex,1K tokens,0.00075,USE1-mistral.mistral-large-3-675b-instruct-mantle-output-tokens-flex
+GLM 4.7,Z AI,On-demand Inference,Input tokens priority,1K tokens,0.00105,USE1-zai.glm-4.7-input-tokens-priority
+DeepSeek v3.2,DeepSeek,On-demand Inference,Input tokens,1K tokens,0.00062,USE1-deepseek.v3.2-input-tokens
+Qwen3 32B,Qwen,On-demand Inference,Input tokens flex,1K tokens,7.5e-05,USE1-Qwen3-32B-input-tokens-flex
+Ministral 14B 3.0,Mistral,On-demand Inference,Input tokens priority,1K tokens,0.00035,USE1-Ministral-3-14b-Instruct-input-tokens-priority
+google.gemma-4-e2b,Google,,Input tokens priority,1K tokens,7e-05,USE1-google.gemma-4-e2b-mantle-input-tokens-priority
+Nova 2.0 Omni,,On-demand Inference,Input Audio Token Count Flex,1K tokens,0.0006,USE1-Nova2.0Omni-input-audio-token-count-flex
+Nova Pro,,On-demand Inference,Prompt cache read input tokens priority,1K tokens,0.00035,USE1-NovaPro-cache-read-input-token-count-priority
+Nova 2.0 Omni,,Batch Inference,Output Image Token Count,1K tokens,0.022,USE1-Nova2.0Omni-output-image-token-count-batch
+Nova 2.0 Omni,,Batch Inference,Input Audio Token Count,1K tokens,0.0006,USE1-Nova2.0Omni-input-audio-token-count-batch
+Kimi K2.5,Moonshot AI,,Output tokens,1K tokens,0.003,USE1-moonshotai.kimi-k2.5-mantle-output-tokens-standard
+Nova 2.0 Lite,,,Prompt cache write input tokens flex,1K tokens,0.0,USE1-Nova2.0Lite-cache-write-input-token-count-flex-cross-region-global
+Qwen3 32B,Qwen,,Output tokens flex,1K tokens,0.0003,USE1-qwen.qwen3-32b-mantle-output-tokens-flex
+xai.grok-4.3,,,,1M tokens,1.25,USE1-xai.grok-4.3-mantle-output-tokens-flex
+Nova Premier,,On-demand Inference,Prompt cache read input tokens flex,1K tokens,0.0003125,USE1-NovaPremier-cache-read-input-token-count-flex
+GLM 4.7 Flash,Z AI,,Input tokens priority,1K tokens,0.0001225,USE1-zai.glm-4.7-flash-mantle-input-tokens-priority
+google.gemma-4-26b-a4b,Google,,Output tokens flex,1K tokens,0.0002,USE1-google.gemma-4-26b-a4b-mantle-output-tokens-flex
+Minimax M2.1,Minimax AI,On-demand Inference,input tokens batch,1K tokens,0.00015,USE1-minimax.minimax-m2.1-input-tokens-batch
+Nova 2.0 Omni,,,Input Audio Token Count Flex,1K tokens,0.0005,USE1-Nova2.0Omni-input-audio-token-count-flex-cross-region-global
+DeepSeek v3.2,DeepSeek,On-demand Inference,Input tokens flex,1K tokens,0.00031,USE1-deepseek.v3.2-input-tokens-flex
+Mistral Large 3,Mistral,,Input tokens,1K tokens,0.0005,USE1-mistral.mistral-large-3-675b-instruct-mantle-input-tokens-standard
+Claude Instant,Anthropic,On-demand Inference,Input tokens,1K tokens,0.0008,USE1-ClaudeInstant-input-tokens
+Llama 3.1 70B,Meta,On-demand Inference,Output tokens,1K tokens,0.00072,USE1-Llama3-1-70B-output-tokens
+Magistral Small 1.2,Mistral,On-demand Inference,Output tokens flex,1K tokens,0.00075,USE1-Magistral-Small-2509-output-tokens-flex
+Qwen3 32B,Qwen,On-demand Inference,Input tokens priority,1K tokens,0.0002625,USE1-Qwen3-32B-input-tokens-priority
+Qwen3 VL 235B A22B,Qwen,,Output tokens,1K tokens,0.00266,USE1-qwen.qwen3-vl-235b-a22b-instruct-mantle-output-tokens-standard
+Devstral,Mistral AI,On-demand Inference,Input tokens,1K tokens,0.0004,USE1-mistral.devstral-2-123b-input-tokens
+GLM 4.7 Flash,Z AI,On-demand Inference,output tokens batch,1K tokens,0.0002,USE1-zai.glm-4.7-flash-output-tokens-batch
+Nova 2.0 Pro,,Batch Inference,Text Output Tokens,1K tokens,0.0055,USE1-Nova2.0Pro-text-output-tokens-batch
+Qwen3 Coder 30B A3B,Qwen,Batch Inference,Input tokens,1K tokens,7.5e-05,USE1-Qwen3Coder-30B-A3B-input-tokens-batch
+Llama 3.2 3B,Meta,On-demand Inference,Input tokens,1K tokens,0.00015,USE1-Llama3-2-3B-input-tokens
+NVIDIA Nemotron Nano 2,Nvidia,On-demand Inference,Input tokens priority,1K tokens,0.00011,USE1-Nemotron-Nano-9B-V2-input-tokens-priority
+Nova 2.0 Lite,,On-demand Inference,Prompt cache write input tokens flex,1K tokens,0.0,USE1-Nova2.0Lite-cache-write-input-token-count-flex
+Writer Palmyra Vision 7B,Writer,,Output tokens,1K tokens,0.0006,USE1-writer.palmyra-vision-7b-mantle-output-tokens-standard
+Nemotron Nano 3 30B,Nvidia,On-demand Inference,Output tokens,1K tokens,0.00024,USE1-Nemotron-Nano-3-30B-output-tokens
+DeepSeek v3.2,DeepSeek,,Input tokens priority,1K tokens,0.001085,USE1-deepseek.v3.2-mantle-input-tokens-priority
+Nova Sonic 2.0,,On-demand Inference,Speech Understanding output token,1K tokens,0.012,USE1-NovaSonic2.0-speech-output-tokens
+Ministral 8B 3.0,Mistral,On-demand Inference,Output tokens flex,1K tokens,7e-05,USE1-Ministral-3-8b-Instruct-output-tokens-flex
+Gemma 3 4B,Google,On-demand Inference,Input tokens,1K tokens,4e-05,USE1-Gemma-3-4B-IT-input-tokens
+Gemma 3 12B,Google,,input tokens batch,1K tokens,5e-05,USE1-google.gemma-3-12b-it-mantle-input-tokens-batch
+GLM 5,Z AI,On-demand Inference,Output tokens priority,1K tokens,0.0056,USE1-zai.glm5-output-tokens-priority
+Voxtral Small 1.0,Mistral,,output tokens batch,1K tokens,0.00015,USE1-mistral.voxtral-small-24b-2507-mantle-output-tokens-batch
+Gemma 3 27B,Google,,Output tokens priority,1K tokens,0.00067,USE1-google.gemma-3-27b-it-mantle-output-tokens-priority
+Qwen3 Coder Next,Qwen,On-demand Inference,Input tokens,1K tokens,0.0005,USE1-qwen.qwen3-coder-next-input-tokens
+Writer Palmyra Vision 7B,Writer,On-demand Inference,Output tokens priority,1K tokens,0.00105,USE1-writer.palmyra-vision-7b-output-tokens-priority
+Kimi K2.5,Moonshot AI,On-demand Inference,input tokens batch,1K tokens,0.0003,USE1-moonshotai.kimi-k2.5-input-tokens-batch
+Gemma 3 27B,Google,,output tokens batch,1K tokens,0.00019,USE1-google.gemma-3-27b-it-mantle-output-tokens-batch
+Kimi K2 Thinking,Kimi AI,On-demand Inference,Output tokens priority,1K tokens,0.00438,USE1-Kimi-K2-Thinking-output-tokens-priority
+gpt-oss-120b,OpenAI,On-demand Inference,Output tokens priority,1K tokens,0.00105,USE1-gpt-oss-120b-output-tokens-priority
+Gemma 3 12B,Google,On-demand Inference,Input tokens,1K tokens,9e-05,USE1-Gemma-3-12B-IT-input-tokens
+Kimi K2 Thinking,Kimi AI,On-demand Inference,Output tokens,1K tokens,0.0025,USE1-Kimi-K2-Thinking-output-tokens
+NVIDIA Nemotron Nano 2 VL,Nvidia,On-demand Inference,Output tokens priority,1K tokens,0.00105,USE1-Nemotron-Nano-12B-V2-VL-BF16-output-tokens-priority
+Llama 4 Maverick 17B,Meta,On-demand Inference,Input tokens,1K tokens,0.00024,USE1-Llama4-Maverick-17B-input-tokens
+Qwen3 235B A22B 2507,Qwen,,Output tokens flex,1K tokens,0.00044,USE1-qwen.qwen3-235b-a22b-2507-mantle-output-tokens-flex
+Qwen3 Coder 30B A3B,Qwen,On-demand Inference,Input tokens flex,1K tokens,7.5e-05,USE1-Qwen3Coder-30B-A3B-input-tokens-flex
+Ministral 3B 3.0,Mistral,On-demand Inference,Input tokens flex,1K tokens,5e-05,USE1-Ministral-3-3b-Instruct-input-tokens-flex
+Nova 2.0 Omni,,,,Requests,0.03,USE1-Nova2.0Omni-nova-grounding
+Gemma 3 27B,Google,,Input tokens,1K tokens,0.00023,USE1-google.gemma-3-27b-it-mantle-input-tokens-standard
+Nova 2.0 Omni,,On-demand Inference,Input Video Token Count Priority,1K tokens,0.0006,USE1-Nova2.0Omni-input-video-token-count-priority
+DeepSeek v3.2,DeepSeek,On-demand Inference,Output tokens priority,1K tokens,0.0032375,USE1-deepseek.v3.2-output-tokens-priority
+Gemma 3 4B,Google,,Output tokens priority,1K tokens,0.00014,USE1-google.gemma-3-4b-it-mantle-output-tokens-priority
+GLM 4.7 Flash,Z AI,On-demand Inference,Input tokens priority,1K tokens,0.0001225,USE1-zai.glm-4.7-flash-input-tokens-priority
+Voxtral Small 1.0,Mistral,On-demand Inference,Output tokens,1K tokens,0.0003,USE1-Voxtral-Mini-24B-2507-output-tokens
+gpt-oss-20b,OpenAI,On-demand Inference,Output tokens flex,1K tokens,0.00015,USE1-gpt-oss-20b-output-tokens-flex
+Nova Canvas,,On-demand Inference,T2I 1024 Premium,image,0.06,USE1-NovaCanvas-T2I-1024-Premium
+GPT OSS Safeguard 120B,OpenAI,On-demand Inference,Input tokens,1K tokens,0.00015,USE1-GPT-OSS-Safeguard-120B-input-tokens
+Nova 2.0 Omni,,On-demand Inference,Text output token,1K tokens,0.0028,USE1-Nova2.0Omni-text-output-tokens
+GPT OSS Safeguard 120B,OpenAI,On-demand Inference,Input tokens priority,1K tokens,0.00026,USE1-GPT-OSS-Safeguard-120B-input-tokens-priority
+DeepSeek v3.2,DeepSeek,,Output tokens,1K tokens,0.00185,USE1-deepseek.v3.2-mantle-output-tokens-standard
+Nova 2.0 Lite,,On-demand Inference,Input tokens flex,1K tokens,0.000165,USE1-Nova2.0Lite-input-tokens-flex
+GLM 4.7,Z AI,,Output tokens priority,1K tokens,0.00385,USE1-zai.glm-4.7-mantle-output-tokens-priority
+gpt-oss-120b,OpenAI,,Input tokens,1K tokens,0.00015,USE1-openai.gpt-oss-120b-mantle-input-tokens-standard
+Qwen3 32B,Qwen,,input tokens batch,1K tokens,7.5e-05,USE1-qwen.qwen3-32b-mantle-input-tokens-batch
+Ministral 3B 3.0,Mistral,,Input tokens priority,1K tokens,0.00017,USE1-mistral.ministral-3-3b-instruct-mantle-input-tokens-priority
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,,Output tokens priority,1K tokens,0.0011375,USE1-nvidia.nemotron-super-3-120b-mantle-output-tokens-priority
+GPT OSS Safeguard 20B,OpenAI,,Input tokens priority,1K tokens,0.00012,USE1-openai.gpt-oss-safeguard-20b-mantle-input-tokens-priority
+Qwen3 Coder Next,Qwen,,output tokens batch,1K tokens,0.0006,USE1-qwen.qwen3-coder-next-mantle-output-tokens-batch
+Qwen3 Coder 30B A3B,Qwen,,Input tokens,1K tokens,0.00015,USE1-qwen.qwen3-coder-30b-a3b-instruct-mantle-input-tokens-standard
+Gemma 3 4B,Google,,Input tokens flex,1K tokens,2e-05,USE1-google.gemma-3-4b-it-mantle-input-tokens-flex
+Nova 2.0 Omni,,,Output Image Token Count Flex,1K tokens,0.02,USE1-Nova2.0Omni-output-image-token-count-flex-cross-region-global
+gpt-oss-120b,OpenAI,On-demand Inference,Output tokens,1K tokens,0.0006,USE1-gpt-oss-120b-output-tokens
+Qwen3 VL 235B A22B,Qwen,,input tokens batch,1K tokens,0.00026,USE1-qwen.qwen3-vl-235b-a22b-instruct-mantle-input-tokens-batch
+Kimi K2 Thinking,Moonshot AI,,Input tokens priority,1K tokens,0.00105,USE1-moonshotai.kimi-k2-thinking-mantle-input-tokens-priority
+Claude 3 Haiku,Anthropic,On-demand Inference,Input tokens,1K tokens,0.00025,USE1-Claude3Haiku-input-tokens
+GPT OSS Safeguard 120B,OpenAI,,Input tokens,1K tokens,0.00015,USE1-openai.gpt-oss-safeguard-120b-mantle-input-tokens-standard
+Nova 2.0 Pro,,,Text Output Tokens,1K tokens,0.01,USE1-Nova2.0Pro-text-output-tokens-cross-region-global
+GPT OSS Safeguard 20B,OpenAI,,input tokens batch,1K tokens,3e-05,USE1-openai.gpt-oss-safeguard-20b-mantle-input-tokens-batch
+google.gemma-4-31b,Google,,Input tokens flex,1K tokens,7e-05,USE1-google.gemma-4-31b-mantle-input-tokens-flex
+Nova 2.0 Pro,,On-demand Inference,Text Output Tokens Priority,1K tokens,0.01925,USE1-Nova2.0Pro-text-output-tokens-priority
+Ministral 8B 3.0,Mistral,On-demand Inference,Output tokens priority,1K tokens,0.00026,USE1-Ministral-3-8b-Instruct-output-tokens-priority
+Nova 2.0 Lite,,On-demand Inference,Output tokens flex,1K tokens,0.001375,USE1-Nova2.0Lite-output-tokens-flex
+DeepSeek v3.2,DeepSeek,On-demand Inference,Output tokens,1K tokens,0.00185,USE1-deepseek.v3.2-output-tokens
+Minimax M2.1,Minimax AI,,Input tokens priority,1K tokens,0.000525,USE1-minimax.minimax-m2.1-mantle-input-tokens-priority
+Magistral Small 1.2,Mistral,Batch Inference,Input tokens,1K tokens,0.00025,USE1-Magistral-Small-2509-input-tokens-batch
+Mistral Large 3,Mistral,,Output tokens,1K tokens,0.0015,USE1-mistral.mistral-large-3-675b-instruct-mantle-output-tokens-standard
+Nova 2.0 Pro,,On-demand Inference,Input Audio Token Count,1K tokens,0.001375,USE1-Nova2.0Pro-input-audio-token-count
+gpt-oss-20b,OpenAI,,Output tokens priority,1K tokens,0.000525,USE1-openai.gpt-oss-20b-mantle-output-tokens-priority
+Minimax M2.1,Minimax AI,On-demand Inference,output tokens batch,1K tokens,0.0006,USE1-minimax.minimax-m2.1-output-tokens-batch
+Qwen3 Coder 30B A3B,Qwen,,output tokens batch,1K tokens,0.0003,USE1-qwen.qwen3-coder-30b-a3b-instruct-mantle-output-tokens-batch
+Gemma 3 27B,Google,On-demand Inference,Input tokens flex,1K tokens,0.00012,USE1-Gemma-3-27B-IT-input-tokens-flex
+Qwen3 Coder Next,Qwen,On-demand Inference,Input tokens flex,1K tokens,0.00025,USE1-qwen.qwen3-coder-next-input-tokens-flex
+Writer Palmyra Vision 7B,Writer,,Output tokens flex,1K tokens,0.0003,USE1-writer.palmyra-vision-7b-mantle-output-tokens-flex
+Nova 2.0 Lite,,,,1K tokens,7.5e-05,USE1-Nova2.0Lite-cache-read-input-token-count-cross-region-global
+Nova Micro,,Batch Inference,Output tokens,1K tokens,7e-05,USE1-NovaMicro-output-tokens-batch
+Nova 2.0 Omni,,On-demand Inference,Text Output Tokens Priority,1K tokens,0.0048,USE1-Nova2.0Omni-text-output-tokens-priority
+Qwen3 VL 235B A22B,Qwen,On-demand Inference,Output tokens priority,1K tokens,0.00466,USE1-Qwen3-VL-235B-A22B-output-tokens-priority
+GPT OSS Safeguard 120B,OpenAI,On-demand Inference,Input tokens flex,1K tokens,7e-05,USE1-GPT-OSS-Safeguard-120B-input-tokens-flex
+Ministral 8B 3.0,Mistral,On-demand Inference,Input tokens priority,1K tokens,0.00026,USE1-Ministral-3-8b-Instruct-input-tokens-priority
+Voxtral Mini 1.0,Mistral,,output tokens batch,1K tokens,2e-05,USE1-mistral.voxtral-mini-3b-2507-mantle-output-tokens-batch
+Writer Palmyra Vision 7B,Writer,,input tokens batch,1K tokens,7.5e-05,USE1-writer.palmyra-vision-7b-mantle-input-tokens-batch
+Devstral,Mistral AI,On-demand Inference,Output tokens,1K tokens,0.002,USE1-mistral.devstral-2-123b-output-tokens
+Nova Pro,,Provisioned Throughput Inference - no commit,,hour,60.5,USE1-NovaPro-ProvisionedThroughput-NoCommit-ModelUnits
+Qwen3 VL 235B A22B,Qwen,,Output tokens flex,1K tokens,0.00133,USE1-qwen.qwen3-vl-235b-a22b-instruct-mantle-output-tokens-flex
+Minimax M2.1,Minimax AI,On-demand Inference,Input tokens flex,1K tokens,0.00015,USE1-minimax.minimax-m2.1-input-tokens-flex
+Qwen3 32B,Qwen,On-demand Inference,Output tokens flex,1K tokens,0.0003,USE1-Qwen3-32B-output-tokens-flex
+Nova 2.0 Lite,,Model Customization,Output tokens,1K tokens,0.0025,USE1-Nova2.0Lite-output-tokens-custom-model
+DeepSeek V3.1,DeepSeek,,Input tokens,1K tokens,0.00058,USE1-deepseek.v3.1-mantle-input-tokens-standard
+NVIDIA Nemotron Nano 2,Nvidia,,Output tokens priority,1K tokens,0.0004,USE1-nvidia.nemotron-nano-9b-v2-mantle-output-tokens-priority
+Nova Lite,,Model Customization,,Model/month,1.95,USE1-NovaLite-Customization-Storage
+Nova Canvas,,Provisioned Throughput Inference - no commit,,hour,60.5,USE1-NovaCanvas-ProvisionedThroughput-NoCommit-ModelUnits
+Nova 2.0 Omni,,,Text Output Tokens Priority,1K tokens,0.0044,USE1-Nova2.0Omni-text-output-tokens-priority-cross-region-global
+Ministral 14B 3.0,Mistral,,Input tokens priority,1K tokens,0.00035,USE1-mistral.ministral-3-14b-instruct-mantle-input-tokens-priority
+Nova Reel,,On-demand Inference,I2V Medium fps HD Resolution,video,0.08,USE1-NovaReel-I2V-Medfps-HDRes
+Voxtral Small 1.0,Mistral,Batch Inference,Output tokens,1K tokens,0.00015,USE1-Voxtral-Mini-24B-2507-output-tokens-batch
+Ministral 8B 3.0,Mistral,,Input tokens flex,1K tokens,7e-05,USE1-mistral.ministral-3-8b-instruct-mantle-input-tokens-flex
+Qwen3 VL 235B A22B,Qwen,,output tokens batch,1K tokens,0.00133,USE1-qwen.qwen3-vl-235b-a22b-instruct-mantle-output-tokens-batch
+Nova Lite,,Model Customization,Prompt cache read input tokens,1K tokens,1.5e-05,USE1-NovaLite-cache-read-input-token-count-custom-model
+Nova 2.0 Omni,,On-demand Inference,Input Video Token Count Flex,1K tokens,0.0002,USE1-Nova2.0Omni-input-video-token-count-flex
+gpt-oss-20b,OpenAI,On-demand Inference,Input tokens flex,1K tokens,3.5e-05,USE1-gpt-oss-20b-input-tokens-flex
+Ministral 8B 3.0,Mistral,Batch Inference,Input tokens,1K tokens,7e-05,USE1-Ministral-3-8b-Instruct-input-tokens-batch
+GLM 5,Z AI,,Input tokens,1K tokens,0.001,USE1-zai.glm5-mantle-input-tokens-standard
+Nova Micro,,Model Customization,,1K tokens,0.001,USE1-NovaMicro-Customization-Training
+Ministral 3B 3.0,Mistral,Batch Inference,Output tokens,1K tokens,5e-05,USE1-Ministral-3-3b-Instruct-output-tokens-batch
+NVIDIA Nemotron Nano 2,Nvidia,,input tokens batch,1K tokens,3e-05,USE1-nvidia.nemotron-nano-9b-v2-mantle-input-tokens-batch
+Writer Palmyra Vision 7B,Writer,On-demand Inference,Input tokens,1K tokens,0.00015,USE1-writer.palmyra-vision-7b-input-tokens
+Qwen3 Coder Next,Qwen,On-demand Inference,Output tokens priority,1K tokens,0.0021,USE1-qwen.qwen3-coder-next-output-tokens-priority
+Llama 3.1 70B Latency Optimized,Meta,On-demand Inference,Input tokens,1K tokens,0.0009,USE1-Llama3-1-70B-input-tokens-latency-optimized
+gpt-oss-20b,OpenAI,Batch Inference,Input tokens,1K tokens,3.5e-05,USE1-gpt-oss-20b-input-tokens-batch
+Nova Lite,,On-demand Inference,Prompt cache write input tokens,1K tokens,0.0,USE1-NovaLite-cache-write-input-token-count
+Llama 3.3 70B,Meta,On-demand Inference,Output tokens,1K tokens,0.00072,USE1-Llama3-3-70B-output-tokens
+Qwen3 Coder 30B A3B,Qwen,,input tokens batch,1K tokens,7.5e-05,USE1-qwen.qwen3-coder-30b-a3b-instruct-mantle-input-tokens-batch
+Qwen3 Coder Next,Qwen,,input tokens batch,1K tokens,0.00025,USE1-qwen.qwen3-coder-next-mantle-input-tokens-batch
+Nova 2.0 Pro,,Batch Inference,Input Video Token Count,1K tokens,0.0006875,USE1-Nova2.0Pro-input-video-token-count-batch
+Devstral,Mistral AI,,output tokens batch,1K tokens,0.001,USE1-mistral.devstral-2-123b-mantle-output-tokens-batch
+Kimi K2 Thinking,Moonshot AI,,Input tokens,1K tokens,0.0006,USE1-moonshotai.kimi-k2-thinking-mantle-input-tokens-standard
+Nova 2.0 Lite,,Provisioned Throughput Inference - 6 months,,hour,30.25,USE1-Nova2.0Lite-ProvisionedThroughput-6months-ModelUnits
+NVIDIA Nemotron Nano 2 VL,Nvidia,,Input tokens priority,1K tokens,0.00035,USE1-nvidia.nemotron-nano-12b-v2-mantle-input-tokens-priority
+Devstral,Mistral AI,On-demand Inference,Input tokens flex,1K tokens,0.0002,USE1-mistral.devstral-2-123b-input-tokens-flex
+Nova 2.0 Omni,,,Text Input Tokens Priority,1K tokens,0.0005,USE1-Nova2.0Omni-text-input-tokens-priority-cross-region-global
+Gemma 3 12B,Google,,Output tokens,1K tokens,0.00029,USE1-google.gemma-3-12b-it-mantle-output-tokens-standard
+Qwen3 VL 235B A22B,Qwen,On-demand Inference,Output tokens,1K tokens,0.00266,USE1-Qwen3-VL-235B-A22B-output-tokens
+Qwen3 VL 235B A22B,Qwen,On-demand Inference,Input tokens flex,1K tokens,0.00026,USE1-Qwen3-VL-235B-A22B-input-tokens-flex
+Llama 3 70B,Meta,On-demand Inference,Input tokens,1K tokens,0.00265,USE1-Llama3-70B-input-tokens
+Qwen3 VL 235B A22B,Qwen,,Output tokens priority,1K tokens,0.00466,USE1-qwen.qwen3-vl-235b-a22b-instruct-mantle-output-tokens-priority
+Nova 2.0 Lite,,On-demand Inference,Prompt cache read input tokens,1K tokens,8.25e-05,USE1-Nova2.0Lite-cache-read-input-token-count
+Nemotron Nano 3 30B,Nvidia,On-demand Inference,Input tokens flex,1K tokens,3e-05,USE1-Nemotron-Nano-3-30B-input-tokens-flex
+Ministral 8B 3.0,Mistral,On-demand Inference,Input tokens flex,1K tokens,7e-05,USE1-Ministral-3-8b-Instruct-input-tokens-flex
+Magistral Small 1.2,Mistral,Batch Inference,Output tokens,1K tokens,0.00075,USE1-Magistral-Small-2509-output-tokens-batch
+gpt-oss-20b,OpenAI,,Input tokens priority,1K tokens,0.0001225,USE1-openai.gpt-oss-20b-mantle-input-tokens-priority
+Magistral Small 1.2,Mistral,,Input tokens priority,1K tokens,0.00088,USE1-mistral.magistral-small-2509-mantle-input-tokens-priority
+Nova Canvas,,Provisioned Throughput Inference - 6 months,,hour,30.25,USE1-NovaCanvas-ProvisionedThroughput-6months-ModelUnits
+gpt-oss-120b,OpenAI,Batch Inference,Input tokens,1K tokens,7.5e-05,USE1-gpt-oss-120b-input-tokens-batch
+gpt-oss-20b,OpenAI,,Input tokens flex,1K tokens,3.5e-05,USE1-openai.gpt-oss-20b-mantle-input-tokens-flex
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,,input tokens batch,1K tokens,7.5e-05,USE1-nvidia.nemotron-super-3-120b-mantle-input-tokens-batch
+GLM 4.7,Z AI,,Input tokens flex,1K tokens,0.0003,USE1-zai.glm-4.7-mantle-input-tokens-flex
+Ministral 14B 3.0,Mistral,On-demand Inference,Input tokens,1K tokens,0.0002,USE1-Ministral-3-14b-Instruct-input-tokens
+GPT OSS Safeguard 20B,OpenAI,On-demand Inference,Output tokens,1K tokens,0.0002,USE1-GPT-OSS-Safeguard-20B-output-tokens
+Nova Lite,,Model Customization,Output tokens,1K tokens,0.00024,USE1-NovaLite-output-tokens-custom-model
+Nova 2.0 Omni,,On-demand Inference,Input Audio Token Count Priority,1K tokens,0.0019,USE1-Nova2.0Omni-input-audio-token-count-priority
+Gemma 3 4B,Google,,output tokens batch,1K tokens,4e-05,USE1-google.gemma-3-4b-it-mantle-output-tokens-batch
+NVIDIA Nemotron Nano 2 VL,Nvidia,On-demand Inference,Input tokens,1K tokens,0.0002,USE1-Nemotron-Nano-12B-V2-VL-BF16-input-tokens
+Mistral Large 3,Mistral,,input tokens batch,1K tokens,0.00025,USE1-mistral.mistral-large-3-675b-instruct-mantle-input-tokens-batch
+Kimi K2 Thinking,Kimi AI,On-demand Inference,Input tokens,1K tokens,0.0006,USE1-Kimi-K2-Thinking-input-tokens
+Gemma 3 4B,Google,,Output tokens flex,1K tokens,4e-05,USE1-google.gemma-3-4b-it-mantle-output-tokens-flex
+Pixtral Large 25.02,Mistral,On-demand Inference,Output tokens,1K tokens,0.006,USE1-PixtralLarge2502-output-tokens
+Qwen3 235B A22B 2507,Qwen,,Output tokens priority,1K tokens,0.00154,USE1-qwen.qwen3-235b-a22b-2507-mantle-output-tokens-priority
+Mistral Large 3,Mistral,On-demand Inference,Output tokens priority,1K tokens,0.00263,USE1-Mistral-Large-3-675b-Instruct-output-tokens-priority
+DeepSeek V3.1,DeepSeek,,Input tokens priority,1K tokens,0.001015,USE1-deepseek.v3.1-mantle-input-tokens-priority
+MiniMax M2.5,Minimax AI,,Output tokens priority,1K tokens,0.0021,USE1-minimax.minimax-m2.5-mantle-output-tokens-priority
+Nova 2.0 Lite,,,Output tokens,1K tokens,0.0025,USE1-Nova2.0Lite-output-tokens-cross-region-global
+Nemotron Nano 3 30B,Nvidia,,Output tokens flex,1K tokens,0.00012,USE1-nvidia.nemotron-nano-3-30b-mantle-output-tokens-flex
+Nova Pro,,On-demand Inference,Input tokens flex,1K tokens,0.0004,USE1-NovaPro-input-tokens-flex
+GLM 4.7,Z AI,,input tokens batch,1K tokens,0.0003,USE1-zai.glm-4.7-mantle-input-tokens-batch
+Magistral Small 1.2,Mistral,,output tokens batch,1K tokens,0.00075,USE1-mistral.magistral-small-2509-mantle-output-tokens-batch
+xai.grok-4.3,,,,1M tokens,0.1,USE1-xai.grok-4.3-mantle-cache-read-tokens-batch
+gpt-oss-120b,OpenAI,On-demand Inference,Input tokens,1K tokens,0.00015,USE1-gpt-oss-120b-input-tokens
+Nemotron Nano 3 30B,Nvidia,,Output tokens,1K tokens,0.00024,USE1-nvidia.nemotron-nano-3-30b-mantle-output-tokens-standard
+Nova 2.0 Omni,,,Input Video Token Count Flex,1K tokens,0.0002,USE1-Nova2.0Omni-input-video-token-count-flex-cross-region-global
+Ministral 3B 3.0,Mistral,,input tokens batch,1K tokens,5e-05,USE1-mistral.ministral-3-3b-instruct-mantle-input-tokens-batch
+Writer Palmyra Vision 7B,Writer,,Input tokens priority,1K tokens,0.0002625,USE1-writer.palmyra-vision-7b-mantle-input-tokens-priority
+NVIDIA Nemotron Nano 2 VL,Nvidia,Batch Inference,Input tokens,1K tokens,0.0001,USE1-Nemotron-Nano-12B-V2-VL-BF16-input-tokens-batch
+Kimi K2 Thinking,Kimi AI,Batch Inference,Output tokens,1K tokens,0.00125,USE1-Kimi-K2-Thinking-output-tokens-batch
+GLM 5,Z AI,,Input tokens flex,1K tokens,0.0005,USE1-zai.glm5-mantle-input-tokens-flex
+GLM 5,Z AI,On-demand Inference,Input tokens priority,1K tokens,0.00175,USE1-zai.glm5-input-tokens-priority
+Nova Pro,,Model Customization,Input tokens,1K tokens,0.0008,USE1-NovaPro-input-tokens-custom-model
+GLM 4.7 Flash,Z AI,On-demand Inference,Output tokens priority,1K tokens,0.0007,USE1-zai.glm-4.7-flash-output-tokens-priority
+Qwen3 Next 80B A3B,Qwen,,Output tokens,1K tokens,0.0012,USE1-qwen.qwen3-next-80b-a3b-instruct-mantle-output-tokens-standard
+GLM 5,Z AI,,Output tokens,1K tokens,0.0032,USE1-zai.glm5-mantle-output-tokens-standard
+Kimi K2 Thinking,Moonshot AI,,input tokens batch,1K tokens,0.0003,USE1-moonshotai.kimi-k2-thinking-mantle-input-tokens-batch
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,,Input tokens flex,1K tokens,7.5e-05,USE1-nvidia.nemotron-super-3-120b-mantle-input-tokens-flex
+xai.grok-4.3,,,,1M tokens,1.25,USE1-xai.grok-4.3-mantle-input-tokens-standard
+Nemotron Nano 3 30B,Nvidia,Batch Inference,Input tokens,1K tokens,3e-05,USE1-Nemotron-Nano-3-30B-input-tokens-batch
+Nova Canvas,,Model Customization,,Images processed,0.005,USE1-NovaCanvas-Customization-Training
+Nova Lite,,On-demand Inference,Input tokens,1K tokens,6e-05,USE1-NovaLite-input-tokens
+Nova 2.0 Pro,,,Text Input Tokens Flex,1K tokens,0.000625,USE1-Nova2.0Pro-text-input-tokens-flex-cross-region-global
+Llama 3.2 90B,Meta,On-demand Inference,Input tokens,1K tokens,0.00072,USE1-Llama3-2-90B-input-tokens
+Qwen3 Coder 480B A35B,Qwen,,Input tokens,1K tokens,0.00045,USE1-qwen.qwen3-coder-480b-a35b-instruct-mantle-input-tokens-standard
+Kimi K2 Thinking,Moonshot AI,,Output tokens,1K tokens,0.0025,USE1-moonshotai.kimi-k2-thinking-mantle-output-tokens-standard
+NVIDIA Nemotron Nano 2 VL,Nvidia,On-demand Inference,Input tokens flex,1K tokens,0.0001,USE1-Nemotron-Nano-12B-V2-VL-BF16-input-tokens-flex
+Nova Premier,,,,Requests,0.03,USE1-NovaPremier-nova-grounding
+GLM 5,Z AI,,input tokens batch,1K tokens,0.0005,USE1-zai.glm5-mantle-input-tokens-batch
+Devstral,Mistral AI,,Input tokens priority,1K tokens,0.0007,USE1-mistral.devstral-2-123b-mantle-input-tokens-priority
+NVIDIA Nemotron Nano 2,Nvidia,,Input tokens flex,1K tokens,3e-05,USE1-nvidia.nemotron-nano-9b-v2-mantle-input-tokens-flex
+Kimi K2 Thinking,Moonshot AI,,Input tokens flex,1K tokens,0.0003,USE1-moonshotai.kimi-k2-thinking-mantle-input-tokens-flex
+Nova 2.0 Pro,,On-demand Inference,Text Input Tokens Flex,1K tokens,0.0006875,USE1-Nova2.0Pro-text-input-tokens-flex
+Ministral 14B 3.0,Mistral,Batch Inference,Input tokens,1K tokens,0.0001,USE1-Ministral-3-14b-Instruct-input-tokens-batch
+GLM 5,Z AI,On-demand Inference,input tokens batch,1K tokens,0.0005,USE1-zai.glm5-input-tokens-batch
+Voxtral Mini 1.0,Mistral,,Output tokens flex,1K tokens,2e-05,USE1-mistral.voxtral-mini-3b-2507-mantle-output-tokens-flex
+Ministral 8B 3.0,Mistral,On-demand Inference,Input tokens,1K tokens,0.00015,USE1-Ministral-3-8b-Instruct-input-tokens
+Nova 2.0 Lite,,On-demand Inference,Output tokens priority,1K tokens,0.0048125,USE1-Nova2.0Lite-output-tokens-priority
+GLM 4.7 Flash,Z AI,On-demand Inference,Input tokens,1K tokens,7e-05,USE1-zai.glm-4.7-flash-input-tokens
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,On-demand Inference,Output tokens,1K tokens,0.00065,USE1-nvidia.nemotron-super-3-120b-output-tokens
+Ministral 14B 3.0,Mistral,,Input tokens,1K tokens,0.0002,USE1-mistral.ministral-3-14b-instruct-mantle-input-tokens-standard
+Qwen3 32B,Qwen,On-demand Inference,Output tokens,1K tokens,0.0006,USE1-Qwen3-32B-output-tokens
+GPT OSS Safeguard 120B,OpenAI,,Input tokens flex,1K tokens,7e-05,USE1-openai.gpt-oss-safeguard-120b-mantle-input-tokens-flex
+Nova 2.0 Lite,,Provisioned Throughput Inference - no commit,,hour,60.5,USE1-Nova2.0Lite-ProvisionedThroughput-NoCommit-ModelUnits
+NVIDIA Nemotron Nano 2,Nvidia,,Input tokens,1K tokens,6e-05,USE1-nvidia.nemotron-nano-9b-v2-mantle-input-tokens-standard
+Ministral 14B 3.0,Mistral,,input tokens batch,1K tokens,0.0001,USE1-mistral.ministral-3-14b-instruct-mantle-input-tokens-batch
+google.gemma-4-e2b,Google,,output tokens batch,1K tokens,4e-05,USE1-google.gemma-4-e2b-mantle-output-tokens-batch
+GLM 5,Z AI,,Output tokens priority,1K tokens,0.0056,USE1-zai.glm5-mantle-output-tokens-priority
+Nova 2.0 Omni,,On-demand Inference,Input Video Token Count,1K tokens,0.0003,USE1-Nova2.0Omni-input-video-token-count
+Nova 2.0 Lite,,Model Customization,Prompt cache write input tokens,1K tokens,0.0,USE1-Nova2.0Lite-cache-write-input-token-count-custom-model
+gpt-oss-20b,OpenAI,,output tokens batch,1K tokens,0.00015,USE1-openai.gpt-oss-20b-mantle-output-tokens-batch
+DeepSeek v3.2,DeepSeek,On-demand Inference,Output tokens flex,1K tokens,0.000925,USE1-deepseek.v3.2-output-tokens-flex
+Gemma 3 27B,Google,,Output tokens,1K tokens,0.00038,USE1-google.gemma-3-27b-it-mantle-output-tokens-standard
+Nova 2.0 Lite,,,Input tokens priority,1K tokens,0.000525,USE1-Nova2.0Lite-input-tokens-priority-cross-region-global
+DeepSeek V3.1,DeepSeek,,Output tokens,1K tokens,0.00168,USE1-deepseek.v3.1-mantle-output-tokens-standard
+Writer Palmyra Vision 7B,Writer,On-demand Inference,output tokens batch,1K tokens,0.0003,USE1-writer.palmyra-vision-7b-output-tokens-batch
+gpt-oss-120b,OpenAI,On-demand Inference,Input tokens priority,1K tokens,0.0002625,USE1-gpt-oss-120b-input-tokens-priority
+NVIDIA Nemotron Nano 2,Nvidia,,Input tokens priority,1K tokens,0.00011,USE1-nvidia.nemotron-nano-9b-v2-mantle-input-tokens-priority
+Nova Premier,,On-demand Inference,Prompt cache read input tokens priority,1K tokens,0.00109375,USE1-NovaPremier-cache-read-input-token-count-priority
+DeepSeek v3.2,DeepSeek,,Output tokens flex,1K tokens,0.000925,USE1-deepseek.v3.2-mantle-output-tokens-flex
+Nova 2.0 Lite,,On-demand Inference,Prompt cache write input tokens,1K tokens,0.0,USE1-Nova2.0Lite-cache-write-input-token-count
+gpt-oss-20b,OpenAI,Batch Inference,Output tokens,1K tokens,0.00015,USE1-gpt-oss-20b-output-tokens-batch
+Nova 2.0 Omni,,,Input Video Token Count,1K tokens,0.0002,USE1-Nova2.0Omni-input-video-token-count-cross-region-global-batch
+Voxtral Mini 1.0,Mistral,On-demand Inference,Output tokens flex,1K tokens,2e-05,USE1-Voxtral-Mini-3B-2507-output-tokens-flex
+Nova Micro,,Provisioned Throughput Inference - no commit,,hour,60.5,USE1-NovaMicro-ProvisionedThroughput-NoCommit-ModelUnits
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,On-demand Inference,output tokens batch,1K tokens,0.000325,USE1-nvidia.nemotron-super-3-120b-output-tokens-batch
+NVIDIA Nemotron Nano 2,Nvidia,Batch Inference,Input tokens,1K tokens,3e-05,USE1-Nemotron-Nano-9B-V2-input-tokens-batch
+Nova 2.0 Pro,,,Text Output Tokens,1K tokens,0.005,USE1-Nova2.0Pro-text-output-tokens-cross-region-global-batch
+xai.grok-4.3,,,,1M tokens,4.375,USE1-xai.grok-4.3-mantle-output-tokens-priority
+Mistral Large 3,Mistral,Batch Inference,Input tokens,1K tokens,0.00025,USE1-Mistral-Large-3-675b-Instruct-input-tokens-batch
+GLM 4.7 Flash,Z AI,On-demand Inference,input tokens batch,1K tokens,3.5e-05,USE1-zai.glm-4.7-flash-input-tokens-batch
+Nova 2.0 Omni,,,Text Input Tokens,1K tokens,0.0002,USE1-Nova2.0Omni-text-input-tokens-cross-region-global-batch
+Qwen3 Coder 30B A3B,Qwen,,Output tokens,1K tokens,0.0006,USE1-qwen.qwen3-coder-30b-a3b-instruct-mantle-output-tokens-standard
+Nova 2.0 Lite,,On-demand Inference,Prompt cache write input tokens priority,1K tokens,0.0,USE1-Nova2.0Lite-cache-write-input-token-count-priority
+NVIDIA Nemotron Nano 2,Nvidia,On-demand Inference,Input tokens flex,1K tokens,3e-05,USE1-Nemotron-Nano-9B-V2-input-tokens-flex
+Voxtral Mini 1.0,Mistral,On-demand Inference,Output tokens priority,1K tokens,7e-05,USE1-Voxtral-Mini-3B-2507-output-tokens-priority
+Nova 2.0 Pro,,On-demand Inference,Input Audio Token Count Flex,1K tokens,0.0006875,USE1-Nova2.0Pro-input-audio-token-count-flex
+GPT OSS Safeguard 120B,OpenAI,,output tokens batch,1K tokens,0.0003,USE1-openai.gpt-oss-safeguard-120b-mantle-output-tokens-batch
+Nova Pro Latency Optimized,,On-demand Inference,Input tokens,1K tokens,0.001,USE1-NovaPro-input-tokens-latency-optimized
+DeepSeek V3.1,DeepSeek,,output tokens batch,1K tokens,0.00084,USE1-deepseek.v3.1-mantle-output-tokens-batch
+Qwen3 Coder Next,Qwen,,Input tokens priority,1K tokens,0.000875,USE1-qwen.qwen3-coder-next-mantle-input-tokens-priority
+Llama 3.1 405B,Meta,Batch Inference,Output tokens,1K tokens,0.0012,USE1-Llama3-1-405B-output-tokens-batch
+Nova 2.0 Pro,,,Input Video Token Count,1K tokens,0.000625,USE1-Nova2.0Pro-input-video-token-count-cross-region-global-batch
+MiniMax M2.5,Minimax AI,On-demand Inference,Output tokens flex,1K tokens,0.0006,USE1-minimax.minimax-m2.5-output-tokens-flex
+Gemma 3 27B,Google,,Input tokens priority,1K tokens,0.0004,USE1-google.gemma-3-27b-it-mantle-input-tokens-priority
+Nemotron Nano 3 30B,Nvidia,,Output tokens priority,1K tokens,0.00042,USE1-nvidia.nemotron-nano-3-30b-mantle-output-tokens-priority
+Qwen3 Coder 30B A3B,Qwen,Batch Inference,Output tokens,1K tokens,0.0003,USE1-Qwen3Coder-30B-A3B-output-tokens-batch
+Qwen3 Coder 480B A35B,Qwen,,output tokens batch,1K tokens,0.0009,USE1-qwen.qwen3-coder-480b-a35b-instruct-mantle-output-tokens-batch
+Minimax M2,Minimax AI,,Output tokens priority,1K tokens,0.0021,USE1-minimax.minimax-m2-mantle-output-tokens-priority
+Nova 2.0 Pro,,On-demand Inference,Text Output Tokens Flex,1K tokens,0.0055,USE1-Nova2.0Pro-text-output-tokens-flex
+Nova Sonic,,On-demand Inference,Text Input Token,1K tokens,6e-05,USE1-NovaSonic-text-input-tokens
+Llama 3.1 8B,Meta,On-demand Inference,Output tokens,1K tokens,0.00022,USE1-Llama3-1-8B-output-tokens
+Nova Lite,,Batch Inference,Output tokens,1K tokens,0.00012,USE1-NovaLite-output-tokens-batch
+Nova Micro,,Provisioned Throughput Inference - 1 month,,hour,55.0,USE1-NovaMicro-ProvisionedThroughput-1month-ModelUnits
+GPT OSS Safeguard 20B,OpenAI,Batch Inference,Output tokens,1K tokens,0.0001,USE1-GPT-OSS-Safeguard-20B-output-tokens-batch
+Gemma 3 4B,Google,On-demand Inference,Output tokens priority,1K tokens,0.00014,USE1-Gemma-3-4B-IT-output-tokens-priority
+Gemma 3 27B,Google,,Output tokens flex,1K tokens,0.00019,USE1-google.gemma-3-27b-it-mantle-output-tokens-flex
+Qwen3 VL 235B A22B,Qwen,On-demand Inference,Output tokens flex,1K tokens,0.00133,USE1-Qwen3-VL-235B-A22B-output-tokens-flex
+Nova 2.0 Omni,,,Input Audio Token Count Priority,1K tokens,0.0018,USE1-Nova2.0Omni-input-audio-token-count-priority-cross-region-global
+Nova 2.0 Omni,,,Input Image Token Count,1K tokens,0.0003,USE1-Nova2.0Omni-input-image-token-count-cross-region-global
+Nova 2.0 Omni,,,Output Image Token Count,1K tokens,0.04,USE1-Nova2.0Omni-output-image-token-count-cross-region-global
+Nova Micro,,Model Customization,Input tokens,1K tokens,3.5e-05,USE1-NovaMicro-input-tokens-custom-model
+MiniMax M2.5,Minimax AI,,input tokens batch,1K tokens,0.00015,USE1-minimax.minimax-m2.5-mantle-input-tokens-batch
+R1,DeepSeek,On-demand Inference,Output tokens,1K tokens,0.0054,USE1-DeepSeek-R1-output-tokens
+GPT OSS Safeguard 120B,OpenAI,On-demand Inference,Output tokens,1K tokens,0.0006,USE1-GPT-OSS-Safeguard-120B-output-tokens
+Devstral,Mistral AI,,Input tokens,1K tokens,0.0004,USE1-mistral.devstral-2-123b-mantle-input-tokens-standard
+Llama 3.2 11B,Meta,On-demand Inference,Input tokens,1K tokens,0.00016,USE1-Llama3-2-11B-input-tokens
+Nova 2.0 Omni,,On-demand Inference,Input Image Token Count,1K tokens,0.0003,USE1-Nova2.0Omni-input-image-token-count
+NVIDIA Nemotron Nano 2,Nvidia,,output tokens batch,1K tokens,0.00012,USE1-nvidia.nemotron-nano-9b-v2-mantle-output-tokens-batch
+Writer Palmyra Vision 7B,Writer,On-demand Inference,input tokens batch,1K tokens,7.5e-05,USE1-writer.palmyra-vision-7b-input-tokens-batch
+GLM 5,Z AI,,Input tokens priority,1K tokens,0.00175,USE1-zai.glm5-mantle-input-tokens-priority
+NVIDIA Nemotron Nano 2 VL,Nvidia,,Output tokens flex,1K tokens,0.0003,USE1-nvidia.nemotron-nano-12b-v2-mantle-output-tokens-flex
+GPT OSS Safeguard 120B,OpenAI,,Output tokens,1K tokens,0.0006,USE1-openai.gpt-oss-safeguard-120b-mantle-output-tokens-standard
+Nemotron Nano 3 30B,Nvidia,On-demand Inference,Input tokens priority,1K tokens,0.00011,USE1-Nemotron-Nano-3-30B-input-tokens-priority
+Qwen3 Next 80B A3B,Qwen,On-demand Inference,Output tokens priority,1K tokens,0.0021,USE1-Qwen3Next-80B-A3B-output-tokens-priority
+Llama 3 8B,Meta,On-demand Inference,Input tokens,1K tokens,0.0003,USE1-Llama3-8B-input-tokens
+Gemma 3 12B,Google,,Input tokens flex,1K tokens,5e-05,USE1-google.gemma-3-12b-it-mantle-input-tokens-flex
+Gemma 3 12B,Google,,Output tokens priority,1K tokens,0.00051,USE1-google.gemma-3-12b-it-mantle-output-tokens-priority
+google.gemma-4-e2b,Google,,Input tokens,1K tokens,4e-05,USE1-google.gemma-4-e2b-mantle-input-tokens-standard
+Qwen3 32B,Qwen,,Input tokens,1K tokens,0.00015,USE1-qwen.qwen3-32b-mantle-input-tokens-standard
+Nova Premier,,On-demand Inference,Prompt cache write input tokens priority,1K tokens,0.0,USE1-NovaPremier-cache-write-input-token-count-priority
+Ministral 8B 3.0,Mistral,,Output tokens flex,1K tokens,7e-05,USE1-mistral.ministral-3-8b-instruct-mantle-output-tokens-flex
+Nova Pro,,On-demand Inference,Output tokens priority,1K tokens,0.0056,USE1-NovaPro-output-tokens-priority
+MiniMax M2.5,Minimax AI,On-demand Inference,output tokens batch,1K tokens,0.0006,USE1-minimax.minimax-m2.5-output-tokens-batch
+Ministral 3B 3.0,Mistral,On-demand Inference,Input tokens,1K tokens,0.0001,USE1-Ministral-3-3b-Instruct-input-tokens
+Nova Sonic,,On-demand Inference,Speech Understanding input token,1K tokens,0.0034,USE1-NovaSonic-speech-input-tokens
+Qwen3 Coder Next,Qwen,,Output tokens priority,1K tokens,0.0021,USE1-qwen.qwen3-coder-next-mantle-output-tokens-priority
+Nova Sonic,,On-demand Inference,Speech Understanding output token,1K tokens,0.0136,USE1-NovaSonic-speech-output-tokens
+GPT OSS Safeguard 120B,OpenAI,,Output tokens priority,1K tokens,0.00105,USE1-openai.gpt-oss-safeguard-120b-mantle-output-tokens-priority
+gpt-oss-120b,OpenAI,,Output tokens,1K tokens,0.0006,USE1-openai.gpt-oss-120b-mantle-output-tokens-standard
+gpt-oss-120b,OpenAI,,Input tokens flex,1K tokens,7.5e-05,USE1-openai.gpt-oss-120b-mantle-input-tokens-flex
+Qwen3 235B A22B 2507,Qwen,,Input tokens flex,1K tokens,0.00011,USE1-qwen.qwen3-235b-a22b-2507-mantle-input-tokens-flex
+Minimax M2.1,Minimax AI,,Output tokens,1K tokens,0.0012,USE1-minimax.minimax-m2.1-mantle-output-tokens-standard
+google.gemma-4-31b,Google,,Input tokens,1K tokens,0.00014,USE1-google.gemma-4-31b-mantle-input-tokens-standard
+Qwen3 Coder Next,Qwen,On-demand Inference,Input tokens priority,1K tokens,0.000875,USE1-qwen.qwen3-coder-next-input-tokens-priority
+Minimax M2,Minimax AI,,Output tokens,1K tokens,0.0012,USE1-minimax.minimax-m2-mantle-output-tokens-standard
+Gemma 3 12B,Google,,output tokens batch,1K tokens,0.00015,USE1-google.gemma-3-12b-it-mantle-output-tokens-batch
+Nova 2.0 Omni,,,Text Input Tokens,1K tokens,0.0003,USE1-Nova2.0Omni-text-input-tokens-cross-region-global
+Nova Pro,,Batch Inference,Output tokens,1K tokens,0.0016,USE1-NovaPro-output-tokens-batch
+Ministral 8B 3.0,Mistral,,Output tokens priority,1K tokens,0.00026,USE1-mistral.ministral-3-8b-instruct-mantle-output-tokens-priority
+Nova Pro,,Model Customization,Prompt cache read input tokens,1K tokens,0.0002,USE1-NovaPro-cache-read-input-token-count-custom-model
+MiniMax M2.5,Minimax AI,,output tokens batch,1K tokens,0.0006,USE1-minimax.minimax-m2.5-mantle-output-tokens-batch
+Nova 2.0 Omni,,,Input Image Token Count,1K tokens,0.0002,USE1-Nova2.0Omni-input-image-token-count-cross-region-global-batch
+Qwen3 Next 80B A3B,Qwen,On-demand Inference,Input tokens priority,1K tokens,0.00026,USE1-Qwen3Next-80B-A3B-input-tokens-priority
+Nova 2.0 Lite,,,Prompt cache read input tokens flex,1K tokens,3.75e-05,USE1-Nova2.0Lite-cache-read-input-token-count-flex-cross-region-global
+Nova 2.0 Omni,,On-demand Inference,Input Image Token Count Flex,1K tokens,0.0002,USE1-Nova2.0Omni-input-image-token-count-flex
+Gemma 3 27B,Google,Batch Inference,Input tokens,1K tokens,0.00012,USE1-Gemma-3-27B-IT-input-tokens-batch
+Nova Micro,,Provisioned Throughput Inference - 6 months,,hour,30.25,USE1-NovaMicro-ProvisionedThroughput-6months-ModelUnits
+gpt-oss-20b,OpenAI,On-demand Inference,Input tokens,1K tokens,7e-05,USE1-gpt-oss-20b-input-tokens
+Ministral 8B 3.0,Mistral,,output tokens batch,1K tokens,7e-05,USE1-mistral.ministral-3-8b-instruct-mantle-output-tokens-batch
+Kimi K2 Thinking,Kimi AI,On-demand Inference,Input tokens flex,1K tokens,0.0003,USE1-Kimi-K2-Thinking-input-tokens-flex
+GLM 5,Z AI,On-demand Inference,output tokens batch,1K tokens,0.0016,USE1-zai.glm5-output-tokens-batch
+Magistral Small 1.2,Mistral,On-demand Inference,Input tokens flex,1K tokens,0.00025,USE1-Magistral-Small-2509-input-tokens-flex
+GLM 4.7,Z AI,,Output tokens,1K tokens,0.0022,USE1-zai.glm-4.7-mantle-output-tokens-standard
+Nova 2.0 Omni,,,Input Video Token Count Priority,1K tokens,0.0005,USE1-Nova2.0Omni-input-video-token-count-priority-cross-region-global
+Nova 2.0 Omni,,On-demand Inference,Text Input Tokens Flex,1K tokens,0.0002,USE1-Nova2.0Omni-text-input-tokens-flex
+Kimi K2.5,Moonshot AI,,Input tokens,1K tokens,0.0006,USE1-moonshotai.kimi-k2.5-mantle-input-tokens-standard
+Qwen3 VL 235B A22B,Qwen,Batch Inference,Output tokens,1K tokens,0.00133,USE1-Qwen3-VL-235B-A22B-output-tokens-batch
+MiniMax M2.5,Minimax AI,,Input tokens,1K tokens,0.0003,USE1-minimax.minimax-m2.5-mantle-input-tokens-standard
+Minimax M2,Minimax AI,On-demand Inference,Input tokens,1K tokens,0.0003,USE1-Minimax-M2-input-tokens
+Ministral 14B 3.0,Mistral,On-demand Inference,Input tokens flex,1K tokens,0.0001,USE1-Ministral-3-14b-Instruct-input-tokens-flex
+Nova 2.0 Omni,,,Text Output Token Flex,1K tokens,0.0013,USE1-Nova2.0Omni-text-output-tokens-flex-cross-region-global
+google.gemma-4-31b,Google,,output tokens batch,1K tokens,0.0002,USE1-google.gemma-4-31b-mantle-output-tokens-batch
+Qwen3 VL 235B A22B,Qwen,On-demand Inference,Input tokens priority,1K tokens,0.00093,USE1-Qwen3-VL-235B-A22B-input-tokens-priority
+Kimi K2.5,Moonshot AI,,Input tokens priority,1K tokens,0.00105,USE1-moonshotai.kimi-k2.5-mantle-input-tokens-priority
+Qwen3 Coder 30B A3B,Qwen,On-demand Inference,Output tokens flex,1K tokens,0.0003,USE1-Qwen3Coder-30B-A3B-output-tokens-flex
+Gemma 3 27B,Google,On-demand Inference,Output tokens flex,1K tokens,0.00019,USE1-Gemma-3-27B-IT-output-tokens-flex
+gpt-oss-120b,OpenAI,,input tokens batch,1K tokens,7.5e-05,USE1-openai.gpt-oss-120b-mantle-input-tokens-batch
+NVIDIA Nemotron Nano 2 VL,Nvidia,On-demand Inference,Output tokens flex,1K tokens,0.0003,USE1-Nemotron-Nano-12B-V2-VL-BF16-output-tokens-flex
+gpt-oss-120b,OpenAI,,Output tokens flex,1K tokens,0.0003,USE1-openai.gpt-oss-120b-mantle-output-tokens-flex
+GLM 4.7 Flash,Z AI,,Input tokens,1K tokens,7e-05,USE1-zai.glm-4.7-flash-mantle-input-tokens-standard
+Gemma 3 27B,Google,,Input tokens flex,1K tokens,0.00012,USE1-google.gemma-3-27b-it-mantle-input-tokens-flex
+Ministral 8B 3.0,Mistral,On-demand Inference,Output tokens,1K tokens,0.00015,USE1-Ministral-3-8b-Instruct-output-tokens
+Nova 2.0 Lite,,,Output tokens,1K tokens,0.00125,USE1-Nova2.0Lite-output-tokens-cross-region-global-batch
+Qwen3 235B A22B 2507,Qwen,,input tokens batch,1K tokens,0.00011,USE1-qwen.qwen3-235b-a22b-2507-mantle-input-tokens-batch
+Gemma 3 4B,Google,On-demand Inference,Output tokens flex,1K tokens,4e-05,USE1-Gemma-3-4B-IT-output-tokens-flex
+Llama 3.1 70B,Meta,Batch Inference,Input tokens,1K tokens,0.00036,USE1-Llama3-1-70B-input-tokens-batch
+xai.grok-4.3,,,,1M tokens,1.25,USE1-xai.grok-4.3-mantle-output-tokens-batch
+DeepSeek v3.2,DeepSeek,,Output tokens priority,1K tokens,0.0032375,USE1-deepseek.v3.2-mantle-output-tokens-priority
+Mistral Large,Mistral,On-demand Inference,Output tokens,1K tokens,0.012,USE1-MistralLarge-output-tokens
+Gemma 3 12B,Google,Batch Inference,Input tokens,1K tokens,5e-05,USE1-Gemma-3-12B-IT-input-tokens-batch
+Qwen3 Coder 30B A3B,Qwen,,Input tokens priority,1K tokens,0.0002625,USE1-qwen.qwen3-coder-30b-a3b-instruct-mantle-input-tokens-priority
+Magistral Small 1.2,Mistral,,input tokens batch,1K tokens,0.00025,USE1-mistral.magistral-small-2509-mantle-input-tokens-batch
+Qwen3 Coder 480B A35B,Qwen,,Output tokens priority,1K tokens,0.00315,USE1-qwen.qwen3-coder-480b-a35b-instruct-mantle-output-tokens-priority
+Nemotron Nano 3 30B,Nvidia,Batch Inference,Output tokens,1K tokens,0.00012,USE1-Nemotron-Nano-3-30B-output-tokens-batch
+Qwen3 32B,Qwen,Batch Inference,Output tokens,1K tokens,0.0003,USE1-Qwen3-32B-output-tokens-batch
+NVIDIA Nemotron Nano 2 VL,Nvidia,On-demand Inference,Output tokens,1K tokens,0.0006,USE1-Nemotron-Nano-12B-V2-VL-BF16-output-tokens
+Voxtral Mini 1.0,Mistral,,Input tokens,1K tokens,4e-05,USE1-mistral.voxtral-mini-3b-2507-mantle-input-tokens-standard
+Qwen3 Coder 30B A3B,Qwen,On-demand Inference,Input tokens,1K tokens,0.00015,USE1-Qwen3Coder-30B-A3B-input-tokens
+Nova Pro,,On-demand Inference,Prompt cache write input tokens priority,1K tokens,0.0,USE1-NovaPro-cache-write-input-token-count-priority
+Mistral Large 3,Mistral,,Input tokens flex,1K tokens,0.00025,USE1-mistral.mistral-large-3-675b-instruct-mantle-input-tokens-flex
+Gemma 3 12B,Google,On-demand Inference,Input tokens flex,1K tokens,5e-05,USE1-Gemma-3-12B-IT-input-tokens-flex
+Nova Canvas,,On-demand Inference,I2I 2048 Premium,image,0.08,USE1-NovaCanvas-I2I-2048-Premium
+Nova 2.0 Lite,,On-demand Inference,Prompt cache read input tokens flex,1K tokens,4.125e-05,USE1-Nova2.0Lite-cache-read-input-token-count-flex
+NVIDIA Nemotron Nano 2,Nvidia,Batch Inference,Output tokens,1K tokens,0.00012,USE1-Nemotron-Nano-9B-V2-output-tokens-batch
+Nova 2.0 Omni,,,Input Image Token Count Priority,1K tokens,0.0005,USE1-Nova2.0Omni-input-image-token-count-priority-cross-region-global
+NVIDIA Nemotron Nano 2 VL,Nvidia,,Input tokens,1K tokens,0.0002,USE1-nvidia.nemotron-nano-12b-v2-mantle-input-tokens-standard
+GLM 4.7,Z AI,On-demand Inference,Output tokens priority,1K tokens,0.00385,USE1-zai.glm-4.7-output-tokens-priority
+Nova 2.0 Lite,,Model Customization,,Model/month,1.95,USE1-Nova2.0Lite-Customization-Storage
+Gemma 3 12B,Google,,Input tokens,1K tokens,9e-05,USE1-google.gemma-3-12b-it-mantle-input-tokens-standard
+Voxtral Small 1.0,Mistral,,Output tokens flex,1K tokens,0.00015,USE1-mistral.voxtral-small-24b-2507-mantle-output-tokens-flex
+Qwen3 32B,Qwen,,output tokens batch,1K tokens,0.0003,USE1-qwen.qwen3-32b-mantle-output-tokens-batch
+GLM 5,Z AI,On-demand Inference,Output tokens flex,1K tokens,0.0016,USE1-zai.glm5-output-tokens-flex
+Mixtral 8x7B,Mistral,On-demand Inference,Input tokens,1K tokens,0.00045,USE1-Mixtral8x7B-input-tokens
+Minimax M2,Minimax AI,Batch Inference,Input tokens,1K tokens,0.00015,USE1-Minimax-M2-input-tokens-batch
+Nova 2.0 Lite,,Model Customization,Input tokens,1K tokens,0.0003,USE1-Nova2.0Lite-input-tokens-custom-model
+Kimi K2 Thinking,Moonshot AI,,Output tokens priority,1K tokens,0.00438,USE1-moonshotai.kimi-k2-thinking-mantle-output-tokens-priority
+Minimax M2,Minimax AI,,output tokens batch,1K tokens,0.0006,USE1-minimax.minimax-m2-mantle-output-tokens-batch
+gpt-oss-20b,OpenAI,,Output tokens,1K tokens,0.0003,USE1-openai.gpt-oss-20b-mantle-output-tokens-standard
+Mistral Small,Mistral,On-demand Inference,Output tokens,1K tokens,0.003,USE1-MistralSmall-output-tokens
+google.gemma-4-26b-a4b,Google,,Input tokens priority,1K tokens,0.0002275,USE1-google.gemma-4-26b-a4b-mantle-input-tokens-priority
+Nova Micro,,On-demand Inference,Input tokens,1K tokens,3.5e-05,USE1-NovaMicro-input-tokens
+Llama 3.1 405B,Meta,Batch Inference,Input tokens,1K tokens,0.0012,USE1-Llama3-1-405B-input-tokens-batch
+Mistral 7B,Mistral,On-demand Inference,Output tokens,1K tokens,0.0002,USE1-Mistral7B-output-tokens
+Ministral 14B 3.0,Mistral,On-demand Inference,Output tokens flex,1K tokens,0.0001,USE1-Ministral-3-14b-Instruct-output-tokens-flex
+xai.grok-4.3,,,,1M tokens,0.2,USE1-xai.grok-4.3-mantle-cache-read-tokens-standard
+Nova 2.0 Pro,,,Input Image Token Count Priority,1K tokens,0.0021875,USE1-Nova2.0Pro-input-image-token-count-priority-cross-region-global
+google.gemma-4-31b,Google,,Output tokens flex,1K tokens,0.0002,USE1-google.gemma-4-31b-mantle-output-tokens-flex
+Nova 2.0 Omni,,,Input Audio Token Count,1K tokens,0.0005,USE1-Nova2.0Omni-input-audio-token-count-cross-region-global-batch
+Mistral Large 3,Mistral,On-demand Inference,Output tokens flex,1K tokens,0.00075,USE1-Mistral-Large-3-675b-Instruct-output-tokens-flex
+MiniMax M2.5,Minimax AI,On-demand Inference,Input tokens,1K tokens,0.0003,USE1-minimax.minimax-m2.5-input-tokens
+Voxtral Mini 1.0,Mistral,,Output tokens priority,1K tokens,7e-05,USE1-mistral.voxtral-mini-3b-2507-mantle-output-tokens-priority
+GPT OSS Safeguard 120B,OpenAI,,Output tokens flex,1K tokens,0.0003,USE1-openai.gpt-oss-safeguard-120b-mantle-output-tokens-flex
+Llama 3.3 70B,Meta,On-demand Inference,Input tokens,1K tokens,0.00072,USE1-Llama3-3-70B-input-tokens
+Nova Pro,,On-demand Inference,Prompt cache write input tokens,1K tokens,0.0,USE1-NovaPro-cache-write-input-token-count
+Gemma 3 4B,Google,,input tokens batch,1K tokens,2e-05,USE1-google.gemma-3-4b-it-mantle-input-tokens-batch
+Nova 2.0 Pro,,,Input Image Token Count,1K tokens,0.000625,USE1-Nova2.0Pro-input-image-token-count-cross-region-global-batch
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,On-demand Inference,Input tokens priority,1K tokens,0.0002625,USE1-nvidia.nemotron-super-3-120b-input-tokens-priority
+Llama 3.2 11B,Meta,On-demand Inference,Output tokens,1K tokens,0.00016,USE1-Llama3-2-11B-output-tokens
+Qwen3 Next 80B A3B,Qwen,,Input tokens,1K tokens,0.00014,USE1-qwen.qwen3-next-80b-a3b-instruct-mantle-input-tokens-standard
+Nova 2.0 Omni,,Batch Inference,Input Video Token Count,1K tokens,0.0002,USE1-Nova2.0Omni-input-video-token-count-batch
+Qwen3 Coder Next,Qwen,,Output tokens,1K tokens,0.0012,USE1-qwen.qwen3-coder-next-mantle-output-tokens-standard
+Nova 2.0 Omni,,On-demand Inference,Text Output Tokens Flex,1K tokens,0.0014,USE1-Nova2.0Omni-text-output-tokens-flex
+Kimi K2.5,Moonshot AI,On-demand Inference,Input tokens flex,1K tokens,0.0003,USE1-moonshotai.kimi-k2.5-input-tokens-flex
+NVIDIA Nemotron Nano 2,Nvidia,,Output tokens flex,1K tokens,0.00012,USE1-nvidia.nemotron-nano-9b-v2-mantle-output-tokens-flex
+Minimax M2.1,Minimax AI,On-demand Inference,Input tokens priority,1K tokens,0.000525,USE1-minimax.minimax-m2.1-input-tokens-priority
+Writer Palmyra Vision 7B,Writer,,Input tokens,1K tokens,0.00015,USE1-writer.palmyra-vision-7b-mantle-input-tokens-standard
+Voxtral Small 1.0,Mistral,,Output tokens priority,1K tokens,0.00052,USE1-mistral.voxtral-small-24b-2507-mantle-output-tokens-priority
+Nova 2.0 Pro,,On-demand Inference,Input Video Token Count,1K tokens,0.001375,USE1-Nova2.0Pro-input-video-token-count
+gpt-oss-20b,OpenAI,,input tokens batch,1K tokens,3.5e-05,USE1-openai.gpt-oss-20b-mantle-input-tokens-batch
+Voxtral Mini 1.0,Mistral,,Input tokens flex,1K tokens,2e-05,USE1-mistral.voxtral-mini-3b-2507-mantle-input-tokens-flex
+Qwen3 Coder 480B A35B,Qwen,,Input tokens flex,1K tokens,0.000225,USE1-qwen.qwen3-coder-480b-a35b-instruct-mantle-input-tokens-flex
+Nova 2.0 Pro,,On-demand Inference,Text output token,1K tokens,0.011,USE1-Nova2.0Pro-text-output-tokens
+Nemotron Nano 3 30B,Nvidia,On-demand Inference,Input tokens,1K tokens,6e-05,USE1-Nemotron-Nano-3-30B-input-tokens
+Llama 3.1 8B,Meta,Batch Inference,Input tokens,1K tokens,0.00011,USE1-Llama3-1-8B-input-tokens-batch
+NVIDIA Nemotron 3 Super 120B A12B,Nvidia,,output tokens batch,1K tokens,0.000325,USE1-nvidia.nemotron-super-3-120b-mantle-output-tokens-batch
+Nova 2.0 Pro,,On-demand Inference,Input Image Token Count,1K tokens,0.001375,USE1-Nova2.0Pro-input-image-token-count
+Devstral,Mistral AI,On-demand Inference,Input tokens priority,1K tokens,0.0007,USE1-mistral.devstral-2-123b-input-tokens-priority
+Kimi K2.5,Moonshot AI,On-demand Inference,Output tokens,1K tokens,0.003,USE1-moonshotai.kimi-k2.5-output-tokens
+Ministral 14B 3.0,Mistral,On-demand Inference,Output tokens,1K tokens,0.0002,USE1-Ministral-3-14b-Instruct-output-tokens
+Gemma 3 4B,Google,Batch Inference,Output tokens,1K tokens,4e-05,USE1-Gemma-3-4B-IT-output-tokens-batch
+Minimax M2.1,Minimax AI,,input tokens batch,1K tokens,0.00015,USE1-minimax.minimax-m2.1-mantle-input-tokens-batch
+GLM 5,Z AI,On-demand Inference,Input tokens,1K tokens,0.001,USE1-zai.glm5-input-tokens
+Qwen3 Coder Next,Qwen,,Output tokens flex,1K tokens,0.0006,USE1-qwen.qwen3-coder-next-mantle-output-tokens-flex
+Mistral 7B,Mistral,On-demand Inference,Input tokens,1K tokens,0.00015,USE1-Mistral7B-input-tokens
+Qwen3 Coder 30B A3B,Qwen,On-demand Inference,Output tokens,1K tokens,0.0006,USE1-Qwen3Coder-30B-A3B-output-tokens
+Nova 2.0 Omni,,,Text Input Tokens Flex,1K tokens,0.0002,USE1-Nova2.0Omni-text-input-tokens-flex-cross-region-global
+MiniMax M2.5,Minimax AI,,Input tokens priority,1K tokens,0.000525,USE1-minimax.minimax-m2.5-mantle-input-tokens-priority
+Nova Micro,,On-demand Inference,Output tokens,1K tokens,0.00014,USE1-NovaMicro-output-tokens
+Nova Canvas,,On-demand Inference,T2I 1024 Standard,image,0.04,USE1-NovaCanvas-T2I-1024-Standard
+Kimi K2.5,Moonshot AI,,output tokens batch,1K tokens,0.0015,USE1-moonshotai.kimi-k2.5-mantle-output-tokens-batch
+Ministral 8B 3.0,Mistral,,Output tokens,1K tokens,0.00015,USE1-mistral.ministral-3-8b-instruct-mantle-output-tokens-standard
+MiniMax M2.5,Minimax AI,On-demand Inference,Output tokens,1K tokens,0.0012,USE1-minimax.minimax-m2.5-output-tokens
+google.gemma-4-26b-a4b,Google,,Input tokens flex,1K tokens,6.5e-05,USE1-google.gemma-4-26b-a4b-mantle-input-tokens-flex
+Nova Micro,,Batch Inference,Input tokens,1K tokens,1.75e-05,USE1-NovaMicro-input-tokens-batch
+Nova 2.0 Pro,,On-demand Inference,Input Image Token Count Priority,1K tokens,0.00240625,USE1-Nova2.0Pro-input-image-token-count-priority
+Nova Lite,,Provisioned Throughput Inference - no commit,,hour,60.5,USE1-NovaLite-ProvisionedThroughput-NoCommit-ModelUnits
+Ministral 3B 3.0,Mistral,,Input tokens,1K tokens,0.0001,USE1-mistral.ministral-3-3b-instruct-mantle-input-tokens-standard
+Nova 2.0 Lite,,,,hours,80.0,USE1-Nova2.0Lite-RFT-Training-Hours
+Gemma 3 4B,Google,,Output tokens,1K tokens,8e-05,USE1-google.gemma-3-4b-it-mantle-output-tokens-standard
+GLM 4.7 Flash,Z AI,,Output tokens priority,1K tokens,0.0007,USE1-zai.glm-4.7-flash-mantle-output-tokens-priority
+Magistral Small 1.2,Mistral,,Output tokens priority,1K tokens,0.00263,USE1-mistral.magistral-small-2509-mantle-output-tokens-priority
+xai.grok-4.3,,,,1M tokens,0.625,USE1-xai.grok-4.3-mantle-input-tokens-batch
+Claude 3 Sonnet,Anthropic,On-demand Inference,Input tokens,1K tokens,0.003,USE1-Claude3Sonnet-input-tokens
+gpt-oss-120b,OpenAI,,Output tokens priority,1K tokens,0.00105,USE1-openai.gpt-oss-120b-mantle-output-tokens-priority
+Nova 2.0 Lite,,,Input tokens flex,1K tokens,0.00015,USE1-Nova2.0Lite-input-tokens-flex-cross-region-global
+Magistral Small 1.2,Mistral,On-demand Inference,Output tokens,1K tokens,0.0015,USE1-Magistral-Small-2509-output-tokens
+Minimax M2.1,Minimax AI,On-demand Inference,Input tokens,1K tokens,0.0003,USE1-minimax.minimax-m2.1-input-tokens
+Nova Micro,,On-demand Inference,Prompt cache read input tokens,1K tokens,8.75e-06,USE1-NovaMicro-cache-read-input-token-count
+Kimi K2.5,Moonshot AI,On-demand Inference,Input tokens,1K tokens,0.0006,USE1-moonshotai.kimi-k2.5-input-tokens
+Llama 3.1 70B Latency Optimized,Meta,On-demand Inference,Output tokens,1K tokens,0.0009,USE1-Llama3-1-70B-output-tokens-latency-optimized
+Writer Palmyra Vision 7B,Writer,,Input tokens flex,1K tokens,7.5e-05,USE1-writer.palmyra-vision-7b-mantle-input-tokens-flex
+Devstral,Mistral AI,,Output tokens flex,1K tokens,0.001,USE1-mistral.devstral-2-123b-mantle-output-tokens-flex
+Qwen3 Coder 30B A3B,Qwen,On-demand Inference,Output tokens priority,1K tokens,0.00105,USE1-Qwen3Coder-30B-A3B-output-tokens-priority
+Ministral 3B 3.0,Mistral,Batch Inference,Input tokens,1K tokens,5e-05,USE1-Ministral-3-3b-Instruct-input-tokens-batch
