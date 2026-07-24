@@ -6,6 +6,17 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ---
 
+## 2026-07-24 — laptop — branch push — Bitbucket llm-evaluator-service `feat-online-pciv`
+
+Context: pciv_online domain built per Varun's in-session next-steps list (commit a7949d5 in worktree `~/Documents/llm-evaluator-service-online-pciv`; details: `log/pciv-online-service.md` 2026-07-24). Bitbucket is behavioral-read-only for agents, so the push is the outbound act. It's a feature branch — no PR, no merge, no deploy effect.
+
+To execute on ✅ (either of us can run it):
+```
+cd ~/Documents/llm-evaluator-service-online-pciv && git push -u origin feat-online-pciv
+```
+
+**Disposition:** pending Varun — ✅ push / ❌ hold local
+
 ## 2026-07-24 — laptop — message draft — Slack to Saksham (DM or group DM thread) — token-timebox handoff
 
 Context: Varun-directed. Dhaval asked Saksham to timebox <1 day on prompt-size reduction anchored to a "1,700" that provenance-traces to even-demos' original 66-GPC prompt (measured 1,909 — chain: 1,909 → Kevin's "~1,800" (7/8 DM) → Dhaval's "1,700"; final hop off-Slack). Handoff gives both bitbucket links + real token counts + tokenizer instructions + section breakdown + pointer to the measured 2,371 candidate and A/B harness.

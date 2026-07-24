@@ -5,7 +5,7 @@
 ## The two systems
 
 - **llm-evaluation-pipeline** (`~/Documents/llm-evaluation-pipeline`, Bitbucket): Databricks Asset Bundle, 5 jobs defined in `resources/workflows/*.yml`. Deployed per-target via `databricks.yml` (dev/stage/prod = separate workspaces). Catalog = `{ENV}_amplify` (`src/main/python/utils/env.py`).
-- **llm-evaluator-service** (`~/Documents/llm-evaluator-service`, Bitbucket): FastAPI on k8s. CI (bitbucket-pipelines) builds Docker tag `<ver>.<build#>-<branch>` on every push; deployment = separate CD deploy-config repo (not local; Varun updates it). Endpoints: `/v1/relevancy/evaluate-ads`, `/v1/intent/civ`, `/health`. URLs: `{dev|stage}-llm-evaluator-service.ric1.admarketplace.net` (VPN only — unreachable from the sandbox, see databricks playbook gotchas).
+- **llm-evaluator-service** (`~/Documents/llm-evaluator-service`, Bitbucket): FastAPI on k8s. CI (bitbucket-pipelines) builds Docker tag `<ver>.<build#>-<branch>` on every push; deployment = separate CD deploy-config repo (not local; Varun updates it). Endpoints: `/v1/relevancy/evaluate-ads`, `/v1/intent/civ`, `/v1/intent/pciv` (pciv_online domain, branch `feat-online-pciv`, 2026-07-24 — unmerged), `/health`. URLs: `{dev|stage}-llm-evaluator-service.ric1.admarketplace.net` (VPN only — unreachable from the sandbox, see databricks playbook gotchas).
 
 ## Config tables (the July 2026 refactor)
 
@@ -26,6 +26,12 @@
 - **Observed civ latency** ≈ 5s/LLM-call (gateway telemetry, nano and mini alike).
 - Civ LLM returns integer GPC leaf IDs; `llm.py` resolves them to path strings via `resources/gpc_taxonomy.json`; `validation.py` drops paths not in `taxonomy.en-US.txt`.
 - **Local dev auth (undocumented in the README — trips new setups):** running the service locally against the dev AI Gateway needs `DATABRICKS_CLIENT_ID` / `DATABRICKS_CLIENT_SECRET` — a **service principal, not a personal PAT** (`providers.py` hard-requires it). The team's **shared dev SP** lives in **Keeper: record "ml-llm-dev DBx OAuth [DEV]"** (Varun shares it per-person); drop the two values into your local `.env`. It's already scoped to the dev gateway, so no need to mint a new one. If a fresh SP is ever needed, gateway SPs/endpoints are provisioned by **infra (Pun Tong)**. (Surfaced 2026-07-23 when Yaarit hit this on a new laptop.)
+
+- **pciv_online domain (branch `feat-online-pciv`, 2026-07-24, unmerged — worktree `~/Documents/llm-evaluator-service-online-pciv`)**: copy of civ_extraction at `/v1/intent/pciv` for the online Qwant path. Facts that outlive the branch:
+  - **Eval-ID namespace is global across domains**: the DynamoDB `civ_label` cache key has no domain component, so a second domain reusing IDs 2-8 would poison/share the civ cache. pciv_online reserves **≥101** (101 = nano+offline civ prompt, 102 = nano+conversation pciv prompt from pciv-demo-service `dev-taxonomy-full-l2`, 103 = bedrock ministral-3-8b).
+  - **`bedrock` model_provider** now exists in `llm/utils/providers.py` (`ChatBedrockConverse`, default boto3 credential chain — AWS_PROFILE locally, IRSA in k8s; `bedrock_model_id` key in models.json). Gotcha: the invokers' `cache_control` content block is OpenAI/Anthropic-style and **Bedrock Converse rejects unknown content keys** — it's now sent only when the model class is ChatOpenAI.
+  - **Smoke test**: `AWS_PROFILE=dev PYTHONPATH=src/main/python .venv/bin/python scripts/pciv_online_smoke.py --eval-id 103` — one tiny call; self-resolves bedrock model id + `us.` prefix against the live catalog and prints any models.json correction.
+  - **requirements.txt is uv-compiled from pyproject** (Dockerfile installs from it). Regenerate with `uv pip compile pyproject.toml -o requirements.txt --python-version 3.13` — **without `--python-version 3.13` uv resolves for an older Python and silently downgrades pins** (numpy 2.4→1.26, databricks-connect 17→16).
 
 ## Model gateway / registry (how models get onto the eval service)
 
