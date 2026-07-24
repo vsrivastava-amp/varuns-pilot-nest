@@ -82,3 +82,4 @@ GROUP BY ALL ORDER BY 4 DESC;
 - **Sandbox blocks bare `curl`** (use `/usr/bin/curl` full path), and internal DNS (`*.admarketplace.net`) doesn't resolve from the sandbox — verify services via pipeline runs or ask user (VPN).
 - `--json` flag on `jobs run-now` rejects positional job_id.
 - Timestamps: user's machine is **Pacific time**; Databricks logs are UTC.
+- **Serverless compute can't reach VPC-internal services**: no private DNS (`*.ric1.admarketplace.net` → "Name or service not known") and no VPC peering. Classic clusters run in the workspace VPC and resolve/route fine — switch cluster, don't debug DNS. Partial workaround if stuck on serverless: internal ELB AWS hostnames ARE publicly resolvable (return 10.9.x) + send the ingress hostname as an explicit `Host:` header — but the route still needs VPC connectivity, so this only helps classic clusters with the split-horizon DNS gap.
