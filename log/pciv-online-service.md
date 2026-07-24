@@ -203,3 +203,9 @@ Prompt-design implication (Yaarit's task): flash use case input = query + SERP t
 6. **Cache semantics for conversations**: Dynamo lookup before LLM is a win for bare queries (high repeat rate) but near-zero hit rate for conversation contexts while adding a hot-path round-trip; consider cache keyed on normalized query only for flash-shape requests, `bypassCache` default for response-bearing shapes.
 7. **In-network Bedrock vs DBX**: the actual measurement AI-1540/1542 exists to make (7/23 latency taste: ministral-8b 370ms tiny-call from laptop; RIC1 in-network should match/beat).
 8. **Single-flight shape**: evals 102/103 already `max_group_size: 1` — no batch-JSON wrapper, one query per call, `_format_message` sends raw text.
+
+## 2026-07-24 — Bedrock path VERIFIED LIVE (smoke green)
+
+- Varun ran `aws sso login --profile dev` in-session; eval 103 smoke (**one** call each attempt, per approval): langchain `ChatBedrockConverse` → `mistral.ministral-3-8b-instruct` (exact id confirmed in catalog, ON_DEMAND us-east-1) → conversation pCIV JSON with `targets[]`, GPC ints resolved to paths. **~1.2s extract() end-to-end from laptop** (single sample, 4230 input tokens uncached — Ministral has no prompt caching, this is the always-cold number; RIC1 in-network should beat it). Output ~152 tokens.
+- Wrinkle found + fixed (50049ed): Ministral intermittently wraps the JSON in code fences/prose (first call failed parse, identical reruns clean — nondeterministic despite temperature 0). gpt-5-family never did this, so offline civ never needed it. Fix: parse outermost `{...}`. **Carry-forward: any OSS-model eval needs lenient parsing; also a reminder that per-field accuracy vs the golden set (the ~$50 approved-run question) is where OSS models will really differentiate, not JSON hygiene.**
+- Branch `feat-online-pciv` now 2 commits (a7949d5, 50049ed); push still pending Varun (REVIEW.md).
