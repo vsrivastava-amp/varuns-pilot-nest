@@ -15,7 +15,7 @@ objection window open (Jira monitor `b6yoaw6du`).
 - [x] Branch `feat-civ-eval-luna-gemini` validated locally (320 tests, golden battery, zero deploys)
 - [x] Rebased onto main `ae16d88` (incl. hotfix PR #52), force-pushed `8736087`, build tag `1.0.287-feat-civ-eval-luna-gemini`
 - [x] ~~dev/stage CD bumps of feature-branch image~~ **DECLINED by Varun 2026-07-24** — not needed; prod only needs the winning model. (Remote branches `feat-civ-eval-luna-gemini{,-stage}-image` on cd-deploy-configs to be deleted.)
-- [ ] **Trim branch to prod shape**: keep eval 6 = gemini-3-6-flash + gemini registry entry + runtime fixes (invoker `normalize_content` for list content, ```json fence-tolerant parse — REQUIRED, gemini responses fail to parse without them); restore eval 5 to main's gpt-5-2; drop gpt-5-6-luna registry entry
+- [x] **Trim branch to prod shape** → new branch `feat-civ-eval-6-gemini` (ae1da11, 307 tests pass): eval 6 = gemini-3-6-flash + registry entry + runtime fixes (invoker `normalize_content`, fence-tolerant parse — REQUIRED for gemini) + accuracy-script retry; eval 5 untouched (gpt-5-2); luna dropped. Old branch `feat-civ-eval-luna-gemini` kept intact on remote. Awaiting Varun push.
 - [ ] PR to llm-evaluator-service main; peer approver w/ context (Yaarit natural) — **flag in PR: id 6 repointed gpt-5-mini → gemini-3-6-flash**; Varun merges
 - [ ] After merge: main build → dev/stage CD bumps w/ the main tag (`apps/llm-evaluator-service/{dev-ric1,stage-ric1}/kustomization.yaml` in Bitbucket cd-deploy-configs — see release-process skill)
 - [ ] **Find prod CD config** — not in Bitbucket cd-deploy-configs (only dev/stage dirs exist); likely the GitHub CD repo. Fill release-process skill TBD.
@@ -36,4 +36,4 @@ objection window open (Jira monitor `b6yoaw6du`).
 - [ ] **Eval-4 cache refresh** (18,071 prod DynamoDB entries from Tue mini pilot): notebook `cache_refresh_eval4` ready; **gates: Sunil/Yaarit LGTM in Slack DM C0BK693R20P + prod pods healthy + Yaarit release confirmed staying**
 - [ ] Dhaval objection window on gemini pick — monitor `b6yoaw6du` watching ticket; proceed if quiet
 - [ ] ITPM/OTPM ask w/ Sixuan (Databricks): dev increase confirmed live; prod outcome unknown — first run slice is the test
-- [ ] Session cleanup: kill local uvicorn task `btfufgz54` (localhost:8000) when local testing done; delete declined cd-deploy-configs remote branches
+- [ ] Session cleanup: kill local uvicorn task `btfufgz54` (localhost:8000) when local testing done. ~~delete declined cd-deploy-configs remote branches~~ ✅ deleted 2026-07-24
