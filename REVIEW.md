@@ -6,14 +6,6 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ---
 
-## 2026-07-24 — laptop(ai1474) — message draft — bypassCache verification reply (Sunil/Yaarit DM C0BK693R20P)
-
-Context: Sunil asked in the cache-refresh DM (13:53 ET) to verify `bypassCache` actually writes recalculated values back to DynamoDB before he fully signs off ("Other than that, the script LGTM!"). Verified in llm-evaluator-service code: `service.py:78` skips only the read; save path (`service.py:103-109` → `save_civ_label`, `dynamodb_repo.py:134`) is an unconditional put_item on the same key — overwrites in place. Failed/invalid-GPC/IAB results are NOT saved (old entries persist — safe). Identical on origin/main (prod). Yaarit hasn't replied yet.
-
-Body: `review/2026-07-24-bypasscache-verify-slack.txt` (Varun's voice, for the DM)
-
-**Disposition:** pending Varun — ✅ send (say so and I'll post it, or paste yourself) / ✏️ edit / ❌
-
 ## 2026-07-24 — laptop(aas-context) — ticket creation + thread reply — unified-retrieval-score calibration gate
 
 Context: kvssScoreLinearA=0.93 (text-ads score scaler in AAS Discover 3.0) is an uncalibrated placeholder — no derivation anywhere, javadoc still rationalizes 0.8 (full provenance: `map/aas.md` §Auction formula, `runs/2026-07-23-aas-context.md`). Varun wants this guaranteed to surface as a decision before go-live. Plan: (1) Jira ticket as child of AI-1513 — the epic that gates 3.0 text ads — so it blocks epic closure; (2) reply in Saksham's unified-retrieval-score thread (#proj-amp-discover-3-0, p1784659275600359) linking the ticket; (3) after ticket exists, optional 1-line AAS PR fixing the stale javadoc to cite it. Order matters: file ticket first, then swap `<AI-XXXX>` into the Slack draft.

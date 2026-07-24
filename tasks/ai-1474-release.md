@@ -32,7 +32,7 @@ objection window open (Jira monitor `b6yoaw6du`).
 
 ## 3. Parked / gated side-threads
 
-- [ ] **Eval-4 cache refresh** (18,071 prod DynamoDB entries from Tue mini pilot): notebook `cache_refresh_eval4` ready; **gates: Sunil/Yaarit LGTM in Slack DM C0BK693R20P + prod pods healthy + Yaarit release confirmed staying**. 2026-07-24: Sunil conditional LGTM (13:53 ET) pending bypassCache verification — verified in code (skips read only; save = unconditional put_item, same on origin/main), reply draft in REVIEW. Yaarit not yet replied.
+- [ ] **Eval-4 cache refresh** (18,071 prod DynamoDB entries from Tue mini pilot): notebook `cache_refresh_eval4` ready; **gates: Sunil/Yaarit LGTM in Slack DM C0BK693R20P + prod pods healthy + Yaarit release confirmed staying**. 2026-07-24: **Sunil LGTM complete** — bypassCache verified in code (skips read only; save = unconditional put_item, same on origin/main), Varun sent reply 14:03 ET, Sunil "cool, thank you!" 14:04. Remaining gates: Yaarit LGTM (silent so far) + prod pods healthy + Yaarit release staying.
 - [ ] Dhaval objection window on gemini pick — monitor `b6yoaw6du` watching ticket; proceed if quiet
 - [ ] ITPM/OTPM ask w/ Sixuan (Databricks): dev increase confirmed live; prod outcome unknown — first run slice is the test
 - [ ] Session cleanup: kill local uvicorn task `btfufgz54` (localhost:8000) when local testing done. ~~delete declined cd-deploy-configs remote branches~~ ✅ deleted 2026-07-24
