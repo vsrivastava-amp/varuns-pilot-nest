@@ -17,14 +17,6 @@ cd ~/Documents/llm-evaluator-service-online-pciv && git push -u origin feat-onli
 
 **Disposition:** pending Varun — ✅ push / ❌ hold local
 
-## 2026-07-24 — laptop — message draft — Slack to Saksham (DM or group DM thread) — token-timebox handoff
-
-Context: Varun-directed. Dhaval asked Saksham to timebox <1 day on prompt-size reduction anchored to a "1,700" that provenance-traces to even-demos' original 66-GPC prompt (measured 1,909 — chain: 1,909 → Kevin's "~1,800" (7/8 DM) → Dhaval's "1,700"; final hop off-Slack). Handoff gives both bitbucket links + real token counts + tokenizer instructions + section breakdown + pointer to the measured 2,371 candidate and A/B harness.
-
-Body: `review/2026-07-24-saksham-token-handoff.txt`
-
-**Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
-
 **Send condition (Varun decides):** HOLD unless pCIV extraction / eval code actually consumes locale or timezone from Qwant requests. Dhaval + Camille are already working this in-channel; it may self-resolve. If it does concern our extraction assumptions, send — the tracker calcifying "cannot" is the risk.
 
 **Draft (Varun sends as himself; keep links to 1–2):**
