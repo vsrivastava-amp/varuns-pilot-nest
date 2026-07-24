@@ -6,6 +6,14 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ---
 
+## 2026-07-24 — laptop(aas-context) — ticket creation + thread reply — unified-retrieval-score calibration gate
+
+Context: kvssScoreLinearA=0.93 (text-ads score scaler in AAS Discover 3.0) is an uncalibrated placeholder — no derivation anywhere, javadoc still rationalizes 0.8 (full provenance: `map/aas.md` §Auction formula, `runs/2026-07-23-aas-context.md`). Varun wants this guaranteed to surface as a decision before go-live. Plan: (1) Jira ticket as child of AI-1513 — the epic that gates 3.0 text ads — so it blocks epic closure; (2) reply in Saksham's unified-retrieval-score thread (#proj-amp-discover-3-0, p1784659275600359) linking the ticket; (3) after ticket exists, optional 1-line AAS PR fixing the stale javadoc to cite it. Order matters: file ticket first, then swap `<AI-XXXX>` into the Slack draft.
+
+Bodies: `review/2026-07-24-aas-score-calibration-jira.txt` (ticket), `review/2026-07-24-aas-score-calibration-slack.txt` (thread reply, Varun's voice)
+
+**Disposition:** pending Varun — ✅ file ticket (Rovo, on your direction) + you send Slack reply / ✏️ edit / ❌ drop
+
 ## 2026-07-24 — laptop — message draft — Bedrock test-budget sign-off (~$50 cap)
 
 Context: Varun asked for a concise cost argument to get approval for the AI-1540/1542 Bedrock benchmark runs. Numbers from `state/bedrock-prices-useast1-20260723.csv` + measured smoke tokens (4230/call). Honest math: $0.35–$2.30 per model per golden-set pass, ~$25–40 full matrix, $50 = cap with headroom. Audience: whoever signs off spend (Dhaval/Saksham?) — tone is neutral so it works for Slack or a ticket comment.
