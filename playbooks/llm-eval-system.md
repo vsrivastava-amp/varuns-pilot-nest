@@ -16,6 +16,7 @@
 - Contents (all envs, as of 2026-07-21): relevancy `(1, active, gpt-5-mini, hybrid_prompt_v1.txt, 50)`; civ `(1, inactive, DUMMY - NOT USED — placeholder agreed with Sunil)` + `(2, active, gpt-5-4-nano, civ_extraction.txt, 40)`. Service also defines civ eval_ids 3/4/5 — deliberately not in the table (only active configs get rows).
 - Service-side civ eval configs on origin/main (2026-07-22): `2 = gpt-5-4-nano, civ_extraction.txt, b40/c20` · `3 = gpt-5-4-nano, civ_extraction_v2.txt (query_objective prompt, PR #47 by Yaarit, 2026-07-15), b40/c20` · `4 = gpt-5-mini, b10/c10` · `5 = gpt-5-2, b10/c10`. 4 and 5 reuse `civ_extraction.txt`.
 - Old `eval_config` left in place as rollback insurance.
+- **Civ prompt versions** (as of 2026-07-24): `civ_extraction.txt` (original) = baseline, **per Yaarit the right one for keyword/offline classification** (evals 2/5/6/7/8); `_v2` = query-objective experiment (eval 3); `_v3` = commercial/partial over-trigger fix for live ad-request traffic (eval 4, RELEASE-6132). v2/v3 tune fields the keyword job doesn't consume — don't "upgrade" keyword configs to them by default.
 
 ## Service internals worth knowing (learned 2026-07-22, AI-1474 scoping)
 
