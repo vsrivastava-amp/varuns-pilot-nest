@@ -14,3 +14,7 @@ Varun's next-steps list (in-session): new domain on llm-eval-service for online 
 - **Bedrock live smoke** (1 call, pennies — covered by "wire up + test"): needs `aws sso login --profile dev` (expired). Command staged in checklist Phase B. Also verifies the guessed `mistral.ministral-3-8b-instruct` model id.
 - **Branch push** to Bitbucket: REVIEW.md 2026-07-24 entry (Bitbucket behavioral-read-only).
 - Carry-overs from 7/23: Phase A app-name decision, AI-1538 description paste, integration-ticket drafts, ~$50 accuracy-run budget.
+
+## Disposed
+
+- 2026-07-24 — ✅ **Branch pushed by Varun** (`feat-online-pciv` → origin, commits a7949d5 + 50049ed; Bitbucket offered PR link `pull-requests/new?source=feat-online-pciv`). REVIEW.md entry cleared. CI builds a Docker tag `<ver>.<build#>-feat-online-pciv` on this push — usable as the image tag for the Phase A dev deployment.
