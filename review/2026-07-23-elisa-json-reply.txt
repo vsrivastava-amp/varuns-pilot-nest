@@ -1,3 +1,0 @@
-Here's the full list of L2 GPCs we plan to support (json attached — 213 entries: 192 L2s plus the 21 top-level categories as fallbacks). Go ahead and tell her L2s.
-
-One caveat: still TBD whether we send it exactly as-is or cut it down a bit — we're weighing dropping a couple of verticals (e.g. Business & Industrial subcategories) for prompt-size reasons. I'll confirm the final list as soon as that's settled.
