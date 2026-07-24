@@ -18,3 +18,4 @@ Varun's next-steps list (in-session): new domain on llm-eval-service for online 
 ## Disposed
 
 - 2026-07-24 — ✅ **Branch pushed by Varun** (`feat-online-pciv` → origin, commits a7949d5 + 50049ed; Bitbucket offered PR link `pull-requests/new?source=feat-online-pciv`). REVIEW.md entry cleared. CI builds a Docker tag `<ver>.<build#>-feat-online-pciv` on this push — usable as the image tag for the Phase A dev deployment.
+- 2026-07-24 (cont.) — **App name decided by Varun: `online-pciv-service`**. Phase A artifacts built + validated locally: cd-deploy-configs `AI-1538-online-pciv` (overlay, 089e5a77a) + cd-releases `AI-1538-online-pciv` (Application yaml). Bedrock test-budget memo drafted (`review/2026-07-24-bedrock-test-budget.txt` — $50 = my ceiling estimate, honest math $25–40 full matrix). Pushes + memo pending Varun in REVIEW.md.

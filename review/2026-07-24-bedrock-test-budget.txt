@@ -1,0 +1,9 @@
+Quick sign-off request: I want to run accuracy + latency benchmarks for the online pCIV model selection (AI-1540/AI-1542) against AWS Bedrock, which bills our dev account per token — asking for a ~$50 cap on exploration spend.
+
+What the money buys:
+- Accuracy: our 545-row CIV golden set through each OSS candidate on Bedrock (Ministral 3B/8B/14B, Qwen3-32B, Llama 4 Scout/Maverick, gpt-oss-20b/120b), up to 2 prompt variants, 3 repeats for variance.
+- Latency: ~1k-call soak on the 1-2 finalists for real P50/P99 (single-sample so far: Ministral 8B ~370ms tiny call, ~1.2s full extraction from laptop).
+
+Why it costs anything: Bedrock has no prompt caching for these OSS models, so the full 4-16k-token prompt bills at list ($0.10-$0.97 per 1M tokens) on every call. That works out to $0.35-$2.30 per model per golden-set pass; the full matrix is ~$25-40 worst case. The gpt-5-4-nano baseline comparison runs on our existing Databricks path (95% cache hits) and costs pennies.
+
+Guardrails: dev account (564079877134) only, one-off (no recurring jobs), hard stop at $50, spend visible in Cost Explorer. Output: model recommendation with per-field accuracy vs nano + measured latency, posted to the tickets.

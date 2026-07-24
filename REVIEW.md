@@ -6,6 +6,26 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ---
 
+## 2026-07-24 — laptop — message draft — Bedrock test-budget sign-off (~$50 cap)
+
+Context: Varun asked for a concise cost argument to get approval for the AI-1540/1542 Bedrock benchmark runs. Numbers from `state/bedrock-prices-useast1-20260723.csv` + measured smoke tokens (4230/call). Honest math: $0.35–$2.30 per model per golden-set pass, ~$25–40 full matrix, $50 = cap with headroom. Audience: whoever signs off spend (Dhaval/Saksham?) — tone is neutral so it works for Slack or a ticket comment.
+
+Body: `review/2026-07-24-bedrock-test-budget.txt`
+
+**Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
+
+## 2026-07-24 — laptop — branch pushes — cd-deploy-configs + cd-releases `AI-1538-online-pciv`
+
+Context: app name decided in-chat ("something like online-pciv" → `online-pciv-service`, matching the repo's `*-service` convention — say if you want bare `online-pciv`). Phase A artifacts prepared locally, kustomize-build validated. Feature branches only — nothing deploys until a PR to `master` is merged (auto-sync!). Reused pending confirmation: akeyless paths + `wi-llm-evaluator-service` SA. Image tag is an unpullable placeholder until the `feat-online-pciv` CI tag is known (Docker Hub is private to the agent — grab it from the Bitbucket pipeline or `docker.io` UI).
+
+To execute on ✅:
+```
+cd ~/Documents/cd-deploy-configs-online-pciv && git push -u origin AI-1538-online-pciv
+cd ~/Documents/cd-releases-online-pciv && git push -u origin AI-1538-online-pciv
+```
+
+**Disposition:** pending Varun — ✅ push both / ❌ hold local
+
 **Send condition (Varun decides):** HOLD unless pCIV extraction / eval code actually consumes locale or timezone from Qwant requests. Dhaval + Camille are already working this in-channel; it may self-resolve. If it does concern our extraction assumptions, send — the tracker calcifying "cannot" is the risk.
 
 **Draft (Varun sends as himself; keep links to 1–2):**
