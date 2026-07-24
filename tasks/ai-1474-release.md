@@ -16,13 +16,12 @@ objection window open (Jira monitor `b6yoaw6du`).
 - [x] Rebased onto main `ae16d88` (incl. hotfix PR #52), force-pushed `8736087`, build tag `1.0.287-feat-civ-eval-luna-gemini`
 - [x] ~~dev/stage CD bumps of feature-branch image~~ **DECLINED by Varun 2026-07-24** — not needed; prod only needs the winning model. (Remote branches `feat-civ-eval-luna-gemini{,-stage}-image` on cd-deploy-configs to be deleted.)
 - [x] **Trim branch to prod shape** → new branch `feat-civ-eval-6-gemini` (ae1da11, 307 tests pass): eval 6 = gemini-3-6-flash + registry entry + runtime fixes (invoker `normalize_content`, fence-tolerant parse — REQUIRED for gemini) + accuracy-script retry; eval 5 untouched (gpt-5-2); luna dropped. Old branch `feat-civ-eval-luna-gemini` kept intact on remote. Pushed to origin by Varun 2026-07-24.
-- [ ] PR to llm-evaluator-service main; peer approver w/ context (Yaarit natural) — **flag in PR: id 6 repointed gpt-5-mini → gemini-3-6-flash**; Varun merges
-- [ ] After merge: main build → dev/stage CD bumps w/ the main tag (`apps/llm-evaluator-service/{dev-ric1,stage-ric1}/kustomization.yaml` in Bitbucket cd-deploy-configs — see release-process skill)
-- [ ] **Find prod CD config** — not in Bitbucket cd-deploy-configs (only dev/stage dirs exist); likely the GitHub CD repo. Fill release-process skill TBD.
-- [ ] Prod deploy: PR + peer approval + Varun manual merge. Gate: prod pods healthy post Yaarit-hotfix.
-- [ ] Release comms per skill: RELEASE ticket, `#release-<num>-<slug>` channel, #releases announcement
-- [ ] Sync `llm_evals.civ_config` table row for eval 6 at release time
-- [ ] **Cache check before run**: prod now serves ids up to 6 (Yaarit's release, 6=mini) — verify nothing cached under prod DynamoDB namespace 6 (or invalidate) before gemini traffic, else repointed id inherits mini answers
+- [x] **PIVOT 2026-07-24 (Sunil, DM C0BK693R20P): DEV-ONLY release.** "Better to run these in lower environments — dev or stage"; read from prod, write to dev/stage. → No prod deploy, no stage. Run hits dev service `dev-llm-evaluator-service.ric1.admarketplace.net` (`/v1/intent/civ`); dev gateway rate-limit increase already confirmed by experiment; gemini results land in DEV DynamoDB cache (prod cache untouched — fine, gold table is the deliverable).
+- [ ] PR `feat-civ-eval-6-gemini` → main (concise per Varun; flag id 6 overwrite: was gpt-5-mini, same civ_extraction.txt prompt); Varun merges
+- [ ] Dev CD bump: `apps/llm-evaluator-service/dev-ric1/kustomization.yaml` newTag → build of the trimmed branch (need build # from pipeline; or post-merge main build)
+- [ ] Sync `llm_evals.civ_config` table row for eval 6 (dev)
+- [ ] Update notebook `L3_categorization_v2` api_url widget → dev civ endpoint
+- [ ] ~~Find prod CD config / prod deploy / release comms~~ N/A for dev-only run (RELEASE ticket + comms: TBD if Varun still wants them for a dev-only change; skill TBD on prod CD repo stays open for future)
 
 ## 2. Full 2.23M-keyword run (Databricks notebook)
 
