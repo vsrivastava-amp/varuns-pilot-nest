@@ -10,14 +10,14 @@ L1/L2/L3 = .928/.902/.897 (statistical tie w/ luna, both >> prior .845 L3); Chri
 100 real keywords. Posted to ticket 2026-07-24 ~12:50 ET w/ Varun approval; Dhaval
 objection window open (Jira monitor `b6yoaw6du`).
 
-## 1. Ship eval 6 = gemini to prod (llm-evaluator-service)
+## 1. Ship eval 6 = gemini to DEV (llm-evaluator-service)
 
 - [x] Branch `feat-civ-eval-luna-gemini` validated locally (320 tests, golden battery, zero deploys)
 - [x] Rebased onto main `ae16d88` (incl. hotfix PR #52), force-pushed `8736087`, build tag `1.0.287-feat-civ-eval-luna-gemini`
 - [x] ~~dev/stage CD bumps of feature-branch image~~ **DECLINED by Varun 2026-07-24** — not needed; prod only needs the winning model. (Remote branches `feat-civ-eval-luna-gemini{,-stage}-image` on cd-deploy-configs to be deleted.)
 - [x] **Trim branch to prod shape** → new branch `feat-civ-eval-6-gemini` (ae1da11, 307 tests pass): eval 6 = gemini-3-6-flash + registry entry + runtime fixes (invoker `normalize_content`, fence-tolerant parse — REQUIRED for gemini) + accuracy-script retry; eval 5 untouched (gpt-5-2); luna dropped. Old branch `feat-civ-eval-luna-gemini` kept intact on remote. Pushed to origin by Varun 2026-07-24.
 - [x] **PIVOT 2026-07-24 (Sunil, DM C0BK693R20P): DEV-ONLY release.** "Better to run these in lower environments — dev or stage"; read from prod, write to dev/stage. → No prod deploy, no stage. Run hits dev service `dev-llm-evaluator-service.ric1.admarketplace.net` (`/v1/intent/civ`); dev gateway rate-limit increase already confirmed by experiment; gemini results land in DEV DynamoDB cache (prod cache untouched — fine, gold table is the deliverable).
-- [ ] PR `feat-civ-eval-6-gemini` → main (concise per Varun; flag id 6 overwrite: was gpt-5-mini, same civ_extraction.txt prompt); Varun merges
+- [x] ~~PR `feat-civ-eval-6-gemini` → main~~ SKIPPED per Varun 2026-07-24 — dev-only run needs no main merge; dev pod runs the feature-branch image directly (Yaarit precedent). Branch stays on remote; merge to main later only if gemini becomes permanent.
 - [ ] Dev CD bump: `apps/llm-evaluator-service/dev-ric1/kustomization.yaml` newTag → build of the trimmed branch (need build # from pipeline; or post-merge main build)
 - [ ] Sync `llm_evals.civ_config` table row for eval 6 (dev)
 - [ ] Update notebook `L3_categorization_v2` api_url widget → dev civ endpoint
@@ -25,7 +25,7 @@ objection window open (Jira monitor `b6yoaw6du`).
 
 ## 2. Full 2.23M-keyword run (Databricks notebook)
 
-- [ ] Run `L3_categorization_v2` (dev ws, `/Users/vsrivastava@admarketplace.com/AI-1474_keyword_gpc_reclassification/`), eval_id=6, prod api_url. First slice doubles as **prod rate-limit verification** (dev increase confirmed by experiment; prod unverified). Est. $2–4k, resumable.
+- [ ] Run `L3_categorization_v2` (dev ws, `/Users/vsrivastava@admarketplace.com/AI-1474_keyword_gpc_reclassification/`), eval_id=6, **dev api_url**. Est. $2–4k, resumable; dev gateway rate-limit increase already verified.
 - [ ] Spot-check raw table (incl. `CHRIS_EXAMPLES` FAIL query — none under Cat Supplies)
 - [ ] Flip `REBUILD_GOLD=True`: coverage gate → staging table → sanity checks → DEEP CLONE backup (`gold_adv_keyword_gpc_level_3_eval2_backup`) → atomic `CREATE OR REPLACE`
 - [ ] Comment on AI-1474 + **ping Emily** when gold table swapped (she bumps Katie Ji for Tableau/BI refresh)
