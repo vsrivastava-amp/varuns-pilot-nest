@@ -5,6 +5,7 @@ pCIV demo environment, owned by Winston. Agent involvement is deliberately narro
 ## Pointers (unverified — fill in as confirmed)
 
 - Repo: `pciv-demo-service` (Bitbucket — set up via INFRA-3422)
+- Ancestor repo: `even-demos` (Bitbucket, Yaarit's) — `publisher/civ_system_prompt.txt` is the ORIGINAL publisher CIV prompt (1,909 tok o200k, 66 GPCs; source of the "~1,700–1,800" numbers circulating pre-fix); `publisher/civ_demo.html` is what became `gpc_taxonomy.json`
 - Local clones (verified 2026-07-22): `~/Documents/pciv-demo-service`; client-facing zip contents at `~/Desktop/external-pciv-demo` (+ copies " 2", " 3" — all identical). Taxonomy: `taxonomy/gpc_taxonomy.json`; extraction prompt: `prompts/pciv_extraction.txt`
 - Full GPC taxonomy source of truth: `llm-evaluator-service/src/main/python/domains/civ_extraction/resources/gpc_taxonomy.json` (5595 entries, all levels)
 - Open issue 2026-07-22: demo taxonomy non-exhaustive (Qwant escalation, group DM C0BJPQHFFGC) — see `runs/2026-07-22-pciv-taxonomy-gap.md` + queue

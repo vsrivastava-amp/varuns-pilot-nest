@@ -1,0 +1,12 @@
+Hey Saksham — artifacts for the token-reduction timebox so you're not starting from zero:
+
+• Original publisher CIV prompt (66 GPCs): https://bitbucket.org/admarketplace/even-demos/src/main/publisher/civ_system_prompt.txt — measures 1,909 tokens
+• Full-taxonomy version (all 192 L2s + 21 L1s): https://bitbucket.org/admarketplace/pciv-demo-service/src/dev-taxonomy-full-l2/prompts/pciv_extraction.txt — 3,307 tokens
+
+To check counts, use the real tokenizer (chars/4 reads ~15% low on these ID-heavy prompts):
+uv run --with tiktoken python -c "import tiktoken; print(len(tiktoken.get_encoding('o200k_base').encode(open('FILE').read())))"
+(o200k_base = gpt-4o/5 families; or make one real API call and read usage.prompt_tokens.)
+
+Context on the 1,700 number: it traces to the original 66-category prompt above (which actually measures 1,909) — it was never a full-taxonomy number. The complete L2 list alone is ~1,300–1,500 tokens, so sub-2k and full coverage can't coexist; the real levers are cutting verticals (e.g. per-pub subsets — the list is machine-generated now, so variants are cheap) or landing around ~2,400.
+
+Where the 3,307 sits: GPC list 1,536 | examples 595 | target rules 394 | disambiguations 277 | type rules 215 | schema 165 | header 103. I also have a measured compacted draft at 2,371 (drops B&I subcats + Mature, prunes rules the full list made redundant, compacts examples) plus the A/B harness we used to regression-test the taxonomy change — happy to hand both over.
