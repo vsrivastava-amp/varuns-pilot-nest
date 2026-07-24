@@ -27,8 +27,8 @@ objection window open (Jira monitor `b6yoaw6du`).
 
 - [ ] Run `L3_categorization_v2` (dev ws, `/Users/vsrivastava@admarketplace.com/AI-1474_keyword_gpc_reclassification/`), eval_id=6, **dev api_url**. Est. $2–4k, resumable; dev gateway rate-limit increase already verified.
 - [ ] Spot-check raw table (incl. `CHRIS_EXAMPLES` FAIL query — none under Cat Supplies)
-- [ ] Flip `REBUILD_GOLD=True`: coverage gate → staging table → sanity checks → DEEP CLONE backup (`gold_adv_keyword_gpc_level_3_eval2_backup`) → atomic `CREATE OR REPLACE`
-- [ ] Comment on AI-1474 + **ping Emily** when gold table swapped (she bumps Katie Ji for Tableau/BI refresh)
+- [ ] **DECISION 2026-07-24 (Varun, per ticket thread — Dhaval "we should not replace", Emily agreed): NO gold swap.** Publish eval-6 results as separate table `gold_adv_keyword_gpc_level_3_eval6` (same schema); gold untouched; Katie Ji repoints dashboard. Notebook endgame reworked: flip `BUILD_RELEASE_TABLE=True` → coverage gate → staging → sanity checks → atomic publish of the NEW table only. (Swap remains a one-liner later if wanted.)
+- [ ] Comment on AI-1474 + **ping Emily** with the new table path `gold_adv_keyword_gpc_level_3_eval6` (she bumps Katie Ji to repoint BI)
 
 ## 3. Parked / gated side-threads
 
