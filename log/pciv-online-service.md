@@ -224,3 +224,7 @@ Prompt-design implication (Yaarit's task): flash use case input = query + SERP t
 - Publisher ids (from `prod_amplify.ssp.publisher`): **1107 = "Qwant"** (2.8M FR reqs/7d), **1276 = "Qwant AI"** (15.4M FR + 0.9M GB + 0.8M US + 0.3M CA /7d). Exact surface split between the two ids unconfirmed — worth asking SSP side which id maps to which placement.
 - **Caveats**: these are today's SERP-era *search terms*, not AI-chat conversations (conversation payloads only arrive with 3.0 ghost endpoints ~7/31; `ad_request.intent` variant column exists but its population is unchecked — one aggregate query got classifier-blocked). For AI-chat-shaped evals these queries are the seed; conversation context has to be synthesized or awaited.
 - Regen one-liner lives in this entry's git blame / run file; table + filter is the durable pointer.
+
+## 2026-07-24 — AI-1568 REJECTED (Varun's call)
+
+- AI-1568 (latency-envelope ticket) transitioned to **Rejected** at Varun's direction — it was created before he reviewed the wording (process now fixed: exact text needs his ✅ before any outbound write, even a directed one). The latency-quantification work itself still stands (ballparks ~Aug 1, Amarachi context) — if it gets a ticket, Varun drafts/approves the words first. Don't cite AI-1568 anywhere.
