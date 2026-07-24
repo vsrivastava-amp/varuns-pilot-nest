@@ -6,11 +6,11 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ---
 
-## 2026-07-23 — laptop — message draft — group DM C0BJPQHFFGC — reply to Elisa (16:51: OK to tell client L2s? json to share?)
+## 2026-07-24 — laptop — message draft — Slack to Saksham (DM or group DM thread) — token-timebox handoff
 
-Context: Elisa hasn't told the client what we support yet. Angle per Varun (in-session): share the full list NOW with an explicit TBD caveat about possible trims — transparency over sequencing-hold. File staged for attach: `~/Desktop/gpc_taxonomy_L1_L2.json` (213 entries, from dev branch). Residual note: json includes 773:Erotic + 780:Weapons (Mature) — deliberately not named in the message; drop the Mature rows from the Desktop copy before attaching if you'd rather not put "Erotic" in front of the client while it's still TBD.
+Context: Varun-directed. Dhaval asked Saksham to timebox <1 day on prompt-size reduction anchored to a "1,700" that provenance-traces to even-demos' original 66-GPC prompt (measured 1,909 — chain: 1,909 → Kevin's "~1,800" (7/8 DM) → Dhaval's "1,700"; final hop off-Slack). Handoff gives both bitbucket links + real token counts + tokenizer instructions + section breakdown + pointer to the measured 2,371 candidate and A/B harness.
 
-Body: `review/2026-07-23-elisa-json-reply.txt`
+Body: `review/2026-07-24-saksham-token-handoff.txt`
 
 **Disposition:** pending Varun — ✅ send / ❌ drop / ✏️ edit
 
