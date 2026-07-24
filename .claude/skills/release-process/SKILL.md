@@ -18,7 +18,7 @@ Roll the new build through dev and stage before any prod motion. Mechanics (lear
 2. **Grab the build tag**: `<MAJOR_VER>.<BITBUCKET_BUILD_NUMBER>-<branch>` where MAJOR_VER = `version` in `pyproject.toml` (llm-evaluator-service: `1.0`). Image lands at Docker Hub `admarketplace/<repo-slug>:<tag>` (private — anon tag listing 404s; classifier blocks credential probes, so get the build number from the Pipelines UI via Varun).
 3. **Bump cd-deploy-configs** (llm-evaluator-service lives in the **Bitbucket** CD repo, `bitbucket.org/admarketplace/cd-deploy-configs`): edit `apps/<app>/<env>/kustomization.yaml` → `images: [- name: admarketplace/<app>, newTag: <tag>]`. Envs for llm-evaluator-service: `dev-ric1`, `stage-ric1` (plus `base/`, `datadog-base-deployment/`).
 4. **One PR per env bump**, branch naming per Yaarit: `feat-<slug>-image` (dev), `feat-<slug>-stage-image` (stage). PR title/commit: `Deploy <app> <tag> to <env>`. Dev/stage PRs are self-mergeable by the requester; prod is gated (step 4 below).
-5. Merge to cd-deploy-configs main triggers the deploy (Argo-style sync). Validate on dev before promoting the same image to stage.
+5. Merge to cd-deploy-configs `master` auto-deploys via ArgoCD (auto-sync + selfHeal, minutes). Validate on dev before promoting the same image to stage. No version endpoint on llm-evaluator-service (only `/health`) — verify a rollout behaviorally (disposable smoke slice keyed by run_id, or gateway usage tables) or via Argo UI.
 
 Gotcha: main can move under your branch (e.g. a hotfix) between validation and deploy — rebase and re-push before grabbing the tag, so the deployed image includes everything on main. The rebuild changes the build number, so always take the tag from the **latest** green pipeline run.
 
@@ -35,7 +35,7 @@ Gotcha: main can move under your branch (e.g. a hotfix) between validation and d
 
 ### 4. Update CD deploy configs for prod (the gated step)
 - CI (bitbucket-pipelines) builds a Docker tag `<version>.<build#>-<branch>` on every push — the release = pointing the CD deploy config at the new tag.
-- **Two CD deploy-config repos exist: one on Bitbucket, one on GitHub. Each app belongs to exactly one.** `llm-evaluator-service` → **Bitbucket** `cd-deploy-configs`, config at `apps/llm-evaluator-service/<env>/kustomization.yaml`. TBD: prod env directory name (only `dev-ric1`/`stage-ric1` existed as of 2026-07-24 — prod config location unconfirmed).
+- **Two CD deploy-config repos exist: one on Bitbucket, one on GitHub. Each app belongs to exactly one.** `llm-evaluator-service` → **Bitbucket** `cd-deploy-configs`, config at `apps/llm-evaluator-service/<env>/kustomization.yaml`. **Branch = environment**: `master` holds dev-ric1/stage-ric1 overlays, the `prod` branch holds prod-ric1 (see `playbooks/k8s-cd.md`). Auto-sync is ON — merging to the tracked branch deploys within minutes, no manual trigger.
 - Prod flow, strictly: **(1)** open a PR with the new tag → **(2)** peer approval from another engineer/manager with project context → **(3) Varun merges manually.** The agent never merges prod CD configs; drafting the PR is fine.
 
 ### 5. Close the loop
