@@ -6,3 +6,4 @@
 - 2026-07-27 — No needs-human.md filings: Q-2026-07-21-01 gained supporting evidence (Norbert's sandbox request includes locale+timezone) — noted in digest under the existing Q-entry rather than a new one.
 - 2026-07-27 — Playbook gotcha appended (Claude-tag summaries in-workspace hallucinate names; name-keyword mention search flooded by Datadog bot).
 - 2026-07-27 — No writes to Jira/Slack/Gmail/Calendar. No REVIEW.md drafts created.
+- 2026-07-27 — follow-up: drafted Saksham DM reply (dataset scope) → review/2026-07-27-saksham-dataset-scope.txt + REVIEW.md entry; Varun corrections folded in (Amarachi = PM, grading the FR set).

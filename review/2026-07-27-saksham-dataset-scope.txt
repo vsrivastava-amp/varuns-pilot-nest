@@ -1,0 +1,10 @@
+Scope of the query dataset:
+
+- 1,000 random distinct search terms + 7-day frequency, pulled Friday from prod_amplify.event_silver.ad_request — publisher 1276 "Qwant AI", geo FR, last 7 days
+- uniform sample over distinct queries, not traffic-weighted — the freq column is in the CSV, so easy to re-weight or take head queries instead
+- caveat: these are SERP-era search terms, not conversational prompts. Real intent payloads only start when the 3.0 ghost endpoints go live (~7/31) — good proxy for query content, not for 3.0 request shape. Worth re-pulling from ghost traffic once it flows
+- queries only, no /di envelope — to turn them into actual pCIV requests they need wrapping in the 3.0 schema (Norbert's sandbox test from Friday in #proj-amp-discover-3-0 is a working reference payload)
+- fit vs AI-1556: this covers the "Qwant for France" leg. US = same SQL with country_code='US' (1276 has ~0.8M US reqs/7d). The LLM-generated set isn't covered
+- one open question: 1107 = "Qwant" vs 1276 = "Qwant AI" — which publisher id maps to which surface/placement is unconfirmed, would be good to check with SSP
+- Amarachi is grading (labeling) the French set, so Bhupesh building request sets on top of it should be complementary, not duplicate
+- happy to send Bhupesh the CSV + the SQL to regenerate/extend, or attach them to AI-1556
