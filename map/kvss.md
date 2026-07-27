@@ -73,10 +73,13 @@ broad** when the site/KVS passes none. Primary implementation fn:
 
 - 2026-07-23 (repo check, see [vespa.md](vespa.md)): the *committed*
   `application.yml` defaults differ from the KT2 numbers — thresholds are
-  per-word-count buckets (e.g. one-word exact/phrase/broad 0.88/0.72/0.72,
-  six-plus 0.85/0.70/0.70), targetHits default **5000** (KT2 said 500), search
-  timeout **0.5s** (KT2 said 50ms). Likely prod env-var overrides vs repo
-  defaults — verify against deployment config before relying on either set.
+  per-word-count buckets, targetHits default 5000, search timeout 0.5s.
+- 2026-07-27 (**RESOLVED** via cd-deploy-configs stage env): deployed values
+  match KT2 — targetHits **500**, timeout **0.05s**, softtimeout 0.6; word-bucket
+  thresholds one-word exact/phrase/broad **0.88/0.74/0.70** tapering to
+  0.85/0.72/0.60 at six-plus words. The committed 5000/0.5s are dev fallbacks.
+  Caveat: stage config verified; prod config isn't in cd-deploy-configs yet
+  (AI-1497) — KT2 asserted prod uses these same values.
 - 2026-07-23 (app-package check): a *third* value-set exists — schema-level
   defaults in database-vespa `keyword_ad.sd` (`keyword_ad_base` inputs):
   exact **0.85** / phrase **0.80** / broad **0.70**. These apply only when KVSS
