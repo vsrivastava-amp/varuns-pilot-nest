@@ -1,24 +1,29 @@
-Dug into why the prod numbers look like this, using the attached CSVs, the pla_gold corpus tables, and the deployed schema. Short version: the numbers are real, and the cost has a specific, fixable shape.
+Analysis of the prod run (c170901), from the attached CSVs, the pla_gold corpus tables, and the deployed schema. The prod numbers are real. The cost has one specific shape.
 
-First, a caveat on the numbers themselves: prod VSS→Vespa timeout is 150 ms. The observed max is 148 ms, and 46/1000 of the 3.0 rows recorded no latency at all (timeouts/failures, excluded from the averages). So the reported p95/p99 are floors, not estimates.
+Caveat first: prod VSS→Vespa timeout is 150 ms. The observed max is 148 ms. 46/1000 of the 3.0 rows recorded no latency (timeouts and failures, excluded from all averages). The reported p95/p99 are floors, not estimates.
 
-Where the cost actually is — the slowdown needs two conditions at the same time:
-
-1. A brands filter is present (any brand — Nike, adidas, or a brand matching zero docs).
+The slowdown needs two conditions at the same time:
+1. A brands filter is present. Any brand — Nike, adidas, or a brand that matches zero docs.
 2. The googleProductCategories value prefix-matches more than one category path in the corpus.
 
-Numbers from the 1000-row prod set:
-- brand + multi-path category ("Apparel & Accessories > Shoes"): 107 ms avg, ~127 ms median.
-- brand + single-path category ("Home & Garden > Decor > Rugs", 4.2M docs): ~25 ms. Doc count under the category does not matter.
-- category without brand: ~35 ms. Brand without category: ~25 ms. No filters: ~22 ms.
-- Result count does not matter: 0-ad rows cost the same as 100-ad rows. This is pure filter-evaluation cost.
+Paired comparison over the 1000 prod rows (same query term, both request versions):
 
-Why brand is the trigger (corpus + schema, pending live confirmation): every filter we send means "value X OR field unset". The unset-brand population is 0.96% of docs — the only unset population that small (gender 26%, age 29%, condition 8%, category 9.7%). The rank profile's approximate-threshold is 0.01. A rare brand plus the 0.96% sentinel puts the estimated filter selectivity at/below that threshold, so Vespa abandons the ANN fast path and evaluates the filter directly. In that mode the category prefix expansion (multi-term OR on a field with no rank:filter) costs 50–140 ms depending on the category branch.
+| 3.0 filter shape | n | 2.0 avg ms | 3.0 avg ms |
+| no filters | 264 | 22.3 | 21.9 |
+| brand and/or gender/age/condition, no GPC | 149 | 22.5 | 24.6 |
+| single-path GPC + brand | 77 | 24.8 | 23.4 |
+| single-path GPC, no brand | 90 | 23.0 | 30.6 |
+| multi-path GPC, no brand | 159 | 23.7 | 36.5 |
+| multi-path GPC + brand | 209 | 23.0 | 110.2 |
 
-This also explains the stage↔prod reversal: the same regime flip happens on stage, but exact evaluation over stage's small corpus is fast (6.5 ms avg for GPC+brand there). Stage filter-latency numbers do not transfer to prod.
+Doc volume under the category does not matter. A 4.2M-doc single-path category costs the same as a 200-doc one. Result count does not matter: 0-ad rows cost the same as 100-ad rows. The cost is filter evaluation, not search or ranking.
+
+Why brand is the trigger (from corpus stats and schema; needs live confirmation): each 3.0 filter matches "value X OR field unset". Unset brand covers 0.96% of docs. All other unset populations are larger (condition 8%, category 9.7%, gender 26%, age 29%). The rank profile approximate-threshold is 0.01. A rare brand plus the 0.96% sentinel drops the estimated filter selectivity below that threshold. Vespa then leaves the ANN fast path and evaluates the filter directly. In that mode, the multi-path category prefix (a field with no rank:filter) costs 50–140 ms.
+
+The same mechanism exists on stage. Stage's corpus is small, so direct evaluation there is fast (6.5 ms avg). That is why the slow slice reversed between stage and prod.
 
 next steps:
-- Confirm the regime flip with searchCoverage diagnostics on the PROD-TEST cluster, and A/B the same query with the brand sentinel stripped from the YQL.
-- Fix candidates, by leverage: (1) drop the "" sentinel from brands, or move unset-matching to dedicated hasBrand/hasGpc bool fields with rank:filter; (2) exact IN for categories — vespaYqlVersionProduct=1 already implements this; (3) add rank:filter to googleProductCategory.
+- Confirm the regime flip with searchCoverage diagnostics on the PROD-TEST cluster. A/B the same query with the "" sentinel removed from the brand clause.
+- Fix candidates, by leverage: (1) drop the "" sentinel from brands, or move unset-matching to hasBrand/hasGpc bool fields with rank:filter; (2) use exact IN for categories — vespaYqlVersionProduct=1 already implements this; (3) add rank:filter to googleProductCategory.
 
-footgun: do not tune filters from stage latency measurements — the slow slice reverses between stage and prod. And these samples contain zero price/currency filters, the two shapes that blew the 150 ms timeout in the 7/24 combination probe; real pCIV traffic will include them.
+footgun: Do not tune filters from stage latency numbers. The slow slice reverses between stage and prod. Also: these samples contain zero price and currency filters. Those two shapes exceeded the 150 ms timeout in the 7/24 combination probe. Real pCIV traffic will send price filters. price and salePrice have no fast-search; currencyCode has no fast-search either.
