@@ -233,3 +233,7 @@ Prompt-design implication (Yaarit's task): flash use case input = query + SERP t
 
 - Varun's rationale for rejecting AI-1568: fold into existing AI-1542 instead (reason "first" of several). Posted as **comment 170926 on AI-1542** after two draft rounds — final format per Varun: `next steps:` + `footgun:` sections, **ASD-STE100 Simplified Technical English** (his explicit style ask; now standing preference for ticket comments). Content: measure p50/p95/p99 per serving option (DBX nano, Bedrock Ministral 3B/8B + alternates), conversation-shaped + French inputs, ballparks to business before Fri Aug 1 (Qwant OOO in August); footgun = no trusted latency target (incl. the P99<2s in the description), Qwant timeout ~500ms kills the design, timeout is a business decision and measured numbers are leverage.
 - French sample files moved by Varun to `review/` for Slack handoff (`qwant_fr_queries_sample_20260724.{csv,sql}`) — deliberately left git-untracked (real user queries).
+
+## 2026-07-27 — AI-1538 status comment posted (170943, Varun-approved)
+
+- STE-100 done/next-steps/footgun comment on AI-1538 (approved after 2 rounds; "IRSA" de-jargoned to "AWS permissions to call Bedrock" — Varun asked what IRSA was, explain-first rule applied). Footgun reframed per Varun: "deploy this service only after the new cd-deploy-configs deployment is created" + cd-deploy-configs mechanics.
