@@ -37,3 +37,10 @@ VSS serves **low-latency, high-QPS mainline product-ad traffic** — the money-m
 - Results below `minRankingScore` (0.5 cosine) are dropped (`rank-score-drop-limit: 0.0`) — a low `searchResultsSize` can mean relevance-dropped, not "no inventory".
 - Setting `experimentContext` keys from outside (e.g. `vespaYqlVersionProduct`) did NOT take effect with plain-JSON guesses (`{"internal":{...}}`, flat map) — the experimentation-SDK wire format is something else; also AAS currently drops experimentContext on forward (AI-1566).
 - Truncated-prefix detector: query GPC `"Apparel & Accessories > Sho"` — 100 hits ⇒ prefix matching active; ~0 hits ⇒ exact IN active. Cheap way to tell which YQL version/clause a server is running.
+
+## Prod regime differences (verified 2026-07-27, Artem's prod-ric1 run @ AI-1545 c170901)
+
+- **Stage filter-latency profiles do NOT transfer to prod — the slow slice reverses.** Same 1000 CIV requests both envs: stage GPC+brand = fastest shape (6.5ms avg; brand selectivity → exact-search regime); prod GPC+brand = SLOWEST (84ms avg, median 116, capped ~148). Prod GPC-alone 33ms, brand-alone 24.6 ≈ no-filter 21.9. The brand exact-search fast-path flip does not survive prod scale (~75M docs); the GPC×brand combination is what goes pathological. Never extrapolate a stage filter-latency measurement to prod.
+- **Prod zero-ad 3.0 rows are SLOW** (44ms avg; GPC+brand zero-ad 73ms) unlike stage (11.8ms) — "found nothing fast" intuition is stage-only. Consequence: full-page-filtered and unfiltered averages roughly agree on prod (53 vs 45ms), so the 7/23 "filter keeps the slow subset" critique is stage-specific.
+- **Prod VSS→Vespa timeout 150ms censors every AI-1545 prod stat**: observed max 148, 53/1000 rows bunched ≥130ms, 46 rows missing latency entirely (11 hard failures) and excluded from averages. Reported prod p95/p99 are floors, not estimates.
+- CIV-derived samples carry **zero price/currency filters** (0/1000 both runs) — the two filters the 7/24 prod probe showed blow the 150ms timeout when combined. Any CIV-sample latency number understates real pCIV-traffic risk until price-carrying requests are measured.
