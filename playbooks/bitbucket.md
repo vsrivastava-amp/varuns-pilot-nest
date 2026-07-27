@@ -15,7 +15,7 @@ git clone --depth 50 git@bitbucket.org:admarketplace/<repo>.git     # shallow is
 
 - Clone into the **session scratchpad**, never into the nest.
 - Read-only is behavioral (the key is Varun's, full perms) — same rule as
-  Jira/Rovo: no pushes, no PR writes; outbound goes through REVIEW.md.
+  Jira/Rovo: no pushes, no PR writes; outbound goes through `review/` drafts.
 - Verified 2026-07-23 (dsp-engine cloned, source read).
 
 ## Gotchas

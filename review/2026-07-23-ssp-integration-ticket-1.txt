@@ -1,0 +1,11 @@
+Title: SSP: invoke online pCIV extraction from /di intent context (project AS, epic AS-13384)
+
+When /di receives Qwant 3.0 `intent` context (prompt + source ContextSummary + optional response — AS-13400), SSP should call the online pCIV service (AI-1538) to derive the CIV (chat.commerciality/type/topic + targets[]) that Qwant does not send.
+
+Decisions this ticket must land (currently written down nowhere):
+1. Blocking vs async: does the ad request wait for extraction (must fit Qwant's ~3s Flash budget alongside SSP→DSP→AAS→VSS — see AS-13402, which does not yet inventory a pCIV hop), or is extraction async (fire-and-cache; current request falls back to prompt-as-qt per AI-1546, later requests in the chat/session benefit)?
+2. Timeout + fallback semantics: extraction failure/timeout must never block ad serving — degrade to the AI-1546 qt fallback chain.
+3. Payload mapping: `intent.*` → service request (incl. which surfaces call it — Flash may be prompt-only at launch per 7/17).
+4. Caching key: session/chat-scoped reuse of extractions (chat.id / session.id are optional fields).
+
+Dependencies: AI-1538 (service exists), AS-13400 (fields accepted). Owner: SSP team (Pinkel) with AI team (Varun) on the service side.

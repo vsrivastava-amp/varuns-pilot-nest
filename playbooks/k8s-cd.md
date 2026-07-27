@@ -21,4 +21,4 @@ Two Bitbucket repos, both cloned under `~/Documents/`:
 
 - llm-evaluator-service dev/stage/prod URLs: `{dev|stage}-llm-evaluator-service.ric1.admarketplace.net` (VPN only; unreachable from sandboxed shells).
 - Image tags: `<ver>.<build>-<branch>` from the service repo's bitbucket-pipelines CI on every push — dev overlays can pin feature-branch tags (e.g. `1.0.266-feat-civ-eval-id-3`).
-- Agent guardrail: merges auto-deploy ⇒ agents prepare feature branches/PRs only; humans merge. PRs beyond dev branches → REVIEW.md.
+- Agent guardrail: merges auto-deploy ⇒ agents prepare feature branches/PRs only; humans merge. PRs beyond dev branches → `review/` draft.

@@ -7,11 +7,11 @@ Goal: by the time Varun finishes coffee, one integrated digest in `state/` cover
 ## Preflight
 
 - **Connector check**: the claude.ai MCP connectors (Calendar, Gmail, Drive, Rovo, Slack) need a per-session `/mcp` handshake and may be absent in headless/cron runs (see `playbooks/google.md`). Probe cheaply (e.g. Slack `slack_read_user_profile`, Rovo `atlassianUserInfo`). **Connectors dead → fall back to the v1 path** (bottom of this file) — don't skip the sweep, and tell Varun which path ran.
-- All connectors ride Varun's OAuth: **reads free, writes never** (drafts → REVIEW.md; exception: Varun directs a write in-chat — that *is* the approval; log it in the run file).
+- All connectors ride Varun's OAuth: **reads free, writes never** (drafts → `review/`; exception: Varun directs a write in-chat — that *is* the approval; log it in the run file).
 
 ## Steps
 
-1. **Nest sync** (standard 60-second ritual): `git pull --rebase`, `git log --oneline -15`, skim `tasks/queue.md`, `REVIEW.md`, `needs-human.md`. Note the date of the last `state/` digest — everything below sweeps *deltas since then*.
+1. **Nest sync** (standard 60-second ritual): `git pull --rebase`, `git log --oneline -15`, skim `tasks/queue.md`, `ls review/` (pending drafts → flag to Varun), `needs-human.md`. Note the date of the last `state/` digest — everything below sweeps *deltas since then*.
 
 2. **Calendar** (`list_events` on primary, today + tomorrow, TZ America/Los_Angeles — calendar default is Eastern, mind the gap):
    - Today's shape: meetings, gaps, focus blocks.
@@ -45,13 +45,13 @@ Goal: by the time Varun finishes coffee, one integrated digest in `state/` cover
 
 - 2026-07-22 — Jira bulk-update noise: ~20 AI issues shared one `updated` timestamp (2026-07-21 19:47 UTC); real activity means new comments or transitions, not timestamps.
 - 2026-07-22 — Verify agent paraphrases against source before Varun acts on them (re-fetch the actual comment thread for anything that drives a decision).
-- 2026-07-22 — Jira writes (transitions etc.) are OK when Varun directs them in-chat — that *is* the approval; log the write in the run file. Agent-initiated writes still go through `REVIEW.md`.
+- 2026-07-22 — Jira writes (transitions etc.) are OK when Varun directs them in-chat — that *is* the approval; log the write in the run file. Agent-initiated writes still go through `review/` drafts.
 - 2026-07-22 — Calendar default TZ is America/New_York (Varun's calendar); this machine is Pacific. Always pass `timeZone` explicitly and label which zone the digest uses.
 - 2026-07-22 — Rovo `searchJiraIssuesUsingJql` with `comment` in fields across a broad sweep (~23 issues) overflows context (138k chars; auto-saved to a tool-results file). Either omit `comment` from the broad sweep and fetch comments per-anchor-issue, or digest the saved file via a subagent (worked well).
 - 2026-07-23 — Machine clock now reports **EDT**, not Pacific as CLAUDE.md states. Run `date` at session start rather than trusting the doc; label digest times with the zone you actually verified. (CLAUDE.md fix pending Varun's confirmation of which is durable.)
 - 2026-07-23 — Slack mention search `<@Uxxxx> after:...` via `slack_search_public_and_private` returns zero results (modifier doesn't work as a bare query term). Use keyword name search (`Varun after:...`, noisy) plus direct anchor-channel/thread reads instead.
 - 2026-07-23 — Gong bot summaries in `#gongtest` are the best same-morning source for external Qwant calls (structured next-steps, posted within ~2h). A `qwant after:<date>` search surfaces them; verify anything decision-driving against the call owner before Varun acts.
-- 2026-07-23 — Check REVIEW.md for concurrent-session appends before committing it (`git status` first): entries from other live sessions can land mid-run and may correct your digest (today: AI-1474 run had actually been attempted and 429-throttled — a REVIEW draft revealed it).
+- 2026-07-23 — Check REVIEW.md for concurrent-session appends before committing it (`git status` first): entries from other live sessions can land mid-run and may correct your digest (today: AI-1474 run had actually been attempted and 429-throttled — a REVIEW draft revealed it). *(2026-07-27: REVIEW.md deprecated → per-draft files in `review/` are single-writer; the surviving lesson is `git status review/` — other sessions' fresh drafts can still correct your digest.)*
 - 2026-07-27 — Name-keyword mention search (`Varun after:<date>`) is now flooded by Datadog bot messages in #devops_alerts_npe (returned even with include_bots defaulting false). Rely on anchor channels + DM search + Jira sweep; the name search adds ~nothing.
 - 2026-07-27 — Claude tag went live in the workspace ~7/24 (bot U0ATJ9XDD2N, joined #team-relevance-yield). Its channel summaries can hallucinate (called Dhaval "Suneel" — Neeraj caught it). Treat Claude-tag output in channels as unverified paraphrase; re-fetch sources, same as agent paraphrases.
 - 2026-07-27 — Weekend-spanning Monday sweeps: use `newer_than:3d` for Gmail and Friday-digest-time as Slack/Jira cutoff; also expect TWO bulk-stamp noise clusters (Sunday-night automation + Monday-morning board grooming before standup).

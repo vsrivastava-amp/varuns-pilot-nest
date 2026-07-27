@@ -1,0 +1,5 @@
+Title: Consume online pCIV output in retrieval/auction + launch A/B (project AS or under AI-1171, judgment call)
+
+Wire the online-pCIV service's extracted CIV into ad selection: qt selection for Vespa (interacts with AI-1546 fallback chains), GPC/category + price/brand matching in AAS (AI-1171 phase-1 scope), commerciality filter. Includes the launch A/B Dhaval proposed 7/17: extraction-on vs raw-prompt-as-qt, so the relevance lift of online extraction is measured from day one (experiment framework per exp-38 precedent).
+
+Dependencies: Ticket 1, AI-1546 (in review), AI-1171. Success criteria: extracted CIV measurably changes retrieval for ghost traffic; A/B dashboards show both arms.

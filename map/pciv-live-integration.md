@@ -35,4 +35,4 @@ milestone TL, **Varun owns the online-pCIV build tickets** (AI-1538/1542).
 
 ## Agent posture
 
-- 2026-07-21: monitor + summarize only. All drafted replies → REVIEW.md, never sent directly.
+- 2026-07-21: monitor + summarize only. All drafted replies → `review/` (was REVIEW.md until 2026-07-27), never sent directly.

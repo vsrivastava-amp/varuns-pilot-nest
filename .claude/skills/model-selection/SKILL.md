@@ -66,7 +66,7 @@ output_cost  = items × out_tokens_per_item × output_rate     (output is NEVER 
 
 Because input is ~95% cached, **output price drives the model ranking**. Give ranges when output-per-item is unmeasured; a small pilot (10–20k items) yields exact `tokensUsed` and latency — prefer that before quoting numbers on a ticket.
 
-**Rate limits gate feasibility, not just cost**: most wrapper endpoints are throttled near zero (as of 2026-07 only the gpt-5-mini and gpt-5-4-nano wrappers have real capacity). Check historical successful-requests-per-minute in the telemetry before promising a runtime; increases go through Databricks (ask template precedent: REVIEW.md 2026-07-23).
+**Rate limits gate feasibility, not just cost**: most wrapper endpoints are throttled near zero (as of 2026-07 only the gpt-5-mini and gpt-5-4-nano wrappers have real capacity). Check historical successful-requests-per-minute in the telemetry before promising a runtime; increases go through Databricks (ask template precedent: git history of REVIEW.md, 2026-07-23 — file deprecated 2026-07-27, drafts now in `review/`).
 
 ## 4. Compare capability honestly
 

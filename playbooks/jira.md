@@ -6,7 +6,7 @@
 
 - Site: `https://admarketplace.atlassian.net`
 - Basic auth: `vsrivastava@admarketplace.com` + `ATLASSIAN_API_KEY` from `.env` in the nest root (gitignored — never commit).
-- Token verified working 2026-07-21 (`/rest/api/3/myself` → 200). Token inherits Varun's full perms — **read-only is behavioral**: GETs freely; any POST/PUT (comments, transitions, ticket edits) goes through REVIEW.md first.
+- Token verified working 2026-07-21 (`/rest/api/3/myself` → 200). Token inherits Varun's full perms — **read-only is behavioral**: GETs freely; any POST/PUT (comments, transitions, ticket edits) goes through a `review/` draft first (or Varun's in-chat direction).
 
 ## Patterns
 
@@ -28,7 +28,7 @@ BASE="https://admarketplace.atlassian.net/rest/api/3"
 ## Second path: Atlassian Rovo MCP (2026-07-22)
 
 - claude.ai "Atlassian Rovo" connector, live on laptop sessions after a per-session `/mcp` handshake (see `playbooks/google.md` → session bridging gotcha). Verified via `atlassianUserInfo` → Varun's account, active.
-- Rides Varun's OAuth, same as the API token: **read-only is behavioral here too.** Write tools exist (`createJiraIssue`, `editJiraIssue`, `transitionJiraIssue`, `addCommentToJiraIssue`, Confluence page create/update) — all go through REVIEW.md first.
+- Rides Varun's OAuth, same as the API token: **read-only is behavioral here too.** Write tools exist (`createJiraIssue`, `editJiraIssue`, `transitionJiraIssue`, `addCommentToJiraIssue`, Confluence page create/update) — all go through a `review/` draft first (or Varun's in-chat direction).
 - Adds what the curl path didn't have wired up: `searchJiraIssuesUsingJql`, `getJiraIssue`, plus **Confluence** (`getConfluencePage`, `searchConfluenceUsingCql`) and Teamwork Graph context.
 - curl path (above) remains the headless-safe option — MCP connectors need interactive auth and may be absent in cron runs.
 

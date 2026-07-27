@@ -29,4 +29,5 @@ Entry template:
 - why it matters: locale/timezone availability changes pCIV extraction and eval assumptions downstream; if the tracker's "cannot" calcifies, integration gets designed against the wrong constraint before the mid-Aug launch.
 - ask: confirm with Claire/Camille what Qwant will actually send (locale? timezone?) and get the tracker corrected — then answer here.
 - 2026-07-22 update: message draft parked in REVIEW.md with a HOLD-unless recommendation — Dhaval/Camille are already working this in-channel; only escalate if our extraction/eval code consumes these fields (Varun knows). Slack Claude monitoring for self-resolution.
+- 2026-07-27 update: the Claire HOLD draft was retired in the REVIEW.md deprecation (git history keeps it). New evidence toward resolution: Norbert's 7/24 sandbox test request to the ghost endpoint includes `locale: en-US` AND a full `timezone` object — consistent with Camille's "should be fine"; the tracker correction is what remains.
 - resolution: (pending)

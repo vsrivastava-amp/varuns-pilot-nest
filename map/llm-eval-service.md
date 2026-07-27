@@ -33,4 +33,4 @@ ARES (Automated Relevance Evaluation Service) is the eval half of tracker projec
 
 ## Agent posture
 
-- 2026-07-21: repo work (triage, small fixes) on dev branches only; PRs beyond dev → REVIEW.md.
+- 2026-07-21: repo work (triage, small fixes) on dev branches only; PRs beyond dev → `review/` draft (was REVIEW.md until 2026-07-27).

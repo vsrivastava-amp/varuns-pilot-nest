@@ -1,0 +1,5 @@
+# Action ask (not a message): on approval, push the AI-1538 Phase A feature branches.
+# Nothing deploys until a PR to master merges (argo auto-sync). Image tag is an unpullable
+# placeholder until the feat-online-pciv CI tag is known. App name: online-pciv-service.
+cd ~/Documents/cd-deploy-configs-online-pciv && git push -u origin AI-1538-online-pciv
+cd ~/Documents/cd-releases-online-pciv && git push -u origin AI-1538-online-pciv

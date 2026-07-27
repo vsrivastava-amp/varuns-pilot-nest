@@ -37,7 +37,7 @@ A single **GitHub repo of plain markdown** ("the nest") is both the memory syste
 
 - **Task queue by privilege tier**: `no-auth` / `session` (live SSO) / `sudo`. No-auth runs freely; session work batches into post-Okta bursts; sudo work pre-staged in `needs-sudo.md`, executed when a window opens.
 - **Auth-aware**: cheap credential probe before each task (`aws sts get-caller-identity`, `databricks auth describe`, API ping). Dead → park task, ping Varun. Never fail silently.
-- **Review gateway**: outbound artifacts (messages, PRs beyond dev branches, ticket changes) land in `REVIEW.md` or dev channel. Agent keeps working other tasks while items await review.
+- **Review gateway**: outbound artifacts (messages, PRs beyond dev branches, ticket changes) land in `review/` (one bare draft file each; was `REVIEW.md` until 2026-07-27) or dev channel. Agent keeps working other tasks while items await review.
 
 ### Guardrails (CLAUDE.md + real permissions where possible)
 - Write access only to dev branches/channels; enforce via branch protection & channel perms, not just instructions
