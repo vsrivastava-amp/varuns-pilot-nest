@@ -59,6 +59,26 @@ avg(last_5m):p95:trace.servlet.request{env:prod,service:intent-identifier-servic
 Matches the earlier report's ~4,394 (one-log boundary difference). **07-27 is the highest day in the
 window and was not over when measured** — the trend is up, not flat.
 
+### Alert episodes (verified via `search_datadog_events`)
+
+**18 episodes, 36 transitions**, cleanly paired. Median duration **5 min**, longest **20 min**
+(07-23 17:58→18:18). This confirms the earlier report's 18 / ~5 min / ~20 min exactly.
+Episodes by day: 07-21 ×4, 07-22 ×2, 07-23 ×5, 07-24 ×1, **07-25 ×0**, 07-26 ×2, 07-27 ×4.
+
+- **13 of 18 episodes lasted exactly 5 minutes** = the monitor's own evaluation window. Those are
+  single-evaluation blips: count crossed 5, fell back immediately.
+- **Duration is not a severity proxy.** The 07-27 14:50 burst (683 timeouts, ~9% of that minute's
+  traffic) produced a 5-minute episode — the same duration as episodes containing six timeouts.
+  Anyone triaging by episode length will mis-rank these.
+- **The recovery message text is a third documentation defect.** The monitor says "recovered to
+  normal levels (<4)"; the alert bodies show Datadog recovers at **≤5**. There is no separate
+  recovery threshold configured.
+- How to get this: `search_datadog_events(query="\"<monitor name>\"", from="now-7d",
+  sort="timestamp")`. `monitor_id:<id>` returns nothing — query the **title string** instead.
+  Watch for truncation: the first page silently capped at 30 of 36 events, which would have
+  produced 15 episodes instead of 18. Check `<count>` against `<displayed_items>` and page with
+  `start_at`.
+
 ## The correction: two distinct failure modes, and the p95 fix does not detect either burst
 
 Per-hour and per-minute decomposition changes the picture the aggregate counts gave:

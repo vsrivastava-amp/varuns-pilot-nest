@@ -70,6 +70,12 @@ despite the name), `generic` (query syntax across all data types).
   The response includes the metric's `unit` — **read it** (see gotchas).
 - **Grouping**: `by {tag}` inside the query string. A `scope` of `tag:N/A` in the response
   means the metric isn't tagged that way, not that the value is missing.
+- **Monitor firing history** (episode counts + durations): `search_datadog_events(query="\"<exact
+  monitor name>\"", from="now-7d", sort="timestamp")`. Events carry `[Triggered]` / `[Recovered]`
+  titles; pair them in order to get episodes. **`monitor_id:<id>` matches nothing** — query the
+  title string. Two traps: (a) the response **silently truncates** — compare `<count>` to
+  `<displayed_items>` and page with `start_at`, or you will undercount episodes; (b) a big result
+  spills to a file on disk, so parse it with grep/python rather than re-running with more tokens.
 
 ## Gotchas
 
