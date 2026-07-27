@@ -7,3 +7,4 @@
 - 2026-07-27 — Playbook gotcha appended (Claude-tag summaries in-workspace hallucinate names; name-keyword mention search flooded by Datadog bot).
 - 2026-07-27 — No writes to Jira/Slack/Gmail/Calendar. No REVIEW.md drafts created.
 - 2026-07-27 — follow-up: drafted Saksham DM reply (dataset scope) → review/2026-07-27-saksham-dataset-scope.txt + REVIEW.md entry; Varun corrections folded in (Amarachi = PM, grading the FR set).
+- 2026-07-27 ~11:25 — CORRECTION (Varun caught it): Yaarit's alignment questions were a thread-reply (parent p1784846599514279), and Saksham HAD answered all four Fri ~11:59 ET. Digest flag 3 rewritten; thread-reply trap added to playbook gotchas (read_thread with a reply ts silently returns 'no thread messages'). Also re-verified today's standup: confirmed/on; Friday's cancellation evidence stands (Saksham msg + cal email).
