@@ -26,11 +26,11 @@ L1/L2/L3 = .928/.902/.897 (statistical tie w/ luna, both >> prior .845 L3); Chri
 ## 2. Full 2.23M-keyword run (Databricks notebook)
 
 - [x] Smoke slice verified (run_id=smoke, 117 rows): 95.6% L3+, avg depth 2.96, 0 dog keywords in Cat Supplies, 4 legit NULLs.
-- [ ] **Full run IN FLIGHT** since ~15:15 ET 2026-07-24: run_id=`gemini-full-1`, eval 6, dev endpoint, classic cluster. Table monitor `bo10owjte` (10-min polls: progress/STALL/COMPLETE). Emily got ~4h ETA via Slack.
+- [x] **Full run COMPLETE 2026-07-27 ~18:35 ET** (was: IN FLIGHT since ~15:15 ET 2026-07-24: run_id=`gemini-full-1`, eval 6, dev endpoint, classic cluster. Table monitor `bo10owjte` (10-min polls: progress/STALL/COMPLETE). Emily got ~4h ETA via Slack.
 - [ ] **Failure-NULL bug found ~16k in**: per-query `status: FAILURE` (rate-limit-type, 207 responses) were written as no-category NULLs (~43% marginal). Notebook FIXED (status/error-aware: failures ride 429 ladder, clean empties get 1 quick retry) + re-imported — but the RUNNING cell has the old code. On Varun's return: interrupt → Run All (resumes, same widgets). Then final mop-up pass `retry_empty=true` re-attempts all NULL keywords. **Check NULL rate before flipping BUILD_RELEASE_TABLE.**
-- [ ] Spot-check raw table (incl. `CHRIS_EXAMPLES` FAIL query — none under Cat Supplies)
+- [x] Spot-checks GREEN 2026-07-27: coverage 2,422,273 >= 2,422,112 live universe; 0 dupes; 19.0% NULLs; 21/21 valid L1; Chris's 17 = 0 in Cat Supplies (~7 residual dog-kw misses in broad sweep, 0.05%, non-blocking)
 - [ ] **DECISION 2026-07-24 (Varun, per ticket thread — Dhaval "we should not replace", Emily agreed): NO gold swap.** Publish eval-6 results as separate table `gold_adv_keyword_gpc_level_3_eval6` (same schema); gold untouched; Katie Ji repoints dashboard. Notebook endgame reworked: flip `BUILD_RELEASE_TABLE=True` → coverage gate → staging → sanity checks → atomic publish of the NEW table only. (Swap remains a one-liner later if wanted.)
-- [ ] **Ping Emily at 100% (Varun-directed 2026-07-27, exact wording agreed in-chat): Slack DM D0BFWRFDW1J with the RAW table path `adv_keyword_gpc_lvl_3_ai1474`. NO release-table flip — Varun: Emily doesn't need it; BUILD_RELEASE_TABLE stays parked unless asked.** Claude authorized to send as Varun on COMPLETE (in-chat direction, guardrail 8 satisfied).
+- [x] **DONE 2026-07-27 (sent, msg link in run log): Ping Emily at 100% (Varun-directed 2026-07-27, exact wording agreed in-chat): Slack DM D0BFWRFDW1J with the RAW table path `adv_keyword_gpc_lvl_3_ai1474`. NO release-table flip — Varun: Emily doesn't need it; BUILD_RELEASE_TABLE stays parked unless asked.** Claude authorized to send as Varun on COMPLETE (in-chat direction, guardrail 8 satisfied).
 - [ ] NB for the closing comment: ticket's public record is behind reality — last word says "full run pending rate limit increase"; it doesn't know about dev-only (Sunil, Slack) or the separate-table release. Closing comment should state: ran on dev, deliverable = `..._eval6` table, `gold_adv_keyword_gpc_level_3` untouched (per Dhaval's no-replace + Emily's agreement). Scope line in description says "Reprocess gold_..." — the separate table satisfies intent per thread consensus.
 
 ## 3. Parked / gated side-threads
@@ -39,3 +39,10 @@ L1/L2/L3 = .928/.902/.897 (statistical tie w/ luna, both >> prior .845 L3); Chri
 - [x] ~~Dhaval objection window~~ CLOSED 2026-07-24 15:42 ET: approved ($2.4k fine, "go with the better resultz"). Jira monitor `b6yoaw6du` stays armed for thread activity.
 - [ ] ITPM/OTPM ask w/ Sixuan (Databricks): dev increase confirmed live; prod outcome unknown — first run slice is the test
 - [ ] Session cleanup: kill local uvicorn task `btfufgz54` (localhost:8000) when local testing done. ~~delete declined cd-deploy-configs remote branches~~ ✅ deleted 2026-07-24
+
+## 4. Post-run cleanup (open)
+
+- [ ] Revert dev HPA replicas 16→2 (both bumps) in cd-deploy-configs — batch job done, dev shouldn't hold 16 pods
+- [ ] Optional: retry_empty mop-up of 460k NULLs (storm losses largely cache-recovered; sample first)
+- [ ] Decide: merge feat-civ-eval-6-gemini to main or leave dev-only (dev pod pinned to branch image 1.0.288)
+- [ ] AI-1474 closing comment + ticket transition (In Review); civ_config table row sync if keeping eval 6
