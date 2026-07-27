@@ -1,20 +1,33 @@
-Hey @Bhupesh — I pulled the Datadog history for this monitor while looking at something adjacent, so I am dropping it here rather than leaving the ticket empty. Correct me where I have this wrong.
+Hey @Bhupesh, I had some context on this one, so I pulled the Datadog history and read the SSP client code. Dumping it all here so the ticket does not start from zero.
 
-The monitor counts log lines, not requests. It triggers above 5 matching events in a rolling 5-minute window and recovers at 5 or fewer. An episode therefore tells you the count crossed a line. It does not tell you how many requests failed.
+What the monitor measures
 
-Last week (2026-07-20 18:00 to 2026-07-27 18:00 UTC): 18 episodes, 4,393 matching logs, median episode 5 minutes, longest 20. The volume is not spread out. 683 of 07-27's 692 logs landed in the single minute 14:50, and 07-26 has the same shape at 08:46. Every other hour in the week is single digits or low tens. This looks like two one-minute bursts plus a constant drip of 1 to 2 per minute — possibly two different problems behind one alert.
+It triggers above 5 matching log events in a rolling 5-minute window. It recovers at 5 or fewer. It counts log lines, not requests.
 
-Two observations that may matter for scoping:
+The filter is an OR, not an AND. The query ends with @stack_trace:(*HttpTimeoutException* *IntentIdentifierControllerApi*), and the space inside the parentheses means OR. Last week it matched 4,393 logs. Only 3,681 of those contain HttpTimeoutException. So roughly 712 of them are other intent-identification failures. Replacing the space with AND turns it into a timeout monitor. Leaving it as OR makes it a general "intent identification failed" monitor, which may be what you want, but the name says otherwise.
 
-1. The drip looks structural. The service's routine max latency runs 22 to 57 ms against SSP's approximately 30 ms deadline, so a slice of normal traffic exceeds the deadline as a matter of course. A sampled failure completed server-side at 52 to 54 ms.
-2. The bursts look like stalls, not latency creep. p50 is 5 ms, but one request during the 07-26 burst took 6.09 seconds. p95 did not move during that minute (0.0154, flat against baseline).
+Volume last week (2026-07-20 18:00 to 2026-07-27 18:00 UTC)
 
-Questions, since the call is yours:
+18 episodes, 4,393 matching logs. Median episode 5 minutes, longest 20.
 
-- Is the intent to fix the alert or the timeouts? The alert reads accurate to me, and it is currently the only signal tracking real impact. If the plan is threshold tuning, note that both bursts would disappear behind a higher threshold.
-- Do you know whether the SSP call path retries after the timeout? An earlier note says Resilience4j is in the path, but I did not confirm it in ssp-engine. If it does retry, the bursts are partly self-inflicted.
-- This monitor and the P95 one are both managedBy:Terraform. Do you know which repo owns them? I could not find the module.
+The volume is not spread out. 683 of 07-27's 692 logs landed in the single minute 14:50. 07-26 has the same shape at 08:46. Every other hour in the week is single digits or low tens. So the week is two one-minute bursts plus a constant 1 to 2 failures per minute.
 
-Separately, and unrelated to the timeouts: monitor 238419172 (Intent Identifier Service - P95 Latency) cannot fire. Its threshold is 10 on a metric measured in seconds, while the message claims 10 ms. I do not see a ticket for it. It probably wants its own, in this epic.
+The constant background failures come from normal latency
 
-footgun: episode duration is not severity here. The 683-timeout burst produced a 5-minute episode, the same length as episodes containing six logs. 13 of the 18 episodes lasted exactly 5 minutes, which is only the evaluation window.
+The service's routine max latency runs 22 to 57 ms. application.yml sets read-timeout-millis to 30 by default. Prod can override that with an env var and I did not read the deployed env, but the observed abandon time of 30.20 ms matches the default. So a slice of ordinary traffic crosses the deadline every hour. A sampled failure finished server-side at 52 to 54 ms, after SSP had already closed the stream.
+
+The bursts are stalls, not gradual latency growth
+
+p50 stayed at 5 ms through both bursts. One request during the 07-26 burst took 6.09 seconds. p95 did not move at all that minute (0.0154, flat against its normal band).
+
+The client retries timeouts with no wait between attempts
+
+IntentIdentifierServiceConfiguration builds the Resilience4j retry with maxAttempts = retries + 1 and waitDuration 0. retryExceptions includes IOException, and HttpTimeoutException extends IOException, so timeouts do retry. retries defaults to 1, so each failure sends 2 attempts back to back. IntentFilter logs "Unexpected error during intent identification" once per request, after both attempts fail. So the 683 logs in that minute represent roughly 1,366 calls sent to a service that was already stalled.
+
+A rate metric already exists
+
+sspEngine.intent.identifier.errors is live and carries a kind tag. It increments once per request. Last week in ric1: request_timeout 3,657, stream_exhausted 341, connect_timeout 96, io_error 31, service_error 14. During the 07-27 14:50 burst, kind:request_timeout recorded 683, which matches the log count exactly. A failure-rate monitor can be built on this today, dividing it by the intent identifier call count. No new instrumentation is needed.
+
+footgun: episode duration does not indicate severity here. The 683-timeout burst produced a 5-minute episode, the same length as episodes containing six logs. 13 of the 18 episodes lasted exactly 5 minutes, which is only the monitor's evaluation window.
+
+Source read at ssp-engine master, commit 1e3b192.

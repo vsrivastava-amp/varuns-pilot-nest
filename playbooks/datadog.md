@@ -106,3 +106,13 @@ despite the name), `generic` (query syntax across all data types).
   before characterizing a failure. A "4,393 logs/week, 18 episodes" problem turned out to be
   two one-minute events plus a low background drip — with different root causes and
   different fixes.
+- **A space inside `@field:(a b)` is OR, not AND.** Verified 2026-07-27: monitor 238419175's
+  `@stack_trace:(*HttpTimeoutException* *IntentIdentifierControllerApi*)` returns 4,393 logs, while
+  the explicit `@stack_trace:*A* AND @stack_trace:*B*` returns 3,681. A monitor written this way
+  counts more than its name implies. To check any monitor for this, re-run its filter with explicit
+  `AND` and compare counts.
+- **Check for an existing app metric before proposing new instrumentation.** `search_datadog_metrics`
+  with `name_filter` found `sspEngine.intent.identifier.errors` (a per-request counter with a `kind:`
+  tag) already live — which made a recommended "add a terminal outcome metric" redundant. App metrics
+  are often prefixed by service (`sspEngine.`, `intent_identifier_service.`), so search the bare
+  suffix, not the code constant.

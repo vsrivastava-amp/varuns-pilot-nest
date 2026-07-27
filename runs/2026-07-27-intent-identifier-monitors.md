@@ -135,6 +135,50 @@ Two separate jobs:
 3. **238419175 remains the only true impact signal.** Keep it. Rate-normalizing it
    (`timeouts / total calls`) is still the right measurement for judging any fix.
 
+## Source-verified facts (ssp-engine master @ 1e3b192, read 2026-07-27)
+
+Cloned to scratchpad per `playbooks/bitbucket.md`. These resolve hedges that the earlier report and
+my first pass had to leave open.
+
+- **The retry premise is confirmed, and it is worse than the report guessed.**
+  `IntentIdentifierServiceConfiguration` builds the Resilience4j retry with
+  `maxAttempts(retries + 1)` and **`waitDuration(Duration.ofSeconds(0))`** — zero backoff.
+  `retryExceptions(IOException.class, IntentIdentifierServiceCallException.class)`, and
+  `java.net.http.HttpTimeoutException extends IOException`, so **timeouts do retry**, immediately.
+  `IntentFilter.isRetryable` independently returns true for any `IOException`.
+- **Config defaults** (`application.yml`): `read-timeout-millis` **30** (env
+  `APP_INTENT_IDENTIFIER_SERVICE_READ_TIMEOUT_MILLIS`, legacy
+  `APP_INTENT_IDENTIFIER_SERVICE_TIMEOUT_MILLIS` honored as fallback "for one release cycle"),
+  `connect-timeout-millis` **1000**, `retries` **1**. Prod may override via env; I did not read the
+  deployed env, but the observed 30.20 ms abandon matches the default.
+- **So 1 log line ≈ 2 abandoned calls.** `retries: 1` → `maxAttempts(2)`. `IntentFilter` logs
+  "Unexpected error during intent identification" **once per request** from the outer catch, after
+  both attempts fail. The 683 logs at 07-27 14:50 therefore represent ~1,366 calls into a stalled
+  service. **The monitor undercounts load on the dependency by 2×.**
+- **It does not currently fail open.** The catch returns
+  `Validation.invalid(EnrichmentError.ErrorType.exception)`, an error result — not the empty/no-intent
+  fallback the earlier report recommended. That fix is a real behavior change, not a no-op. How the
+  caller treats `ErrorType.exception` is **not traced** — open.
+- **A terminal-outcome metric already exists**, so the report's "record a terminal outcome metric" is
+  already done. `MetricService.countIntentIdentifierError` increments **`sspEngine.intent.identifier.errors`**
+  with a `kind:` tag, once per request. Kinds: `request_timeout`, `connect_timeout`, `stream_exhausted`
+  ("too many concurrent streams"), `io_error`, `http_4xx`, `http_5xx`, `null_response`,
+  `null_query_term_results`, `service_error`, `other`. Also `external.call` timing.
+  **Verified live in Datadog**, 7d ric1: request_timeout 3,657 · stream_exhausted 341 ·
+  connect_timeout 96 · io_error 31 · service_error 14. At 07-27 14:50, `kind:request_timeout` = **683**,
+  matching the log count exactly. **The rate monitor is buildable today with no new instrumentation.**
+- **The monitor's filter is an OR, and it over-matches.** `@stack_trace:(*A* *B*)` — the space inside
+  the parentheses is OR, not AND. Proof: the monitor's own filter returns **4,393**; an explicit
+  `@stack_trace:*HttpTimeoutException* AND @stack_trace:*IntentIdentifierControllerApi*` returns
+  **3,681**; `*HttpTimeoutException*` alone also returns **3,681**. So ~712 logs (~16%) are
+  non-timeout intent-identification failures counted by a monitor named "timeout logs".
+- **Refuted hypothesis:** I guessed the 341 `stream_exhausted` errors were zero-backoff retries
+  exhausting HTTP/2 streams during bursts. `kind:stream_exhausted` returned **no series** across the
+  07-27 burst window. Not the burst mechanism. Left out of the draft.
+- **Terraform module not found.** `admarketplace/terraform` exists but holds only ec2/kafka/LB
+  resources across `ric1/` + `pdx1/` (no `datadog_monitor` anywhere in a depth-5 clone).
+  `admarketplace/terraform-modules` also exists and is unexamined. Still open.
+
 ## Jira placement (verified 2026-07-27)
 
 - **AI-1543 "Fix Intent Identifier Service - timeout logs alert"** — the home for Problem 1. Title is
