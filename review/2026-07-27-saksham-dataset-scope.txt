@@ -1,7 +1,0 @@
-Hey @Saksham Bhatla,
-On #team-relevance-yield I posted 1000 query terms for a French dataset, to assist with an ask from Amarachi (https://admarketplace.slack.com/archives/C08GKCC9742/p1784918041039589)
-This data needs to be graded in part using human oversight in order to be a proper Golden Dataset. Amarachi should be the one to grade this set
-These are just SERP terms, not conversational prompts. So they don't yet match 3.0 format
-Bhupesh's request set on top of it should be complementary
-For AI-1556 this covers the Qwant-France leg — I can share the SQL with Bhupesh to regenerate or pull the US set (same query, different country code). The LLM-generated set is the remaining gap. Once ghost 3.0 traffic starts (~7/31) we should re-pull from real intent payloads so the sets match the actual request format
-On AI-1538: I'm on it today. Taking your answers in Friday's thread as the working assumptions (gpt-5.4-nano, sub-1s target, one prompt to start) and focusing on getting a working service accepting the new payload first, iterating from there

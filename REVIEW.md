@@ -6,14 +6,6 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 ---
 
-## 2026-07-27 — laptop(morning-routine) — message draft — DM reply to Saksham, pCIV query-dataset scope
-
-Context: Saksham DM'd (9:56 ET) asking to confirm the scope of the query dataset Varun generated for pCIV requests, linking AI-1556 (Bhupesh, "Create 3.0 pCIV requests" — wants Qwant US + FR sets + one LLM-generated). Varun replied "give me a moment" at 10:30. Draft answers the scope question in bullets: what the 7/24 FR sample is (1000 distinct terms + freq, pub 1276, FR, 7d), sampling + SERP-vs-conversational caveats, AI-1556 fit (FR leg done, US one query away, LLM-gen uncovered), 1107-vs-1276 surface question, Amarachi grading (labeling) the FR set = complementary to Bhupesh, offer of CSV+SQL. Varun said he'll likely rewrite from his own context — treat as skeleton.
-
-Body: `review/2026-07-27-saksham-dataset-scope.txt` — 11:35 ET: replaced with Varun's own rewrite (in-chat), agent filled the CSV-post permalink + AI-1556 and AI-1538 bullets.
-
-**Disposition:** pending Varun — ✅ send as himself / ✏️ tweak / ❌ drop
-
 ## 2026-07-24 — laptop(aas-context) — ticket creation + thread reply — unified-retrieval-score calibration gate
 
 Context: kvssScoreLinearA=0.93 (text-ads score scaler in AAS Discover 3.0) is an uncalibrated placeholder — no derivation anywhere, javadoc still rationalizes 0.8 (full provenance: `map/aas.md` §Auction formula, `runs/2026-07-23-aas-context.md`). Varun wants this guaranteed to surface as a decision before go-live. Plan: (1) Jira ticket as child of AI-1513 — the epic that gates 3.0 text ads — so it blocks epic closure; (2) reply in Saksham's unified-retrieval-score thread (#proj-amp-discover-3-0, p1784659275600359) linking the ticket; (3) after ticket exists, optional 1-line AAS PR fixing the stale javadoc to cite it. Order matters: file ticket first, then swap `<AI-XXXX>` into the Slack draft.
