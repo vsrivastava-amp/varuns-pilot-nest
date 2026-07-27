@@ -145,13 +145,15 @@ Both services: retrieval signal == ranking signal (cosine retrieves and ranks; s
 
 ## Ops & monitoring
 
-- Datadog: **vespa-cloud-service-dashboard** (`43c-s3g-tae`); vespa-feed-service dashboard (`f4p-upr-ehg`); VSS logs `service:vespa-search-service* env:prod`; alerts land in #prod-relevance-yield-alerts and #devops_alerts_npe (noisy — Datadog bot). Vespa Cloud-native metrics NOT yet in Datadog (asked 7/23, open).
+- Datadog: **vespa-cloud-service-dashboard** (`43c-s3g-tae`); vespa-feed-service dashboard (`f4p-upr-ehg`); VSS logs `service:vespa-search-service* env:prod`. The two primary alert channels are **#prod-relevance-yield-alerts** (`C0B22A0CG74`) for raw Datadog warn/trigger/recovery transitions and **#platform-alerts** (`C061B9YGLNP`) for PagerDuty incidents, acknowledgements, resolution state, and human discussion. Correlate both before deciding an incident was investigated or fixed; see `playbooks/vespa.md` → "Monitoring alerts." Vespa Cloud-native metrics NOT yet in Datadog (asked 7/23, open).
 - Runbook: "Relevance & Yield On-call Runbook" (Google Doc, jdeferio) — VSS-timeout triage: VSS latency high + Vespa CPU normal → VSS is the culprit (common signature).
 - Incident history (channels): timeouts 5/02 + 5/11, latency 2/18 + ric1 3/13, discrepancy 1/28, PLA-not-updated 2/26, maxHits 6/18 (Vespa-initiated upgrade broke app; postmortem in #ext channel 6/30), latency spike 7/12 (vendor ticket SUPPORT-781).
 - Known gotchas: Yahoo queries ending `.`/`...` are illegal Vespa syntax (sanitization added, AS-12642); VSS rides java.net.http.HttpClient's default connection pool over h1.1 (INFRA-3380 open); feed throughput ceiling ~6K FPS after container-cluster tuning (Oren, 6/10); indexing changes cost ~5-6% memory, rolled east/west with traffic shift.
 
 ## Slack channels
 
+- **#prod-relevance-yield-alerts** (C0B22A0CG74) — primary raw Datadog alert stream for Relevance & Yield production services.
+- **#platform-alerts** (C061B9YGLNP) — primary PagerDuty incident stream; inspect incident threads for acknowledgements, human analysis, and follow-up.
 - **#vespa-changes** (C0APXKGB2D6) — main internal coordination.
 - **#ext-admarketplace-vespa** (C091NJML1AB, private) — vendor channel; Vespa team (Kristian Aune, Jon Bratseth, Eirik Nygaard, Gleb Sizov) answers directly; office hours Wed 10:00 ET, 30min.
 - **#proj-vespa-cicd**, **#adbot-agent-vespa-releases** (bot: upstream Vespa release notes), plus per-release/incident channels (search "vespa" in channel names).

@@ -6,6 +6,31 @@
 
 VSS serves **low-latency, high-QPS mainline product-ad traffic** — the money-maker path, where DB latency runs ~20ms and every added millisecond is a real per-query and cluster-capacity cost. The Qwant/pCIV 3.0 flow is an **emerging avenue, not the main revenue driver** — don't conflate their latency budgets (the Qwant "~3s Flash Answer budget" in some digests applies to that conversational flow only). A filter shape that adds 40–120ms is a rounding error against 3s but a 3–8x regression against mainline VSS. The AI-1545-style concern is 3.0-style filters reaching the mainline path, not Qwant UX.
 
+## Monitoring alerts
+
+Use both primary channels; they answer different questions:
+
+- **#prod-relevance-yield-alerts** (`C0B22A0CG74`) is the raw Datadog stream. Start here to enumerate warn, triggered, and recovered transitions, including the monitor link, affected datacenter/group, threshold, and metric or log signature.
+- **#platform-alerts** (`C061B9YGLNP`) is the PagerDuty incident stream. Search for the monitor name or Datadog monitor ID, then read the parent thread for acknowledgement, human analysis, operational resolution, and follow-up.
+
+Alert-review workflow:
+
+1. Read `#prod-relevance-yield-alerts` for the bounded time window. Paginate to the end and deduplicate on Slack `message_ts`; the channel-history cursor can repeat the boundary message.
+2. Group by Datadog monitor ID plus alert group (`datacenter`, `search_type`, consumer group, and so on). Treat warn → triggered → recovered as one incident, not three alerts.
+3. Search `#platform-alerts` by exact monitor name and numeric monitor ID. Read each PagerDuty parent thread; a search hit may be a thread reply, so use the permalink's `thread_ts`, not the reply timestamp.
+4. Record three states separately: **acknowledged** means a person accepted the page; **recovered/resolved by Datadog** means the metric returned below threshold; **root-caused/remediated** requires human evidence of a cause or corrective action. Never equate automatic recovery with a fix.
+5. For Vespa-side anomalies that lack an internal explanation, check **#ext-admarketplace-vespa** (`C091NJML1AB`) for the vendor escalation and support-ticket link. A filed vendor ticket means investigation is open unless the thread contains a confirmed answer.
+
+Useful Slack searches (adjust dates every run):
+
+```text
+"<monitor name>" in:platform-alerts after:YYYY-MM-DD before:YYYY-MM-DD
+<monitor-id> in:platform-alerts after:YYYY-MM-DD before:YYYY-MM-DD
+vespa timeout after:YYYY-MM-DD before:YYYY-MM-DD
+```
+
+Worked example, 2026-07-24: Datadog monitor `263399495` ("Vespa Search Service timeouts") produced two RIC1 PagerDuty incidents around 04:00 ET and one PDX1 incident around 07:00 ET. All automatically recovered; Oren attributed the symptoms to short-lived Vespa latency spikes with no unusual traffic spike, escalated in `#ext-admarketplace-vespa`, and later filed Vespa support ticket `SUPPORT-808`. Operational impact cleared, but Slack contained no confirmed root cause or corrective change.
+
 ## Repos
 
 - **`admarketplace-gh/vespa-search-service`** (VSS) — Spring service that fronts Vespa. Key classes: `VespaYqlQueryBuilder` (assembles YQL), `WhereNearestNeighborBuilder` (ANN annotations), `ProductAdConstraintsTranslator` (3.0 filters → YQL predicates), `ExperimentSearchConfigResolver` (experimentContext keys like `vespaYqlVersionProduct`).
