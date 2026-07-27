@@ -57,3 +57,9 @@ One standard — **ASD-STE100 sentence discipline** — run in two moods dependi
 - Ask the owner whether behavior is intended; do NOT enumerate fix directives on someone else's ticket.
 - Short: 2–4 small paragraphs or a couple of numbered points. A table only if it earns its lines (Dhaval likes them).
 - ⚠️ Do not apply the imperative/no-hedge register to discussion comments — a 2026-07-27 draft was rejected for exactly this ("The prod numbers are real. The cost has one specific shape." — wrong register for a peer's ticket).
+
+**Punctuation and sentence shape (Varun, 2026-07-27, post-AI-1545 c170983):**
+- Em dashes are discouraged unless really needed. Colons as rhetorical setup ("The slowdown has one specific shape:", "The decision this points at:") are a weird pattern — replace with subject-verb-object sentences ("The slowdown happens only when …", "This points at a decision about …").
+- Stick to "typical high school English constructions". Do not do rhetorically interesting things. Punctuation serves a specific role, not emphasis.
+- Turn hedges into facts before drafting (measure the number, read the deployed config) or cut them; hedge only genuinely unconfirmed inference. No referential language ("same question as before, sharper now") — restate the actual question so the comment is self-contained.
+- Editing lenses that produced the accepted AI-1545 comment: (1) what is extraneous, (2) what is hedged that we can resolve ourselves, (3) what is referential that should be said outright.
