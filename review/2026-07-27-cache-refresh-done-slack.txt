@@ -1,1 +1,1 @@
-Hey @sunil. The notebook above ran. Wanted to raise that ~9k/18k of the keywords came back without GPCs. Is that expected @yaarit? Thanks
+Hey @sunil. The notebook above ran twice. Wanted to raise that many keywords came back without GPCs — ~9k/18k on the first run, ~6k/18k on the second. Same input, different counts, so it does not look deterministic. Each run also had 1-2 whole-batch 503s from the service. Is that expected @yaarit? Thanks
