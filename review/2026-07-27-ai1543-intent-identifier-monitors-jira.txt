@@ -1,0 +1,20 @@
+Hey @Bhupesh — I pulled the Datadog history for this monitor while looking at something adjacent, so I am dropping it here rather than leaving the ticket empty. Correct me where I have this wrong.
+
+The monitor counts log lines, not requests. It triggers above 5 matching events in a rolling 5-minute window and recovers at 5 or fewer. An episode therefore tells you the count crossed a line. It does not tell you how many requests failed.
+
+Last week (2026-07-20 18:00 to 2026-07-27 18:00 UTC): 18 episodes, 4,393 matching logs, median episode 5 minutes, longest 20. The volume is not spread out. 683 of 07-27's 692 logs landed in the single minute 14:50, and 07-26 has the same shape at 08:46. Every other hour in the week is single digits or low tens. This looks like two one-minute bursts plus a constant drip of 1 to 2 per minute — possibly two different problems behind one alert.
+
+Two observations that may matter for scoping:
+
+1. The drip looks structural. The service's routine max latency runs 22 to 57 ms against SSP's approximately 30 ms deadline, so a slice of normal traffic exceeds the deadline as a matter of course. A sampled failure completed server-side at 52 to 54 ms.
+2. The bursts look like stalls, not latency creep. p50 is 5 ms, but one request during the 07-26 burst took 6.09 seconds. p95 did not move during that minute (0.0154, flat against baseline).
+
+Questions, since the call is yours:
+
+- Is the intent to fix the alert or the timeouts? The alert reads accurate to me, and it is currently the only signal tracking real impact. If the plan is threshold tuning, note that both bursts would disappear behind a higher threshold.
+- Do you know whether the SSP call path retries after the timeout? An earlier note says Resilience4j is in the path, but I did not confirm it in ssp-engine. If it does retry, the bursts are partly self-inflicted.
+- This monitor and the P95 one are both managedBy:Terraform. Do you know which repo owns them? I could not find the module.
+
+Separately, and unrelated to the timeouts: monitor 238419172 (Intent Identifier Service - P95 Latency) cannot fire. Its threshold is 10 on a metric measured in seconds, while the message claims 10 ms. I do not see a ticket for it. It probably wants its own, in this epic.
+
+footgun: episode duration is not severity here. The 683-timeout burst produced a 5-minute episode, the same length as episodes containing six logs. 13 of the 18 episodes lasted exactly 5 minutes, which is only the evaluation window.

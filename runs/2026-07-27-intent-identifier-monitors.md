@@ -135,6 +135,34 @@ Two separate jobs:
 3. **238419175 remains the only true impact signal.** Keep it. Rate-normalizing it
    (`timeouts / total calls`) is still the right measurement for judging any fix.
 
+## Jira placement (verified 2026-07-27)
+
+- **AI-1543 "Fix Intent Identifier Service - timeout logs alert"** — the home for Problem 1. Title is
+  verbatim the monitor name. Assignee **Bhupesh Hada**, reporter Saksham Bhatla, status **Not
+  Started**, **description empty, zero comments**. Varun redirected here from AI-1542 (in-chat
+  2026-07-27).
+- Epic **AI-1367 "ML/AI: Emerging OpEx Issues"** (In Progress) is explicitly the alert-hygiene epic:
+  siblings are AI-1388 (SASS QPS anomaly alerts), AI-1424 (elme-yield alerts), AI-1427
+  (advertiser-ctr-service alerts), AI-1559 (elme-yield monitoring gaps), AI-1315 (llm-evaluator
+  logging gaps). Bhupesh already owns AI-1426 + AI-1429 in it — observability is the right lane.
+- **Problem 2 (monitor 238419172) has NO ticket.** `text ~ "Intent Identifier"` across all projects
+  returns nothing for a P95/latency alert. It needs one, and AI-1367 is the right epic.
+- **Scoping risk worth Varun's/Saksham's attention**: AI-1543 is titled "fix the *alert*". The alert
+  is accurate and is the only signal tracking real impact. If the ticket is executed as threshold
+  tuning, both one-minute bursts get hidden. Raised as a question in the draft rather than asserted —
+  it is Bhupesh's ticket.
+- Prior art for verifying the retry premise: **AS-11453 "SSP Engine calls intent-identifier-service"**
+  and **AS-11454** (both Done, Alexander Nikiforov) — that is where the 30 ms deadline and any retry
+  behavior were implemented. **AS-11523** (Viktor Strokan, Done) sized prod hardware, so the 3-replica
+  figure likely originates there.
+
+## Disposition
+
+- Jira comment draft for AI-1543 → `review/2026-07-27-ai1543-intent-identifier-monitors-jira.txt`
+  (pending Varun). Written in the **discussion mood** per `playbooks/jira.md` — Bhupesh's ticket, so
+  observations + questions, not fix directives. The three remediation candidates stay in this run file
+  and in the full report; they are not pushed at the ticket owner.
+
 ## Open / pending Varun
 
 - **Terraform owner unidentified.** Both monitors are `managedBy:Terraform`; I did not locate the
