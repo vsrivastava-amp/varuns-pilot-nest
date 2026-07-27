@@ -10,9 +10,9 @@ Format per entry: date, agent, type (message draft / PR / ticket change), target
 
 Context: Saksham DM'd (9:56 ET) asking to confirm the scope of the query dataset Varun generated for pCIV requests, linking AI-1556 (Bhupesh, "Create 3.0 pCIV requests" — wants Qwant US + FR sets + one LLM-generated). Varun replied "give me a moment" at 10:30. Draft answers the scope question in bullets: what the 7/24 FR sample is (1000 distinct terms + freq, pub 1276, FR, 7d), sampling + SERP-vs-conversational caveats, AI-1556 fit (FR leg done, US one query away, LLM-gen uncovered), 1107-vs-1276 surface question, Amarachi grading (labeling) the FR set = complementary to Bhupesh, offer of CSV+SQL. Varun said he'll likely rewrite from his own context — treat as skeleton.
 
-Body: `review/2026-07-27-saksham-dataset-scope.txt`
+Body: `review/2026-07-27-saksham-dataset-scope.txt` — 11:35 ET: replaced with Varun's own rewrite (in-chat), agent filled the CSV-post permalink + AI-1556 and AI-1538 bullets.
 
-**Disposition:** pending Varun — ✏️ rewrite/send as himself / ✅ as-is / ❌ drop
+**Disposition:** pending Varun — ✅ send as himself / ✏️ tweak / ❌ drop
 
 ## 2026-07-24 — laptop(aas-context) — ticket creation + thread reply — unified-retrieval-score calibration gate
 
