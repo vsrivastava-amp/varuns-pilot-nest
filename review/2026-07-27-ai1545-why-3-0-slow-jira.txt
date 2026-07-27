@@ -1,0 +1,24 @@
+Dug into why the prod numbers look like this, using the attached CSVs, the pla_gold corpus tables, and the deployed schema. Short version: the numbers are real, and the cost has a specific, fixable shape.
+
+First, a caveat on the numbers themselves: prod VSS→Vespa timeout is 150 ms. The observed max is 148 ms, and 46/1000 of the 3.0 rows recorded no latency at all (timeouts/failures, excluded from the averages). So the reported p95/p99 are floors, not estimates.
+
+Where the cost actually is — the slowdown needs two conditions at the same time:
+
+1. A brands filter is present (any brand — Nike, adidas, or a brand matching zero docs).
+2. The googleProductCategories value prefix-matches more than one category path in the corpus.
+
+Numbers from the 1000-row prod set:
+- brand + multi-path category ("Apparel & Accessories > Shoes"): 107 ms avg, ~127 ms median.
+- brand + single-path category ("Home & Garden > Decor > Rugs", 4.2M docs): ~25 ms. Doc count under the category does not matter.
+- category without brand: ~35 ms. Brand without category: ~25 ms. No filters: ~22 ms.
+- Result count does not matter: 0-ad rows cost the same as 100-ad rows. This is pure filter-evaluation cost.
+
+Why brand is the trigger (corpus + schema, pending live confirmation): every filter we send means "value X OR field unset". The unset-brand population is 0.96% of docs — the only unset population that small (gender 26%, age 29%, condition 8%, category 9.7%). The rank profile's approximate-threshold is 0.01. A rare brand plus the 0.96% sentinel puts the estimated filter selectivity at/below that threshold, so Vespa abandons the ANN fast path and evaluates the filter directly. In that mode the category prefix expansion (multi-term OR on a field with no rank:filter) costs 50–140 ms depending on the category branch.
+
+This also explains the stage↔prod reversal: the same regime flip happens on stage, but exact evaluation over stage's small corpus is fast (6.5 ms avg for GPC+brand there). Stage filter-latency numbers do not transfer to prod.
+
+next steps:
+- Confirm the regime flip with searchCoverage diagnostics on the PROD-TEST cluster, and A/B the same query with the brand sentinel stripped from the YQL.
+- Fix candidates, by leverage: (1) drop the "" sentinel from brands, or move unset-matching to dedicated hasBrand/hasGpc bool fields with rank:filter; (2) exact IN for categories — vespaYqlVersionProduct=1 already implements this; (3) add rank:filter to googleProductCategory.
+
+footgun: do not tune filters from stage latency measurements — the slow slice reverses between stage and prod. And these samples contain zero price/currency filters, the two shapes that blew the 150 ms timeout in the 7/24 combination probe; real pCIV traffic will include them.
