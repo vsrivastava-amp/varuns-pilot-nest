@@ -41,12 +41,19 @@ BASE="https://admarketplace.atlassian.net/rest/api/3"
 - Jira Cloud **UI supports threaded replies** on issue comments. The **REST API does not** (as of 2026-07): no `parentId` on POST, and UI-made replies read back as flat comments (Atlassian RFC pending for API support). Rovo MCP's addCommentToJiraIssue is equally flat.
 - Consequence: agent-posted "replies" = new comment + @mention of the person (ADF `mention` node with accountId). If true threading matters, Varun posts by hand in the UI.
 
-## Writing style for ticket comments (Varun standard, 2026-07-27)
+## Writing style for ticket comments (Varun standard, 2026-07-27; refined in-chat 2026-07-27)
 
-Technical comments — especially on Jira tickets — follow **ASD-STE100 Simplified Technical English**:
-- Short sentences (~20 words max); one instruction or idea per sentence.
-- Active voice, present tense, imperative for actions ("Measure X", "Do not trust Y").
-- No vague terms, no jargon, one word per concept (no synonym variation).
-- Status/handoff comments use the structure: `next steps:` then `footgun:`.
-- No padding: content that lives in the dossier/description stays there.
-Worked example: AI-1542 comment 170926. Origin: Varun rejected a verbose draft — "I just want the exact footgun i raised, in simple text."
+One standard — **ASD-STE100 sentence discipline** — run in two moods depending on the comment's job. The core rules always apply:
+- Short sentences (~20 words max); one idea per sentence.
+- Active voice; one word per concept (no synonym variation — "filter" stays "filter").
+- No padding: content that lives in the dossier/run log stays there. Claim-to-evidence ratio 1:1 — every assertion personally verified.
+
+**Handoff/status comments** (imperative mood): instructions and warnings only. Structure: `next steps:` then `footgun:`. No hedges, no questions. Worked example: AI-1542 c170926. Origin: Varun rejected a verbose draft — "I just want the exact footgun i raised, in simple text."
+
+**Discussion comments on others' analyses** (indicative mood + questions): Varun frames this as "a conversational variant of STE-100" — same sentence mechanics, wider speech acts. Worked examples: AI-1545 c170698/c170757.
+- Friendly direct opener ("Hey @Artem — dug through the CSVs"), cc whoever needs the thread.
+- Structure: observation → why → evidence-in-passing → hand the thread back with questions.
+- Calibrated hedges are correct, not vague: "looks concentrated" = observed, not causally confirmed. Mark epistemic status precisely.
+- Ask the owner whether behavior is intended; do NOT enumerate fix directives on someone else's ticket.
+- Short: 2–4 small paragraphs or a couple of numbered points. A table only if it earns its lines (Dhaval likes them).
+- ⚠️ Do not apply the imperative/no-hedge register to discussion comments — a 2026-07-27 draft was rejected for exactly this ("The prod numbers are real. The cost has one specific shape." — wrong register for a peer's ticket).
