@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ls /Users/vsrivastava/pilots-nest/review/*.txt 2>/dev/null | jq -R -s 'split(\"\\n\") | map(select(length>0) | sub(\".*/\";\"\")) | if length==0 then empty else {systemMessage: (\"📋 pending review/ drafts: \" + join(\", \")), hookSpecificOutput: {hookEventName: \"UserPromptSubmit\", additionalContext: (\"Pending review/ drafts awaiting Varun'\\''s in-chat disposition: \" + join(\", \") + \". Surface any that are relevant; execute+delete on his direction.\")}} end' 2>/dev/null || true",
+            "timeout": 10,
+            "statusMessage": "Checking pending review/ drafts"
+          }
+        ]
+      }
+    ]
+  }
+}
