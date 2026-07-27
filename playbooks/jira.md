@@ -40,3 +40,13 @@ BASE="https://admarketplace.atlassian.net/rest/api/3"
 
 - Jira Cloud **UI supports threaded replies** on issue comments. The **REST API does not** (as of 2026-07): no `parentId` on POST, and UI-made replies read back as flat comments (Atlassian RFC pending for API support). Rovo MCP's addCommentToJiraIssue is equally flat.
 - Consequence: agent-posted "replies" = new comment + @mention of the person (ADF `mention` node with accountId). If true threading matters, Varun posts by hand in the UI.
+
+## Writing style for ticket comments (Varun standard, 2026-07-27)
+
+Technical comments — especially on Jira tickets — follow **ASD-STE100 Simplified Technical English**:
+- Short sentences (~20 words max); one instruction or idea per sentence.
+- Active voice, present tense, imperative for actions ("Measure X", "Do not trust Y").
+- No vague terms, no jargon, one word per concept (no synonym variation).
+- Status/handoff comments use the structure: `next steps:` then `footgun:`.
+- No padding: content that lives in the dossier/description stays there.
+Worked example: AI-1542 comment 170926. Origin: Varun rejected a verbose draft — "I just want the exact footgun i raised, in simple text."
