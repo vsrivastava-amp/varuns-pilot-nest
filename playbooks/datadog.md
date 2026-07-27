@@ -40,25 +40,63 @@ monitor. Move it here on the next steward pass.
 
 | ID | Name / signal | Notes |
 |---|---|---|
-| `238419175` | SSP → Intent Identifier `HttpTimeoutException` | **Log-count** monitor (>5 events / rolling 5 min), not a metric monitor. Counts log lines, not requests or traffic share. `runs/2026-07-27-intent-identifier-monitors.md` |
-| `238419172` | Intent Identifier p95 latency | **Misconfigured** — message says 10 ms, query says `> 10` on a *seconds* metric = 10 s, effectively inert. Same run file. |
+| `238419175` | "Intent Identifier Service - timeout logs" | **Log-count** monitor (>5 events / rolling 5 min), not a metric monitor. Counts log lines, not requests or traffic share. Terms match `@stack_trace:(*…*)`, not free text. `managedBy:Terraform`. `runs/2026-07-27-intent-identifier-monitors.md` |
+| `238419172` | "Intent Identifier Service - P95 Latency" | **Misconfigured** — message says 10 ms / recovery 8 ms, query says `> 10` on a *seconds* metric = 10 s, so it cannot fire. `managedBy:Terraform`. Also the wrong percentile for the burst it is meant to warn about — same run file. |
 | `263399495` | Vespa Search Service timeouts | Worked example in `playbooks/vespa.md` (2026-07-24 RIC1/PDX1 incidents → `SUPPORT-808`). |
+
+## Tool incantations (verified 2026-07-27, first working session)
+
+Datadog is **UTC**; this machine is Pacific — say which in any write-up.
+
+Skill discovery first, as the server instructs: `list_datadog_skills(query=…)` plus a
+direct `load_datadog_skill`. Worth it — `datadog/logs` documents the
+`extra_fields` → `extra_columns` translation that is otherwise pure trial and error.
+Useful skills: `datadog/logs`, `datadog/incidents-and-alerting` (monitors live here,
+despite the name), `generic` (query syntax across all data types).
+
+- **Read a monitor by ID**: `search_datadog_monitors(query="id:238419175",
+  include_tags=["*"])`. Returns the raw query, message, type, status, creator, and tags.
+  `include_tags` must be an array — a bare `*` fails JSON parsing.
+- **Count / aggregate logs**: `analyze_datadog_logs` with `filter` (Datadog query syntax)
+  + `sql_query` (DDSQL over a virtual `logs` table). Time-bucket with
+  `DATE_TRUNC('day'|'hour'|'minute', timestamp)`. **Never** add a `WHERE timestamp`
+  clause — the table already holds only the `from`/`to` window. Aliases can't be reused
+  in `GROUP BY`; repeat the full expression.
+- **Raw logs / attribute discovery**: `search_datadog_logs` with `extra_fields:['*']`.
+  Use `analyze_datadog_logs` for anything numeric.
+- **Metrics**: `get_datadog_metric(queries=[…], raw_data=true, interval=60000)`.
+  `raw_data=true` gives every point; without it you get 20 coarse bins that will hide a
+  one-minute event. Multiple queries per call is fine and cheaper than several calls.
+  The response includes the metric's `unit` — **read it** (see gotchas).
+- **Grouping**: `by {tag}` inside the query string. A `scope` of `tag:N/A` in the response
+  means the metric isn't tagged that way, not that the value is missing.
 
 ## Gotchas
 
 - **Metric units are seconds.** `trace.servlet.request` p95 thresholds are
   seconds — `> 10` is ten seconds, not ten milliseconds. A 20 ms threshold is
-  `> 0.020`. Misreading this produced monitor 238419172's inert threshold.
+  `> 0.020`. Misreading this produced monitor 238419172's inert threshold. The
+  metric API returns `"unit":"seconds"` in the response — check it before you
+  believe any threshold or monitor message.
 - **`avg(last_5m):p95:` is not a 5-minute p95.** It averages Datadog's
   approximately 10-second p95 buckets across the window. Any monitor message
   must describe it that way, or on-call reads it as a true window p95.
+- **`avg(last_Xm)` dilutes short spikes by roughly X.** A one-minute incident inside a
+  five-minute average largely vanishes. For burst detection use `max(last_5m)`.
+- **Percentile choice decides what you can see.** On intent-identifier, p95 stayed inside
+  its normal band through a burst that timed out 683 requests in one minute and included a
+  6-second request; p99 moved clearly. Check that the percentile you monitor actually
+  responds to the incident you care about — verify against a known past incident before
+  trusting a threshold.
 - **Log-count monitors don't measure impact.** Episode counts and log counts both
   scale with traffic and with retry behavior. For impact, build a rate:
   `failures / total calls`, grouped by region and pod.
-
-## Tool incantations
-
-*(Pending — fill in after the first successful handshake + smoke test. Record the
-actual tool names, how to query logs vs. metrics, monitor read/history calls, and
-whatever time-window arguments they take. UTC: Datadog is UTC, this machine is
-Pacific — say which in any write-up.)*
+- **`managedBy:Terraform`** on a monitor means console edits get reverted on the next
+  apply. Check the tag before proposing any monitor change; the fix is a Terraform PR.
+- **APM trace metrics may carry no pod/host tags.** `trace.servlet.request` returns `N/A`
+  for `pod_name`, `host`, and `kube_pod_name`, so you cannot attribute a latency spike to a
+  replica from the metric alone — go to spans or k8s metrics for that.
+- **Aggregate counts hide burst structure.** Always decompose by hour, then by minute,
+  before characterizing a failure. A "4,393 logs/week, 18 episodes" problem turned out to be
+  two one-minute events plus a low background drip — with different root causes and
+  different fixes.

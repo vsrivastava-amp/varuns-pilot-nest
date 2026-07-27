@@ -1,41 +1,134 @@
 # 2026-07-27 — Intent Identifier prod monitors: two separate problems (session: ii-monitors)
 
-- 2026-07-27 Provenance: findings pasted in-chat by Varun from an **earlier session's Datadog investigation**. Recorded here so the next session doesn't re-derive it. **Not independently verified by this session** — this session had no Datadog auth (the claude.ai Datadog MCP connector is present but unauthenticated; AGENTS.md still lists "Datadog keys" as pending). Re-derive the counts before quoting them anywhere outbound.
-- 2026-07-27 Nothing about `intent-identifier-service`, monitor `238419175`, or monitor `238419172` existed anywhere in the nest before this file (grep across map/log/playbooks/runs/state came back empty). Nearest adjacent material: the Datadog→PagerDuty alert-review workflow in `playbooks/vespa.md` (§ alert channels), which is the flow to use for these monitors too.
+- 2026-07-27 Provenance: findings originally pasted in-chat by Varun from an earlier session's Datadog investigation. **This session verified them directly against Datadog** (connector handshake completed by Varun mid-session). Everything below is first-hand unless marked otherwise. All timestamps **UTC** (Datadog); this machine is Pacific.
+- 2026-07-27 Nothing about `intent-identifier-service` or either monitor existed in the nest before this file. Datadog access facts → `playbooks/datadog.md` (new).
 
-## Problem 1 — SSP-side Intent Identifier timeouts (monitor 238419175)
+## Monitor facts (verified, 2026-07-27)
 
-- Monitor: https://app.datadoghq.com/monitors/238419175 — log count monitor, not a metric monitor. Matches `service:ssp-engine env:prod datacenter:ric1 status:error` + `"Unexpected error during intent identification"` + `HttpTimeoutException` + `IntentIdentifierControllerApi`. Fires at >5 matching events in a rolling 5-minute window.
-- **It counts log lines, not unique requests, users, or share of traffic.** One alert episode can contain many timeout logs. Each log is generally SSP abandoning an Intent Identifier call after approximately 30 ms.
-- Last-7-day shape (as of 2026-07-27 10:56 EDT): 18 alert episodes (was 17; another episode landed during the investigation), median episode approximately 5 min, longest approximately 20 min, approximately 4,394 matching timeout logs in the 7-day query window.
-- Representative trace: SSP HTTP client times out at 30.20 ms → Intent Identifier finishes processing at 52–54 ms → server cannot return the response because SSP already closed the stream. **At least some requests complete just after SSP's deadline.**
-- Recommended fixes (independent of each other, from the earlier report — none of these are actioned, and each is an outbound change needing a `review/` draft):
-  1. Replicas 3 → 4, so three-pod capacity survives one pod restarting or going unready. Cuts the transient latency bumps from restart/scheduling/readiness events.
-  2. SSP's Intent Identifier timeout 30 ms → approximately 60–75 ms. The sampled failure completed server-side at 52–54 ms. **Confirm the value against SSP's end-to-end request budget before deploying.**
-  3. Do not retry `HttpTimeoutException` on the hot path (call path uses Resilience4j retry). A retry after the 30 ms deadline multiplies load exactly when the service is degraded. Fail open: return an empty/no-intent fallback and record a terminal-outcome metric.
-- Measurement gotcha for after any of those changes: track the **rate**, not the log count — `SSP Intent Identifier timeouts / total SSP Intent Identifier calls`, grouped by region, SSP pod, and Intent Identifier pod.
+Both monitors: created 2025-11-20 by **Ivan Trichev**, both **`managedBy:Terraform`**, both tagged
+`service:intent-identifier-service`, both notify `@slack-prod-relevance-yield-alerts` +
+`sysops@admarketplace.com` + `engine@admarketplace.com`. Both status OK at time of reading.
 
-## Problem 2 — p95 latency monitor is misconfigured (monitor 238419172)
+**`managedBy:Terraform` is the load-bearing detail for any fix** — these monitors are not
+UI-editable in a durable way. A console edit gets reverted on the next apply. The fix path is a PR
+against whatever Terraform module owns them (owner not yet identified — see Open below).
 
-- Monitor: https://app.datadoghq.com/monitors/238419172. Message claims "P95 latency exceeds 10 ms over the last five minutes". Query is `avg(last_5m):p95:trace.servlet.request{...} > 10`.
-- **The metric unit is seconds**, so `> 10` means 10 seconds, not 10 ms. Normal p95 is approximately 15 ms, so a literal 10 ms threshold would be unusable and the actual 10-second threshold is effectively inert — this monitor cannot fire in practice.
-- Second defect: `avg(last_5m):p95:` averages the approximately 10-second p95 buckets across five minutes. It is not one p95 over every request in the window. Any replacement message must describe it that way.
-- Proposed replacement (early-warning monitor, top priority per the earlier report):
+### 238419175 — "Intent Identifier Service - timeout logs" (`log alert`)
 
-  ```
-  avg(last_1m):p95:trace.servlet.request{
-    env:prod,
-    service:intent-identifier-service,
-    span.kind:server,
-    resource_name:post_/api/v1/identify-intents
-  } > 0.020
-  ```
+```
+logs("service:(ssp-engine) env:prod datacenter:ric1 status:error
+      \"Unexpected error during intent identification\"
+      @stack_trace:(*HttpTimeoutException* *IntentIdentifierControllerApi*)")
+  .index("*").rollup("count").last("5m") > 5
+```
 
-  Recovery threshold `< 0.018`. Notification text: "The average of Intent Identifier's 10-second p95 latency measurements exceeded 20 ms during the last minute."
-- Rationale: 20 ms warns before latency reaches SSP's approximately 30 ms deadline, while 238419175 stays the direct impact signal.
+- Nuance the original report flattened: the two exception terms are **wildcard matches on the
+  `@stack_trace` attribute**, not free-text message search. Reproducing the query without
+  `@stack_trace:` and the `*`s gives different counts.
+- Recovery at `<4` (per the message body). Counts **log lines** — not requests, users, or traffic share.
+
+### 238419172 — "Intent Identifier Service - P95 Latency" (`query alert`)
+
+```
+avg(last_5m):p95:trace.servlet.request{env:prod,service:intent-identifier-service,
+    span.kind:server,resource_name:post_/api/v1/identify-intents} > 10
+```
+
+- **The unit bug is confirmed.** The Datadog metric API returns `"unit":"seconds"` for this metric,
+  so `> 10` is ten *seconds*. Message text claims `>10ms`; recovery text claims `<8ms`. Both are wrong
+  by 1000×, and the monitor is effectively inert.
+- Second defect confirmed: `avg(last_5m):p95:` averages Datadog's ~10-second p95 buckets across five
+  minutes. It is not one p95 over the window's requests.
+
+## Volume (verified)
+
+7-day window ending 2026-07-27 ~17:00 UTC, monitor 238419175's exact query:
+
+| Day (UTC) | Timeout logs |
+|---|---|
+| 07-20 | 734 |
+| 07-21 | 510 |
+| 07-22 | 611 |
+| 07-23 | 751 |
+| 07-24 | 133 |
+| 07-25 | 77 |
+| 07-26 | 679 |
+| 07-27 | 898 (partial day) |
+| **total** | **4,393** |
+
+Matches the earlier report's ~4,394 (one-log boundary difference). **07-27 is the highest day in the
+window and was not over when measured** — the trend is up, not flat.
+
+## The correction: two distinct failure modes, and the p95 fix does not detect either burst
+
+Per-hour and per-minute decomposition changes the picture the aggregate counts gave:
+
+- **07-27 14:00 UTC hour = 692 logs, of which 683 landed in the single minute 14:50.** The rest of
+  that hour is 1–2/min.
+- **07-26 08:00 UTC hour = 581 logs**, same shape, burst minute 08:46.
+- Every other hour in the week is ≤61, mostly single digits.
+
+So the week is **two one-minute bursts plus a steady 1–2/min background drip**, not a diffuse problem.
+
+Latency percentiles at those exact minutes (`trace.servlet.request`, seconds):
+
+| | p95 baseline (7d) | p99 baseline (7d) | 07-26 08:46 | 07-27 14:50 |
+|---|---|---|---|---|
+| p95 | 0.0136–0.0157 | — | **0.0154** | **0.0178** |
+| p99 | — | 0.0162–0.0201 | **0.0254** | **0.0254** |
+| max | 0.0386–0.0571 typical | — | **6.087** | **0.410** |
+
+**The proposed replacement monitor (`p95 … > 0.020`) would not have fired for either burst.** On
+07-26 at 08:46, while 581 timeouts/hour were firing and one request took 6.09 seconds, p95 was
+0.0154 — indistinguishable from baseline. On 07-27 at 14:50 p95 reached only 0.0178, still under
+0.020. And `avg(last_5m)` dilutes a one-minute spike roughly 5×, pushing it further from any
+threshold. p95 is the wrong percentile *and* `avg` is the wrong time aggregator for this failure.
+
+What the numbers say instead:
+
+- **Background drip** — baseline `max` runs 22–57 ms, i.e. **routinely above SSP's 30 ms deadline**.
+  That is the mechanism behind the constant 1–2/min. The earlier report's fix #2 (raise the SSP
+  timeout to 60–75 ms) targets exactly this and is well-aimed: it recovers the routine tail.
+- **Bursts** — a multi-second stall (6.09 s on 07-26). **Raising the deadline to 75 ms cannot save a
+  6-second request.** Only fix #1 (replicas 3→4) and fix #3 (fail open, do not retry
+  `HttpTimeoutException`) address bursts. A 6-second stop-the-world on a service whose p50 is 4–5 ms
+  reads like GC pause, pod restart, or thread-pool stall — not latency creep.
+- Burst scale: 683 timeouts against ~7,500 req/min ≈ **9% of that minute's traffic**. Server-side
+  hits dipped to 5,648 from ~7,500 in the same minute.
+- `trace.servlet.request.errors` returned **no series** for this resource — consistent with the
+  reported mechanism (SSP closes the stream; the server never gets to return, so nothing is recorded
+  as a server-side error). The absence is itself evidence for the diagnosis.
+
+### Revised recommendation for 238419172
+
+Fixing the unit bug is right, but do not sell a p95 monitor as an early warning for the timeouts.
+Two separate jobs:
+
+1. **238419172 = sustained-regression detector.** `p95 > 0.020` is a defensible threshold on the
+   data (7-day p95 max is 0.0157, so ~27% headroom, no expected noise) — as long as the message says
+   what it means: "the average of Intent Identifier's ~10-second p95 latency measurements exceeded
+   20 ms over the last minute." It will catch a real latency regression. It will not catch bursts.
+2. **Burst detection needs p99 with `max`, not p95 with `avg`.** p99 reached 0.0254 in both bursts
+   against a 0.0162–0.0201 baseline; something like `max(last_5m):p99:… > 0.023` catches both events
+   with margin. Note the baseline already touches 0.0201, so a p99 threshold of 0.020 would be noisy
+   — 0.023 is the workable floor.
+3. **238419175 remains the only true impact signal.** Keep it. Rate-normalizing it
+   (`timeouts / total calls`) is still the right measurement for judging any fix.
 
 ## Open / pending Varun
 
-- **Is Datadog access live now?** AGENTS.md § Current status still says "Still pending: Datadog keys", but this report contains real Datadog query results. If a path exists (MCP handshake, API keys in `.env`, or Varun-run queries), it belongs in a playbook and in the status line. Filed as a question here rather than in `needs-human.md` because it is a capability fact, not a conflict.
-- **Where does this service live in the nest?** `intent-identifier-service` has no `map/` file and no repo row in `playbooks/bitbucket.md`. If it is on the pCIV live path (SSP `/di` → intent identification), it likely belongs with `map/pciv-live-integration.md` and may attach to **AI-1542 (latency, Varun)** — unconfirmed, do not assume.
-- **All three Problem-1 fixes and the Problem-2 monitor rewrite are outbound changes** (ssp-engine config, k8s replica count, a live prod monitor). Nothing was drafted or executed this session. Say the word and drafts go into `review/`.
+- **Terraform owner unidentified.** Both monitors are `managedBy:Terraform`; I did not locate the
+  module. Needs a repo search (candidates: an infra/terraform repo not yet in
+  `playbooks/bitbucket.md`'s inventory) before any monitor change can be drafted.
+- **Per-pod attribution unavailable from this metric.** `trace.servlet.request` carries no
+  `pod_name` / `host` / `kube_pod_name` tags — all three return `N/A`. So I could **not** determine
+  whether the 6.09 s stall hit one replica or all of them. That question decides how much fix #1
+  (replicas 3→4) actually buys, so it matters. Needs APM spans (which carry pod tags) or k8s
+  metrics — a follow-up, not a blocker on the other fixes.
+- **Where this service belongs in the nest.** Still no `map/` file and no repo row in
+  `playbooks/bitbucket.md`. If it is on the pCIV live path (SSP `/di` → intent identification) it
+  likely belongs with `map/pciv-live-integration.md` and may attach to **AI-1542 (latency, Varun)** —
+  unconfirmed, not assumed.
+- **All fixes remain outbound and undrafted**: ssp-engine timeout config, k8s replica count, retry
+  behavior, and a Terraform-managed prod monitor. Nothing was executed or drafted this session.
+  Read-only throughout (monitor reads, log aggregations, metric queries).
