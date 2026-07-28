@@ -1,0 +1,38 @@
+Title: Calibrate the KVSS score coefficients (kvssScoreLinearA/B) before 3.0 text ads ramp
+
+Suggested placement: project AI, child of AI-1513. Link AI-1435 (origin) and AI-1436 (Launch Text ads).
+
+Description:
+
+Discover 3.0 ranks product ads and text ads in one list. DiscoverRankingStep sorts on normalizedScore alone, regardless of ad type (DiscoverRankingStep.java:63, :199, :216).
+
+The two ad types reach that score by different formulas.
+
+* Text ad: normalizedScore = floor((a * rawKvssScore + b) * 1000000), where a and b default to 0.93 and 0 (KvssProperties.java:43-44, KvssScoreNormalizer.java:48-49). KVSS returns a raw score in [0,1].
+* Product ad: normalizedScore = floor(score * 1000000) (ProductAdResultMapper.java:78).
+
+So a and b set the text-vs-product mix of every 3.0 auction. Per the 7/23 sync, DSP then multiplies the unified score into the economic auction as unifiedScore * CTR * CPC. The coefficients would therefore reach pricing and yield, not just ordering. I have not read the DSP side myself, so treat that second step as reported rather than verified.
+
+The value 0.93 has no recorded derivation. The history in ad-auction-service explains where it came from but not why.
+
+* 2026-07-10, commit 597bb0f, "AI-1435 - integrate text ads into discover auction". Both the Java default and application.yml set a = 1. The transform starts as identity.
+* 2026-07-14, commit 056e61d, "AI-1435 - cleanup". application.yml moves to 0.93. The Java default moves to 0.8. The same commit adds the javadoc paragraph that explains a = 0.8, on the grounds that VSS full-title cosine similarity is a stronger relevance signal than a KVSS short-phrase match.
+* 2026-07-15, commit 73a414f, "AI-1435 - address CR". The Java default moves from 0.8 to 0.93. The javadoc still explains 0.8 and still does today (KvssProperties.java:38).
+
+Two consequences follow from that sequence.
+
+1. application.yml sets the property in every environment, so 0.93 is the value that has always run. The Java default of 0.8 never took effect anywhere.
+2. The 0.93 entered the yaml with no stated basis, and the alignment commit moved the Java default to match the yaml rather than the reverse. I did not read the CR discussion, so the reason for choosing that direction is unknown to me.
+
+The direction of the adjustment looks reasonable. Discounting a text ad below a product ad at equal raw score matches the javadoc's argument about the two relevance signals. The specific magnitude is the open question. Nothing in the repo distinguishes 0.93 from 0.8 or from any other value.
+
+Both coefficients are already overridable per request through the experiment keys kvssScoreLinearA and kvssScoreLinearB (ExperimentContextReader.java:23-24), and per environment through KVSS_SCORE_LINEAR_A and KVSS_SCORE_LINEAR_B (application.yml:105-106). Calibration needs no new instrumentation.
+
+Acceptance criteria:
+
+1. Agree a calibration method and run it. Two candidate approaches: align the raw score distributions of KVSS and VSS on matched traffic, or fit against a relevance ground truth. ARES-by-ad-type currently scores product ads well above text ads, which makes it a candidate anchor. That ARES observation comes from Tarun's 7/13 analysis and needs re-checking before it anchors anything.
+2. Set a and b from that analysis. State explicitly whether b stays at 0.
+3. Make the javadoc, application.yml, and the recorded rationale agree on one value.
+4. Record the decision before 3.0 text ads ramp past experiment traffic.
+
+Source read at ad-auction-service HEAD d119cda.

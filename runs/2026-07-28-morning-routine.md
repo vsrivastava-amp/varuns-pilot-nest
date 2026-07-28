@@ -46,6 +46,26 @@ State checked against live sources, not filenames.
 - ⏳ **`2026-07-24-aas-score-calibration-slack.txt` — held, being reworked.** Verified the blocker: the draft says "I filed `<AI-XXXX>`" but **the ticket was never filed**. AI-1513 has exactly five children (AI-1544, AI-1437, AI-1436, AI-1435, AI-1329), none about calibration, and no Jira issue anywhere matches `kvssScoreLinear` / "unified retrieval score" / "score calibration". Varun's direction: recreate the ticket **written better**, and DM Artem. Both drafts to follow in `review/`.
 - ⏳ **`2026-07-28-ai1538-infra-bedrock-perms.txt` + `2026-07-28-ai1538-infra-deploy-standup.txt`** — fresh (created ~11:06 ET today by the ai1538 session), on the AI-1538 critical path. Left alone, not this session's drafts.
 
+### AAS score calibration, reworked (Varun-directed 2026-07-28)
+
+Varun's call: recreate the ticket, written better, and DM Artem. Old `2026-07-24-aas-score-calibration-slack.txt` **deleted as superseded** — it was a reply into a Saksham thread, it claimed a ticket that was never filed, and the new audience is Artem. Two new drafts:
+
+- `review/2026-07-28-aas-score-calibration-jira.txt` — the ticket.
+- `review/2026-07-28-aas-score-calibration-artem-dm.txt` — the DM. Carries a leading send-order comment: **file the ticket first**, then paste the closing line with the real key, or drop that line. That sequencing failure is exactly what killed the previous draft.
+
+**Facts re-derived from source, not copied from the old draft.** Cloned `ad-auction-service` fresh (HEAD `d119cda`) into this session's scratchpad and read it. Verified:
+- Text: `floor((a * rawKvssScore + b) * 1_000_000)`, defaults a=0.93 b=0 — `KvssProperties.java:43-44`, `KvssScoreNormalizer.java:48-49`. KVSS raw score is `[0,1]`.
+- Product: `floor(score * 1_000_000)` — `ProductAdResultMapper.java:78`.
+- Ranking sorts on `normalizedScore` alone regardless of type — `DiscoverRankingStep.java:63, :199, :216`.
+- Overrides already exist: experiment keys `kvssScoreLinearA/B` (`ExperimentContextReader.java:23-24`), env `KVSS_SCORE_LINEAR_A/B` (`application.yml:105-106`). Calibration needs no new instrumentation.
+- History, all three commits authored by **Artem Dippel** (which is why the DM goes to him): `597bb0f` 7/10 both Java and yaml at 1; `056e61d` 7/14 "cleanup" yaml→0.93 **and** Java→0.8, javadoc paragraph explaining 0.8 added in the same commit; `73a414f` 7/15 "address CR" Java 0.8→0.93, javadoc untouched and still says 0.8 at HEAD.
+
+**New fact the old draft and `map/aas.md` both miss:** application.yml sets the property in every environment, so **0.93 is the value that has always run and the Java `0.8` default never took effect anywhere.** The 7/14–7/15 "mismatch" was therefore cosmetic in effect, but 0.93 entered the yaml with no stated basis and the CR alignment moved Java to match the yaml rather than the reverse.
+
+Marked as unverified in both drafts, deliberately: the CR thread itself (not readable without PR API access), the DSP-side `unifiedScore * CTR * CPC` step (recorded from the 7/23 sync, not read in dsp-engine), and Tarun's 7/13 ARES-by-ad-type observation.
+
+`map/aas.md` §135-145 is accurate but less precise than the above. Did not edit it — `map/` edits get proposed for Varun's review, not made unilaterally. Offer standing.
+
 ### Sensitive-data finding (Varun decided: leave as-is)
 
 `review/qwant_fr_queries_sample_20260724.csv` (1,000 real Qwant end-user search terms from `prod_amplify.event_silver.ad_request`) and its `.sql` are **tracked in git**, committed in **515bdf3** — apparently swept in rather than added deliberately. `review/README.md` says this class of file "may sit here **git-untracked** — never commit those; check `git status` before commit." Varun's call, in-chat 2026-07-28: **leave both alone** (private repo, he is comfortable). Recording the README-vs-practice mismatch and taking no action. Note for future sessions: deleting the file would not remove the queries from history — that needs a rewrite plus a force push, coordinated across live sessions.
