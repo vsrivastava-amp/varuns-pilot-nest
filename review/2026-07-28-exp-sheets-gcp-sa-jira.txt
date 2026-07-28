@@ -1,0 +1,28 @@
+# Jira ticket draft — project INFRA, type Story. File via Jira API or UI on approval.
+# Suggested links after creation: relates-to INFRA-3015 (same request shape, Stephen Ince's SA ask).
+
+Summary: Create Google service account for Databricks-to-Google-Sheets experiment reporting
+
+Description:
+
+Summary
+Requesting a dedicated Google Cloud service account so a scheduled Databricks job can write experiment analysis results into a Google Sheet. The job replaces manual copy-paste from the "Experimentation Platform Analysis" dashboard and gives the team a shared, commentable view of live A/B results.
+
+Business justification
+- The experimentation dashboard is hard to read and has no annotation surface. A Google Sheet gives the team number formatting, significance highlighting, and cell comments.
+- A scheduled Databricks job keeps the sheet current for the life of each experiment. No manual export steps.
+
+Requested configuration
+- Service account name: exp-sheets-writer (or similar)
+- GCP project: whichever project you designate for internal automation. project-ssp-placement-caps exists already (see INFRA-3015). We have no preference.
+- API to enable: Google Sheets API only. We do not need Drive API. The sheet is created by a human and shared with the service account as an editor.
+- Authentication: JSON key, stored in a Databricks secret scope in the dev workspace. Never committed to source control.
+- If you prefer no long-lived keys, we can integrate workload identity federation from AWS instead of a JSON key. Happy to go that route.
+
+Access model
+- The service account can only edit sheets that are explicitly shared with it. No domain-wide delegation, no broad Drive access.
+
+One question
+- Does our Google Workspace sharing policy allow sharing a sheet with a service account email (*.iam.gserviceaccount.com)? If it is blocked, we would need an allowlist exception for this one account.
+
+Note: INFRA-3015 requests a service account of the same shape (Docs/Drive automation). If it is easier to satisfy both with one project or one pattern, we are glad to align.

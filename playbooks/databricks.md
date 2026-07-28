@@ -72,6 +72,9 @@ GROUP BY ALL ORDER BY 4 DESC;
 
 ## Other
 
+- **Serverless job compute HAS public-internet egress** (verified 2026-07-28: one-off `jobs submit` with `environment_key` hit `sheets.googleapis.com` + `www.googleapis.com`, HTTP 200). The VPC-internal limitation (above) is about *private* endpoints only — public SaaS APIs are reachable from serverless.
+- **Varun can create/delete secret scopes in dev** (verified 2026-07-28, `databricks secrets create-scope`). Existing scopes show the pattern: per-integration scopes (`aws_bedrock_creds`, `aws_aurora_exp_dev`, …).
+- One-off serverless python run recipe: `workspace import` the .py, then `jobs submit --json '{"run_name":…,"tasks":[{"task_key":…,"spark_python_task":{"python_file":"/Workspace/Users/…"},"environment_key":"default"}],"environments":[{"environment_key":"default","spec":{"client":"1"}}]}'`.
 - `databricks fs ls/rm -r dbfs:/...` — checkpoint inspection/reset.
 - `databricks repos create <url> bitbucketCloud --path /Repos/<user>/<name>`, `repos update <id> --branch <b>` — needs git-credentials in that workspace (`databricks git-credentials list`).
 - `databricks workspace export <path>`, `workspace list`, `workspace get-status` — object types (FILE vs NOTEBOOK) matter.
