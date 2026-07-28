@@ -43,6 +43,16 @@ Mechanism (researched 2026-07-23, free API): **AWS Service Quotas, per-account �
 - [ ] Draft the infra/AWS ask (numbers + justification per memo's field list) → `review/` (precedent: DBX rate-limit ask 2026-07-23, in REVIEW.md git history). Kick off EARLY — no SLA on approvals.
 - [ ] Client-side throttling design for the service: request+token limiters smoothed to RPM/60 & TPM/60, bounded queue, one deadline-aware retry max, shed-don't-amplify (memo §5 list → service requirements)
 
+## Phase C2 — finalist testing in dev (Varun priority 2026-07-28, after screen)
+
+Finalists (Varun-picked off the Pareto): **Gemma 4 31B, GPT-5.6 Luna, Qwen3-Next-80B, Ministral 14B.**
+
+- [x] **Model × provider test matrix wired** (2026-07-28, commits 7b03dbc + 4754b0a on feat-online-pciv, PUSH PENDING): eval config = one (model, surface, prompt) combo, so provider A/B is just two eval ids — 604 qwen80/runtime vs **612 qwen80/mantle**, 607 ministral14/runtime vs **613 ministral14/mantle**, 609 gemma4/mantle, 610 luna/mantle (both Mantle-ONLY — AWS doesn't offer them on runtime; verified via model cards + live probes). Mantle open-weight root is `/v1/chat/completions` (NOT `/openai/v1`), qwen needs `-instruct` id suffix there. All 6 smoke green.
+- [ ] **Dev soak driver = Databricks job** (Varun's call): DBX job in dev workspace POSTs to `https://dev-online-pciv-service.ric1.admarketplace.net/v1/intent/civ` per eval id — in-network(ish) numbers, scheduled/sustained load (also exercises the Mantle ramp + Gemma cache steady-state). Design note: sustained-rate loop (not batch-blast), p50/p95/p99 per eval id, French + conversation-shaped rows when AI-1556 sets land.
+- [ ] Blocked on dev deployment = the two INFRA tickets + image tag + PR merge (Phase A). Subagent studying INFRA board conventions 2026-07-28; drafts to be revised to house style.
+- [ ] Prompt-prefix discipline note for Yaarit (standing constraint): caching (Mantle implicit / OpenAI-style) only hits on byte-identical prefixes ≥1024 tok — keep fixed instruction+taxonomy block first, dynamic content (query/SERP context) last; per-placement prompts each cache independently. (Explained to Varun 2026-07-28.)
+- [ ] Verify whether Gemma 4's implicit cache discounts PRICE or only latency: check AWS Cost Explorer line items for `google.gemma-4-31b` after 2026-07-28's ~$25 screen run (read-only, SSO session). Screen assumed full price (conservative).
+
 ## Phase D — stage/prod (later)
 
 - [ ] stage overlay on master (`stage-ric1`, DBX host 8321), prod overlay on `prod` branch via release PR (pattern: RELEASE-#### tickets, e.g. 586f23a96)
