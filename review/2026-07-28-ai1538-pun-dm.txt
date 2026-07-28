@@ -1,0 +1,3 @@
+Hey @Pun, I went ahead and created these tickets. Let me know if you could take a look at them this week:
+https://admarketplace.atlassian.net/browse/INFRA-3474 (Bedrock permissions for a new dev deployment)
+https://admarketplace.atlassian.net/browse/INFRA-3475 (secrets/service-account setup for the same app)
