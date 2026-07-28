@@ -69,3 +69,9 @@ One standard — **ASD-STE100 sentence discipline** — run in two moods dependi
 - Stick to "typical high school English constructions". Do not do rhetorically interesting things. Punctuation serves a specific role, not emphasis.
 - Turn hedges into facts before drafting (measure the number, read the deployed config) or cut them; hedge only genuinely unconfirmed inference. No referential language ("same question as before, sharper now") — restate the actual question so the comment is self-contained.
 - Editing lenses that produced the accepted AI-1545 comment: (1) what is extraneous, (2) what is hedged that we can resolve ourselves, (3) what is referential that should be said outright.
+
+**Headings and list intros must say the thing (Varun, 2026-07-28, on the AI-1543 draft):**
+- The referential ban applies to **every heading and list intro**, not just sentences. Varun rejected "Four changes the data points at, independent of each other" and "One unrelated thing on the same service" as "extreme[ly] referential" — both point back at surrounding text instead of stating content. His instruction: **"try to say the thing."**
+- A heading must be a self-contained statement a scanner can read alone. Fixes applied: → "Replicas, the memory limit, the read timeout and the retry are four separate changes"; → "The P95 latency monitor on this service cannot fire, for an unrelated reason"; → "sspEngine.intent.identifier.errors already counts failures once per request"; → "The monitor counts log lines, and its filter is an OR".
+- Same trap in list bullets: lead with the subject, not a verb aimed at the reader. "A fourth replica keeps three warm pods serving through a restart" beats "Add a replica, 3 to 4." The declarative form also avoids issuing directives on someone else's ticket.
+- Watch these tells: "this", "these", "the two", "any of this", "one thing", "it all", and any heading that is a bare label ("What the monitor measures") rather than a claim.
