@@ -32,6 +32,12 @@ BASE="https://admarketplace.atlassian.net/rest/api/3"
 - Adds what the curl path didn't have wired up: `searchJiraIssuesUsingJql`, `getJiraIssue`, plus **Confluence** (`getConfluencePage`, `searchConfluenceUsingCql`) and Teamwork Graph context.
 - curl path (above) remains the headless-safe option — MCP connectors need interactive auth and may be absent in cron runs.
 
+### JQL / Rovo gotchas (learned 2026-07-28, delta sweep)
+
+- **Bare datetimes in JQL resolve in the account timezone, not UTC.** `updated >= "2026-07-27 15:00"` means 15:00 **ET** for Varun's account. A sweep written against a UTC cutoff silently drops the 11:00–15:00 ET band and looks like a quiet window. Convert the cutoff to ET first, or use relative syntax (`-4h`). Cross-check: a sweep that returns nothing on a normal workday is a bug signal, not a quiet day.
+- **`searchJiraIssuesUsingJql` ignores the `fields` allowlist** and returns full `description`, `project`, and avatar blobs regardless of what you ask for. ~15 issues overflows the tool-result cap. Either accept the spill-to-file and digest it, or use the curl `/search/jql` path where `fields=` is honored (much cheaper). This is the same overflow noted for `comment` on 2026-07-22, but it is not limited to `comment` — the allowlist simply does not work.
+- Pattern that works for a delta sweep: light JQL for the moved-issue list, then `getJiraIssue` per issue that actually moved. Confirm anchors are unmoved rather than assuming it, and say which you confirmed.
+
 ## Landscape (2026-07-21 snapshot — re-derive, don't trust stale)
 
 ~40 projects visible. Ones that matter here: **AI** (Artificial Intelligence — PCIV core), **AS** (Ad Selection), **DPR** (Data Products & Reporting), **INFRA**, **PUB** (Publisher Onboarding), **DATABRICKS**, **RELEASE**.
