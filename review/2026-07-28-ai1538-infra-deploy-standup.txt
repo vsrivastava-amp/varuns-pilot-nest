@@ -1,0 +1,17 @@
+INFRA ticket draft (project INFRA, reporter Varun, link AI-1538)
+
+Title: Register and stand up dev deployment for online-pciv-service
+
+Description:
+
+We add a new app named online-pciv-service to cd-deploy-configs (AI-1538). It is a separate deployment of the llm-evaluator-service image, with its own pods, Datadog service tag, and hostname (dev-online-pciv-service.ric1.admarketplace.net).
+
+What is ready:
+
+* The kustomize overlay is on branch AI-1538-online-pciv in cd-deploy-configs (apps/online-pciv-service/base + dev-ric1). A PR to master follows.
+* The ArgoCD Application yaml is on branch AI-1538-online-pciv in cd-releases (dev/ric1/dev-online-pciv-service.yaml). We copied the AI-1371 precedent for dev-llm-evaluator-service.
+
+Asks for infra:
+
+1. Apply or register the ArgoCD Application from the cd-releases branch. Tell us if this process differs from the AI-1371 precedent, where the Application yamls stayed on unmerged branches.
+2. Confirm the new app can reference the existing akeyless paths (akeyless:/llm-evaluator-service/dev/ric1/databricks/*) and the imagePullSecret docker-registry-access-token-ampdockercirw. If the app needs its own akeyless paths, please create them (precedent: DBR-6025 for pciv-demo prod).

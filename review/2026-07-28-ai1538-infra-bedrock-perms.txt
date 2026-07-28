@@ -1,0 +1,21 @@
+INFRA ticket draft (project INFRA, reporter Varun, link AI-1538)
+
+Title: Give online-pciv-service pods IAM permissions to call AWS Bedrock
+
+Description:
+
+We deploy a new app named online-pciv-service to dev EKS ric1 (AI-1538). It is a new deployment of the llm-evaluator-service image. The service calls LLMs on AWS Bedrock in us-east-1.
+
+The pod identity needs these IAM permissions:
+
+* bedrock:InvokeModel
+* bedrock:Converse
+* bedrock:ConverseStream
+* bedrock-mantle:CallWithBearerToken
+
+The last permission is separate from the bedrock:* ones. It allows calls to the bedrock-mantle endpoint, which serves the OpenAI and Gemma models. The service creates short-term bearer tokens from the pod role at runtime. It does not need stored API keys or new secrets.
+
+Questions for infra:
+
+1. Which AWS account do the dev EKS pods run in? We verified Bedrock model access in account 564079877134.
+2. Can the new app reuse the service account wi-llm-evaluator-service, or should it get its own workload-identity service account? If it gets its own, we will update serviceAccountName in our overlay.
