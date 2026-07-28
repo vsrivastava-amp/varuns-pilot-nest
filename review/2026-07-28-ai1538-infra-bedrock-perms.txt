@@ -1,21 +1,25 @@
-INFRA ticket draft (project INFRA, reporter Varun, link AI-1538)
+# File as: project INFRA, issue type Task, no labels/components, assignee empty (infra self-assigns). Link AI-1538.
 
-Title: Give online-pciv-service pods IAM permissions to call AWS Bedrock
+Title: Add Bedrock invoke permissions to online-pciv-service workload identity in dev EKS
 
 Description:
 
-We deploy a new app named online-pciv-service to dev EKS ric1 (AI-1538). It is a new deployment of the llm-evaluator-service image. The service calls LLMs on AWS Bedrock in us-east-1.
+Hello! We are deploying a new app `online-pciv-service` to dev EKS ric1 (AI-1538, online pCIV extraction for Qwant). It is a second deployment of the llm-evaluator-service image and calls LLMs on AWS Bedrock in us-east-1. App registration is tracked in the companion INFRA ticket (linked).
 
-The pod identity needs these IAM permissions:
+Please attach an IAM policy to the pod's workload-identity role — service account `wi-llm-evaluator-service` if the new app reuses it, or the new app's SA if one gets created (see companion ticket) — allowing these actions in us-east-1:
 
 * bedrock:InvokeModel
 * bedrock:Converse
 * bedrock:ConverseStream
 * bedrock-mantle:CallWithBearerToken
 
-The last permission is separate from the bedrock:* ones. It allows calls to the bedrock-mantle endpoint, which serves the OpenAI and Gemma models. The service creates short-term bearer tokens from the pod role at runtime. It does not need stored API keys or new secrets.
+The last action is separate from the bedrock:* ones: it gates calls to the bedrock-mantle endpoint, which serves the OpenAI and Gemma models. The service mints short-term bearer tokens from the pod role at runtime (aws-bedrock-token-generator), so no stored API keys and no new secrets are needed.
 
-Questions for infra:
+Please also confirm the Bedrock model access agreements for these model IDs are enabled in the AWS account the dev EKS pods run in (we've verified access in account 564079877134 — please confirm that's the same account):
 
-1. Which AWS account do the dev EKS pods run in? We verified Bedrock model access in account 564079877134.
-2. Can the new app reuse the service account wi-llm-evaluator-service, or should it get its own workload-identity service account? If it gets its own, we will update serviceAccountName in our overlay.
+* google.gemma-4-31b (bedrock-mantle)
+* openai.gpt-5.6-luna (bedrock-mantle)
+* qwen.qwen3-next-80b-a3b (bedrock-runtime) / qwen.qwen3-next-80b-a3b-instruct (bedrock-mantle)
+* mistral.ministral-3-14b-instruct (both endpoints)
+
+Thanks!

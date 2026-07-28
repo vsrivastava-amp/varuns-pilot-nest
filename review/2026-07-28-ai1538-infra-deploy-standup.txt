@@ -1,17 +1,20 @@
-INFRA ticket draft (project INFRA, reporter Varun, link AI-1538)
+# File as: project INFRA, issue type Task, no labels/components, assignee empty (infra self-assigns). Link AI-1538 + the companion Bedrock-permissions INFRA ticket.
 
-Title: Register and stand up dev deployment for online-pciv-service
+Title: Register ArgoCD Application for online-pciv-service in dev (cd-releases)
 
 Description:
 
-We add a new app named online-pciv-service to cd-deploy-configs (AI-1538). It is a separate deployment of the llm-evaluator-service image, with its own pods, Datadog service tag, and hostname (dev-online-pciv-service.ric1.admarketplace.net).
+Hello! We are standing up `online-pciv-service` in dev EKS ric1 (AI-1538) — a separate deployment of the llm-evaluator-service image with its own pods, Datadog service tag, and hostname (dev-online-pciv-service.ric1.admarketplace.net). Same setup pattern as dev-llm-evaluator-service (AI-1371).
 
-What is ready:
+Everything is prepared on branches:
 
-* The kustomize overlay is on branch AI-1538-online-pciv in cd-deploy-configs (apps/online-pciv-service/base + dev-ric1). A PR to master follows.
-* The ArgoCD Application yaml is on branch AI-1538-online-pciv in cd-releases (dev/ric1/dev-online-pciv-service.yaml). We copied the AI-1371 precedent for dev-llm-evaluator-service.
+* kustomize overlay: https://bitbucket.org/admarketplace/cd-deploy-configs/src/AI-1538-online-pciv/apps/online-pciv-service/ (PR to master to follow)
+* ArgoCD Application yaml: https://bitbucket.org/admarketplace/cd-releases/src/AI-1538-online-pciv/dev/ric1/dev-online-pciv-service.yaml (copied from the AI-1371 precedent)
 
-Asks for infra:
+Asks:
 
-1. Apply or register the ArgoCD Application from the cd-releases branch. Tell us if this process differs from the AI-1371 precedent, where the Application yamls stayed on unmerged branches.
-2. Confirm the new app can reference the existing akeyless paths (akeyless:/llm-evaluator-service/dev/ric1/databricks/*) and the imagePullSecret docker-registry-access-token-ampdockercirw. If the app needs its own akeyless paths, please create them (precedent: DBR-6025 for pciv-demo prod).
+* Please register/apply the ArgoCD Application from the cd-releases branch. With AI-1371 the Application yamls stayed on unmerged branches — let us know if the process has changed.
+* Please confirm the new app can reference llm-evaluator-service's existing akeyless paths `llm-evaluator-service/dev/ric1/databricks/*` and the imagePullSecret `docker-registry-access-token-ampdockercirw`. If reuse isn't allowed, please create paths under `online-pciv-service/dev/ric1/` instead (precedent: DBR-6025 for pciv-demo prod) and we'll update the overlay.
+* If a new workload-identity service account is preferred over reusing `wi-llm-evaluator-service`, tell us the name and we'll update serviceAccountName in the overlay (the companion INFRA ticket attaches Bedrock permissions to whichever SA is chosen).
+
+Thanks!
