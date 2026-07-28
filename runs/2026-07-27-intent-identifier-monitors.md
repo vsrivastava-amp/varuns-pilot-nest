@@ -203,9 +203,18 @@ my first pass had to leave open.
 ## Disposition
 
 - Jira comment draft for AI-1543 → `review/2026-07-27-ai1543-intent-identifier-monitors-jira.txt`
-  (pending Varun). Written in the **discussion mood** per `playbooks/jira.md` — Bhupesh's ticket, so
-  observations + questions, not fix directives. The three remediation candidates stay in this run file
-  and in the full report; they are not pushed at the ticket owner.
+  (pending Varun). **Varun-directed shape (in-chat 2026-07-27/28):** a plain **info dump**, because
+  Bhupesh has low bandwidth and Varun is helping the ticket along. Specifically:
+  - **No questions.** Anything answerable from source or Datadog gets resolved before drafting, not
+    asked of a low-bandwidth colleague. That is what produced the retry/metric/OR-filter findings.
+  - **Do not raise the rescoping.** The ticket is mis-scoped ("fix the alert" when the alert is
+    accurate), Varun agrees, and it is explicitly **not ours to raise**.
+  - Bullets are fine here (Varun, 2026-07-28) — he pastes into Jira and formats the links himself.
+  - Inline links in parentheticals: both monitors, the monitor's own log query, two metrics-explorer
+    graphs, four `ssp-engine` source files pinned at `1e3b192` with `#lines-N:M` anchors, and AS-11453.
+  - Register per `playbooks/jira.md`: no em dashes, no colon setups, SVO sentences, nothing
+    referential. Varun's two catches on v1 were "Questions, since the call is yours" (he knows) and
+    "The drip looks structural" (referential + abstract label; now a heading that names the thing).
 
 ## Open / pending Varun
 
