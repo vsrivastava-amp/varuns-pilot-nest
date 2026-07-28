@@ -14,7 +14,7 @@ Two Bitbucket repos, both cloned under `~/Documents/`:
 ## cd-releases — the ArgoCD Application registry
 
 - Layout: `<env>/<dc>/<env>-<app>.yaml` ArgoCD `Application` CRs; `DECOM/` subdir = stop running. Dev apps: `namespace: npe-argocd`, destination dev EKS `https://810C5935E63AEA0039E695BACDEA9D4B.gr7.us-east-1.eks.amazonaws.com`, `targetRevision: HEAD` of cd-deploy-configs, path to the overlay.
-- Gotcha: an app can be running without its Application yaml on master — llm-evaluator-service's live in unmerged branches `AI-1371` (dev+stage) / `AI-1371-prod` (prod). Registration is evidently applied out-of-band by infra; confirm the process before assuming a master merge registers an app.
+- ~~Gotcha: an app can be running without its Application yaml on master — registration applied out-of-band by infra~~ **CORRECTED 2026-07-28: cd-releases `master` IS the live registry** — `dev/ric1/dev-llm-evaluator-service.yaml` is ON master (merged via PR #871 "auto-llm-eval"; the AI-1371 branches were stale work-in-progress copies), alongside ~144 other dev app yamls. Registering a new app = **merge its Application yaml to cd-releases master via normal PR** — auto-deploys, no manual `argo app create`/kubectl by infra (scripts/README.md: "will automatically be deployed to the dev cluster"; `scripts/generate-dev-release.sh` scaffolds the yaml from `scripts/template`). Deregister = move the yaml into `DECOM/`. Both repos need a merge for a new app: cd-deploy-configs master (what it looks like) AND cd-releases master (that it runs) — an overlay without an Application is invisible to ArgoCD.
 - `ignoreDifferences` on /spec/replicas + HPA managedFields — keep when copying, or Argo fights the HPA.
 
 ## Gotchas

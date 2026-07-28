@@ -4,7 +4,7 @@ Title: Add Bedrock invoke permissions to online-pciv-service workload identity i
 
 Description:
 
-Hello! We are deploying a new app `online-pciv-service` to dev EKS ric1 (AI-1538, online pCIV extraction for Qwant). It is a second deployment of the llm-evaluator-service image and calls LLMs on AWS Bedrock in us-east-1. App registration is tracked in the companion INFRA ticket (linked).
+We are deploying a new app `online-pciv-service` to dev EKS ric1 (AI-1538, online pCIV extraction for Qwant). It is a second deployment of the llm-evaluator-service image and calls LLMs on AWS Bedrock in us-east-1. App registration is tracked in the companion INFRA ticket (linked).
 
 Please attach an IAM policy to the pod's workload-identity role — service account `wi-llm-evaluator-service` if the new app reuses it, or the new app's SA if one gets created (see companion ticket) — allowing these actions in us-east-1:
 
