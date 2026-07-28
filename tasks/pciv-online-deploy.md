@@ -14,6 +14,7 @@ Mechanism (verified 2026-07-23, see `playbooks/k8s-cd.md`): ArgoCD; `cd-deploy-c
 - [~] **cd-releases — Application yaml WRITTEN 2026-07-24** on branch `AI-1538-online-pciv` (worktree `~/Documents/cd-releases-online-pciv`; push pending `review/2026-07-24-ai1538-branch-pushes.txt`): `dev/ric1/dev-online-pciv-service.yaml` copied from AI-1371 precedent. Still confirm with infra who applies it. Original item: (copy `origin/AI-1371:dev/ric1/dev-llm-evaluator-service.yaml`; namespace `npe-argocd`, destination dev EKS `810C5935…eks.amazonaws.com`, path `apps/<app>/dev-ric1`, targetRevision HEAD). Confirm with infra who applies it (branch-only precedent suggests infra runs kubectl apply / argo app create).
 - [ ] **Smoke**: `curl https://dev-<app>.ric1.admarketplace.net/health` (VPN), then `POST /v1/intent/civ` with evalId 2, 1 query. Datadog: service visible under new name.
 - [ ] Guardrail note: prepare branches + PRs; **merges to master auto-deploy** — Varun merges (agent PRs go through `review/` drafts first).
+- [ ] Housekeeping (post-merge): the three `~/Documents/*-online-pciv` dirs are **linked git worktrees** of the main clones (made so checkouts don't yank branches from under concurrent sessions sharing the main clones). They do NOT auto-clean — after the PRs merge, `git worktree remove` each + delete merged branches. (Explained to Varun 2026-07-28.)
 
 ## Phase B — Bedrock provider with *a* model
 
