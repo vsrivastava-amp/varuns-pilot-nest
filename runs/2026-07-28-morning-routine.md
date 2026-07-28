@@ -37,6 +37,19 @@ All sweeps paginated to completion; both auth paths probed healthy. `project = A
 - `playbooks/jira.md` — new "JQL / Rovo gotchas" section: bare JQL datetimes resolve in the **account timezone, not UTC** (this silently dropped a 4-hour band on the first sweep run, caught by the subagent and re-sliced); `searchJiraIssuesUsingJql` ignores the `fields` allowlist entirely, not just for `comment`.
 - `playbooks/morning-routine.md` — new gotcha: a near-silent anchor channel means go read the active threads, not that the day was quiet. Records the anchor-read → keyword-search → per-`thread_ts` sequence, and that `oldest` on `slack_read_thread` does not reliably filter replies.
 
+## review/ sweep + dispositions (Varun asked, in-chat 2026-07-28)
+
+State checked against live sources, not filenames.
+
+- ✅ **`2026-07-27-ai1543-intent-identifier-monitors-jira.txt` — SENT, draft deleted.** Verified posted as AI-1543 comment **c171027** at 2026-07-28 11:52:14 ET, author Varun. Draft body matches. This was the ii-monitors session's draft; disposed here with Varun's in-chat approval because the work was verifiably complete. NB for whoever owns AI-1543 next: **the posted comment has paste damage** — recommendations 5 and 6 collapsed onto one line, the p50/p95/p99 graph bullet runs into "See that the constant background failures come from normal latency", and a few stray hyphens survived. Content intact, structure mangled; fixable in the Jira UI.
+- ✅ **Committed four draft deletions that were made on disk but never committed** (`2026-07-23-ssp-integration-ticket-1/2`, `2026-07-24-aas-score-calibration-jira`, `2026-07-24-bedrock-test-budget`). Flagged by the ai1538-catchup session earlier today as "real disposals nobody committed"; Varun confirmed in-chat. Git history keeps all four.
+- ⏳ **`2026-07-24-aas-score-calibration-slack.txt` — held, being reworked.** Verified the blocker: the draft says "I filed `<AI-XXXX>`" but **the ticket was never filed**. AI-1513 has exactly five children (AI-1544, AI-1437, AI-1436, AI-1435, AI-1329), none about calibration, and no Jira issue anywhere matches `kvssScoreLinear` / "unified retrieval score" / "score calibration". Varun's direction: recreate the ticket **written better**, and DM Artem. Both drafts to follow in `review/`.
+- ⏳ **`2026-07-28-ai1538-infra-bedrock-perms.txt` + `2026-07-28-ai1538-infra-deploy-standup.txt`** — fresh (created ~11:06 ET today by the ai1538 session), on the AI-1538 critical path. Left alone, not this session's drafts.
+
+### Sensitive-data finding (Varun decided: leave as-is)
+
+`review/qwant_fr_queries_sample_20260724.csv` (1,000 real Qwant end-user search terms from `prod_amplify.event_silver.ad_request`) and its `.sql` are **tracked in git**, committed in **515bdf3** — apparently swept in rather than added deliberately. `review/README.md` says this class of file "may sit here **git-untracked** — never commit those; check `git status` before commit." Varun's call, in-chat 2026-07-28: **leave both alone** (private repo, he is comfortable). Recording the README-vs-practice mismatch and taking no action. Note for future sessions: deleting the file would not remove the queries from history — that needs a rewrite plus a force push, coordinated across live sessions.
+
 ## Not done
 
 - Did not touch other sessions' pending `review/` drafts (Varun, in-chat 2026-07-27: do not worry about drafts not pertaining to this session). This session produced no outbound drafts.
