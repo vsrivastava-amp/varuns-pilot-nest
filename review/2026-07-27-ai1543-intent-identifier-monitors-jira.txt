@@ -12,13 +12,15 @@ Volume last week (2026-07-20 18:00 to 2026-07-27 18:00 UTC)
 
 - 18 episodes, 4,393 matching logs. Median episode 5 minutes, longest 20.
 - The volume is not spread out. 683 of 07-27's 692 logs landed in the single minute 14:50. 07-26 has the same shape at 08:46.
-- Every other hour in the week is single digits or low tens. So the week is two one-minute bursts plus a constant 1 to 2 failures per minute.
+- Every other hour in the week is single digits or low tens. So the week is two one-minute bursts plus a constant 1 to 2 failures per minute. The two behave differently and have different causes.
 
-The constant background failures come from normal latency
+Both bursts happen at the exact minute a pod restarts
 
-- The service's routine max latency runs 22 to 57 ms.
-- application.yml sets read-timeout-millis to 30 by default (https://bitbucket.org/admarketplace/ssp-engine/src/1e3b192/src/main/resources/application.yml#lines-52:59). Prod can override that with an env var and I did not read the deployed env, but the observed abandon time of 30.20 ms matches the default.
-- So a slice of ordinary traffic crosses the deadline every hour. A sampled failure finished server-side at 52 to 54 ms, after SSP had already closed the stream.
+- The container restart counter for intent-identifier-service-ric1 steps up at 14:50 on 07-27, the same minute as the 683 timeouts (https://app.datadoghq.com/metric/explorer?start=1785160800000&end=1785166200000&paused=true#N4Ig7glgJg5gpgFxALlFOAzCA7CCID22KoATnAI4CucAzgrSgNpoS0AOANgIYCeA+gl7s4KEJxyiANCAwFSAWyo9GyFrPlKeY8vW6kGgggm6cQAXwC6M6nFIQ6zNNxP9aBKqQDGo5CAWI9l6MMtjcATp0Jga0RiZmNjSkvGK0VArIANZUAEZ22Ih0AHReRCaSpLRFutEMwHDYAG7I7KQEUFLZefzoXAS8AdgIyDgIDQgAtNDjEFh2E7R2jRA+E0EAjOYW1iC67ESL-HKKLmL4AYv2jjL0vJy+oBIFgsK+IO4SUCAyT3D8kFAEAALMTYTSmb4gdimRBjMRQAgwfheFS0FYWKwyIQiM4QC52ByMcw-PgeJCoEBAuAQGBA8nrGQA4EoBkgAAeLJkKWQm2J7y4eAAwkQsDAUNhlJxzEA). It steps up again at 08:46 on 07-26, the other burst minute.
+- The deployment has 3 replicas in eks-prd-use1-01, namespace prod. The pods have restarted 4, 3 and 1 times. That is 8 restarts in 13 days, so roughly one every day and a half, and each one has produced a burst.
+- Memory looks like the reason the pods die. Across the 14:50 restart, pod dfb5cf44c-htd6n sat at 3.196 GB against a 3Gi limit, which is 99.2%, flat for at least 36 minutes, then dropped to a fresh 0.8 GB heap (https://app.datadoghq.com/metric/explorer?start=1785162000000&end=1785165600000&paused=true#N4Ig7glgJg5gpgFxALlFOAzCA7CCID22KoATnAI4CucAzgrSgNpoS0AOANgIYCeA+gl7s4KEJxyiANCAwFSAWyo9GyFrPlKeYhXAUgAvgF0Z1OKQh1mabgm79aBKqQDGo5CF0ILLxjOzcujp6IKY0pLw63AAeyADWVABG5tiIdAB0ugryvOlUtNzwwHDYAG7I7KQEUFIJyfzoXAS8utgIyDgIJQgAtNDdEFjmPbTmpRBuPT4AjAYABIm8c8Ds1fwBugaGJiDkHESj-HKKtmL4uqMWVjL0vJzuoBKpgsLuII4SUKHikvyQUAgABZibCabicb7scGILpiKAEGD8FwqWgTQzGGRCERnCAXcyWRgGGQ8XhOJCoECAuAQGCA8nTGT-IEoBkgaIsmSRZCzInvLh4ADCRCwMBQ2GUnAMQA).
+- Memory requests are 2Gi and steady usage sits above that, at about 147% of requests. QoS class is Burstable.
+- container.memory.oom_events is 0 for all three pods over the week, so the kernel is not OOM killing them. I did not retrieve the container termination reason, so what actually restarts them is unconfirmed. A JVM held at its heap ceiling and thrashing GC would fit the evidence, including the 6.09 second request below, and would show up as a liveness probe failure rather than an OOM.
 
 The bursts are stalls, not gradual latency growth
 
@@ -26,16 +28,29 @@ The bursts are stalls, not gradual latency growth
 - p95 did not move at all during either burst minute (0.0154 on 07-26, flat against its normal band of 0.0136 to 0.0157). p99 did move, to 0.0254 in both.
 - Graph of p50, p95, p99 and max across the 07-27 burst: https://app.datadoghq.com/metric/explorer?start=1785157200000&end=1785166200000&paused=true#N4Ig7glgJg5gpgFxALlFOAzCA7CCID22KoATnAI4CucAzgrSgNpoS0AOANgIYCeA+gl7s4KEJxyiANCAwFSAWyo9GyFrPlKeY6nFK8ADCAC+U0HMXLuOmvoCMJgLozdpCHWZpuCbv1oEqUgBjUWQQBUQ3IMYZbG4Imz1DEBdbXjF2AFYDZARSbnSAOlo9ADdORGbyXXpgOGx25HZSAigpNtJ23LhkHARBhABaaCWILD1lqZn0yfZubGaAaxwoZB29KXIklPT+QqyRgnp+AHpudggT0rsTkex8DF5h+4HaYxMzEChvX23g0PCkW6MRA+wBrl4DlSSTECm4AA9cvkilMKggqpQaLV6o1mq12mVunBei97sN0Pcxu5SJNCTMOPMlis1mUNlsAv89vFiewjghTudLtdbhSHk8+q93sZnCAtrzsCV+BY4UgwvgIh13CD6LwKiRxJJBMIAf4JFAUgbsHB+JAoAgABZibCabicC1zNH9MRQAgwfhBFS0bomaUyIQiMTquh6LUfcR8AKq0D2uAQGD21V2GS2h0oLMgeF5mTpZB2YymEAcCQIADCRCwMBQ2GUnGMQA
 
+The constant background failures come from normal latency
+
+- The service's routine max latency runs 22 to 57 ms.
+- application.yml sets read-timeout-millis to 30 by default (https://bitbucket.org/admarketplace/ssp-engine/src/1e3b192/src/main/resources/application.yml#lines-52:59). Prod can override that with an env var and I did not read the deployed env, but the observed abandon time of 30.20 ms matches the default.
+- So a slice of ordinary traffic crosses the deadline every hour. A sampled failure finished server-side at 52 to 54 ms, after SSP had already closed the stream.
+
 The client retries timeouts with no wait between attempts
 
 - IntentIdentifierServiceConfiguration builds the Resilience4j retry with maxAttempts = retries + 1 and waitDuration 0 (https://bitbucket.org/admarketplace/ssp-engine/src/1e3b192/src/main/java/com/adm/services/enrichment/term/filter/IntentIdentifierServiceConfiguration.java#lines-29:34).
 - retryExceptions includes IOException, and HttpTimeoutException extends IOException, so timeouts do retry. IntentFilter.isRetryable returns true for any IOException as well (https://bitbucket.org/admarketplace/ssp-engine/src/1e3b192/src/main/java/com/adm/services/enrichment/term/filter/IntentFilter.java#lines-173:181).
 - retries defaults to 1, so each failure sends 2 attempts back to back.
 - IntentFilter logs "Unexpected error during intent identification" once per request, after both attempts fail (https://bitbucket.org/admarketplace/ssp-engine/src/1e3b192/src/main/java/com/adm/services/enrichment/term/filter/IntentFilter.java#lines-84:90).
-- So the 683 logs in that minute represent roughly 1,366 calls sent to a service that was already stalled.
+- So the 683 logs in that minute represent roughly 1,366 calls sent to a pod that was already failing.
 - The current failure path returns an EnrichmentError of type exception, not an empty no-intent result. I did not trace how the caller handles that.
 
-A rate metric already exists
+Four changes the data points at, independent of each other
+
+- Add a replica, 3 to 4. Every burst so far happened during a restart, and with 3 replicas a restart removes a third of the capacity and sends traffic to a cold JVM. A fourth replica keeps three warm pods serving through a restart. It does not stop the restarts, so treat it as damage control rather than a fix.
+- Look at the memory ceiling. A pod pinned at 99.2% of a 3Gi limit for 36 minutes is the most likely reason the restarts happen at all, and it is upstream of every burst. Raising the limit, raising requests to match real usage, or finding the leak all attack the cause instead of the symptom.
+- Raise the SSP read timeout from 30 ms to somewhere in the 60 to 75 ms range. This is aimed only at the constant background failures, where the service answers in 52 to 54 ms and SSP has already left. Worth checking against SSP's whole request budget first.
+- Stop retrying HttpTimeoutException, and return an empty no-intent result instead. With waitDuration 0 the retry doubles load on a pod that is already stalled, which is the worst possible moment for it.
+
+A rate metric already exists for measuring any of this
 
 - sspEngine.intent.identifier.errors is live and carries a kind tag. It increments once per request (https://bitbucket.org/admarketplace/ssp-engine/src/1e3b192/src/main/java/com/adm/metrics/MetricService.java#lines-175:181).
 - Last week in ric1: request_timeout 3,657, stream_exhausted 341, connect_timeout 96, io_error 31, service_error 14.

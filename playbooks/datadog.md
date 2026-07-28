@@ -111,6 +111,16 @@ despite the name), `generic` (query syntax across all data types).
   the explicit `@stack_trace:*A* AND @stack_trace:*B*` returns 3,681. A monitor written this way
   counts more than its name implies. To check any monitor for this, re-run its filter with explicit
   `AND` and compare counts.
+- **When APM spans are missing, k8s metrics often answer the same question.** `trace.*` metrics carry
+  no pod tags and `search_datadog_spans` returned 0 spans for `intent-identifier-service`, so per-pod
+  latency attribution was impossible. But `kubernetes.containers.restarts` and
+  `kubernetes.memory.usage` grouped `by {pod_name}` worked, and pinned a latency burst to a pod restart
+  at 1-minute resolution. Reach for `search_datadog_k8s_resources` (replica counts, restart counts,
+  pod age) + `describe_datadog_k8s_resource` (limits/requests/QoS) before concluding a question is
+  unanswerable.
+- **`container.memory.oom_events` distinguishes an OOM kill from a liveness restart.** A pod pinned at
+  99.2% of its memory limit that then restarts *looks* like an OOM kill and is not necessarily one —
+  oom_events was 0 across the week. Check the metric before writing "OOMKilled" anywhere.
 - **Check for an existing app metric before proposing new instrumentation.** `search_datadog_metrics`
   with `name_filter` found `sspEngine.intent.identifier.errors` (a per-request counter with a `kind:`
   tag) already live — which made a recommended "add a terminal outcome metric" redundant. App metrics

@@ -179,6 +179,36 @@ my first pass had to leave open.
   resources across `ric1/` + `pdx1/` (no `datadog_monitor` anywhere in a depth-5 clone).
   `admarketplace/terraform-modules` also exists and is unexamined. Still open.
 
+## Burst root cause: pod restarts (verified 2026-07-28)
+
+Prompted by Varun asking where his replicas 3→4 recommendation fits. It fits, and chasing it found
+the actual burst trigger. **This closes the "could not attribute the stall to a pod" gap.**
+
+- **A container restart lands on the exact minute of BOTH bursts.**
+  `sum:kubernetes.containers.restarts{kube_deployment:intent-identifier-service-ric1}` steps 7→8 at
+  **07-27 14:50** (the 683-timeout minute) and steps at **07-26 08:46** (the other burst). Not a
+  coincidence at 1-minute resolution across two independent events.
+- **Deployment state**: `intent-identifier-service-ric1`, cluster `eks-prd-use1-01`, ns `prod`,
+  **3 replicas** (3/3 ready, age 256d). A `-pdx1` twin also runs 3. Pod restart counts **4 / 3 / 1 =
+  8 restarts in 13 days**, so roughly one every 1.6 days. Pod `xt9xz` is 7d old while its siblings are
+  13d on the *same* ReplicaSet hash `dfb5cf44c`, so it was rescheduled without a deploy.
+- **Memory is the likely reason they die.** Across the 14:50 restart, pod `htd6n` sat at
+  **3.196 GB against a 3Gi limit = 99.2%**, dead flat for 36+ minutes, then dropped to a fresh
+  **0.8 GB** heap. Requests are 2Gi with steady usage ~147% of requests. QoS `Burstable`.
+  CPU is not the constraint (usage 891m against a 4-core limit, 22%).
+- **Refuted my own OOM inference:** `container.memory.oom_events` = **0** for all three pods over 7d.
+  The kernel is not OOM killing them. I did not retrieve the container termination reason, so the
+  restart cause stays **unconfirmed**. A JVM pinned at its heap ceiling and thrashing GC fits
+  everything observed (6.09 s max, p50 unchanged at 5 ms, no OOM event) and would surface as a
+  liveness-probe restart. Stated as inference in the draft, not fact.
+- **This reframes the replica recommendation honestly.** 3→4 cuts per-restart capacity loss from 33%
+  to 25% and keeps three warm pods serving through a restart, so it is real. But it does not stop the
+  restarts, and every burst so far came from one. The memory ceiling is upstream of all of it.
+- **APM spans are unavailable for this service** — `search_datadog_spans` returns 0 for
+  `service:intent-identifier-service` even in-window, and `aggregate_spans` grouped by `pod_name`
+  returns 0 buckets. Per-pod *latency* attribution is still impossible; per-pod *restart and memory*
+  attribution works fine via k8s metrics. That is the substitute that cracked it.
+
 ## Jira placement (verified 2026-07-27)
 
 - **AI-1543 "Fix Intent Identifier Service - timeout logs alert"** — the home for Problem 1. Title is
