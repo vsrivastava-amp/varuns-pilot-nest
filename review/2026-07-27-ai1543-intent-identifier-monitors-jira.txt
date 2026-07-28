@@ -1,12 +1,13 @@
 Hey @Bhupesh, I had some context on this one, so I pulled the Datadog history and read the SSP client code. Dumping the findings here so the ticket does not start from zero. Every number below links to its source.
 
+CURRENT STATE
+
 The monitor counts log lines, and its filter is an OR (https://app.datadoghq.com/monitors/238419175)
 
 - It triggers above 5 matching log events in a rolling 5-minute window, and recovers at 5 or fewer.
 - It counts log lines, not requests.
 - The filter is an OR, not an AND. The query ends with @stack_trace:(*HttpTimeoutException* *IntentIdentifierControllerApi*), and the space inside the parentheses means OR.
 - Last week that filter matched 4,393 logs (https://app.datadoghq.com/logs?query=service%3A%28ssp-engine%29+env%3Aprod+datacenter%3Aric1+status%3Aerror+%22Unexpected+error+during+intent+identification%22+%40stack_trace%3A%28%2AHttpTimeoutException%2A+%2AIntentIdentifierControllerApi%2A%29&agg_m=count&agg_t=count&index=%2A). Only 3,681 of those contain HttpTimeoutException. So roughly 712 of them, about 16%, are other intent-identification failures.
-- Replacing the space with AND turns it into a timeout monitor. Leaving it as OR makes it a general "intent identification failed" monitor, which may be what you want, but the name says otherwise.
 
 Volume last week (2026-07-20 18:00 to 2026-07-27 18:00 UTC)
 
@@ -14,7 +15,7 @@ Volume last week (2026-07-20 18:00 to 2026-07-27 18:00 UTC)
 - The volume is not spread out. 683 of 07-27's 692 logs landed in the single minute 14:50. 07-26 has the same shape at 08:46.
 - Every other hour in the week is single digits or low tens. So the week is two one-minute bursts plus a constant 1 to 2 failures per minute. The bursts and the background failures have different causes.
 
-Both bursts happen at the exact minute a pod restarts
+Both one-minute bursts happen at the exact minute a pod restarts
 
 - The container restart counter for intent-identifier-service-ric1 steps up at 14:50 on 07-27, the same minute as the 683 timeouts (https://app.datadoghq.com/metric/explorer?start=1785160800000&end=1785166200000&paused=true#N4Ig7glgJg5gpgFxALlFOAzCA7CCID22KoATnAI4CucAzgrSgNpoS0AOANgIYCeA+gl7s4KEJxyiANCAwFSAWyo9GyFrPlKeY8vW6kGgggm6cQAXwC6M6nFIQ6zNNxP9aBKqQDGo5CAWI9l6MMtjcATp0Jga0RiZmNjSkvGK0VArIANZUAEZ22Ih0AHReRCaSpLRFutEMwHDYAG7I7KQEUFLZefzoXAS8AdgIyDgIDQgAtNDjEFh2E7R2jRA+E0EAjOYW1iC67ESL-HKKLmL4AYv2jjL0vJy+oBIFgsK+IO4SUCAyT3D8kFAEAALMTYTSmb4gdimRBjMRQAgwfheFS0FYWKwyIQiM4QC52ByMcw-PgeJCoEBAuAQGBA8nrGQA4EoBkgAAeLJkKWQm2J7y4eAAwkQsDAUNhlJxzEA). It steps up again at 08:46 on 07-26, the other burst minute.
 - The deployment has 3 replicas in eks-prd-use1-01, namespace prod. The pods have restarted 4, 3 and 1 times, which is 8 restarts in 13 days, or roughly one every day and a half.
@@ -44,23 +45,30 @@ The client retries timeouts with no wait between attempts
 - So the 683 logs in that minute represent roughly 1,366 calls sent to a pod that was already failing.
 - The current failure path returns an EnrichmentError of type exception, not an empty no-intent result. I did not trace how the caller handles that.
 
-Replicas, the memory limit, the read timeout and the retry are four separate changes
-
-- A fourth replica keeps three warm pods serving through a restart. With 3 replicas a restart removes a third of the capacity and routes traffic to a cold JVM, and both big bursts happened during a restart. A fourth replica does not stop the restarts, so it limits the damage rather than fixing the cause.
-- The 3Gi memory limit sits upstream of both big bursts. A pod pinned at 99.2% of that limit for 36 minutes is the most likely reason the restarts happen at all. Raising the limit, raising requests to match real usage, or finding the leak each attack the cause instead of the symptom.
-- A read timeout of 60 to 75 ms recovers the constant background failures. The service answers those in 52 to 54 ms, by which point SSP has already closed the stream. The new value needs checking against SSP's whole request budget first.
-- Removing the retry on HttpTimeoutException stops the load from doubling. With waitDuration 0 the second attempt hits a pod that is already stalled. Returning an empty no-intent result instead also turns a hard failure into a degraded response.
-
 sspEngine.intent.identifier.errors already counts failures once per request
 
 - sspEngine.intent.identifier.errors is live and carries a kind tag. It increments once per request (https://bitbucket.org/admarketplace/ssp-engine/src/1e3b192/src/main/java/com/adm/metrics/MetricService.java#lines-175:181).
 - Last week in ric1: request_timeout 3,657, stream_exhausted 341, connect_timeout 96, io_error 31, service_error 14.
 - During the 07-27 14:50 burst, kind:request_timeout recorded 683, which matches the log count exactly: https://app.datadoghq.com/metric/explorer?start=1785163200000&end=1785164700000&paused=true#N4Ig7glgJg5gpgFxALlFOAzCA7CCID22KoATnAI4CucAzgrSgNpoS0AOANgIYCeA+gl7s4KEJxyiANCAwFSAWyo9GyFrPlKeY+uW4L+cAB4ALblXpwoIAL5TQcxcu5jy1OgkEQFcAlSQ2ALoy7qQQdMxo3Ajc-LR+pADGosggPghhiYwy2PopILpw+oam5pbWITSkvDpUCsi0HACi2DCSAHQ4CHDYCJ3ovRBYcKTtI6TytMA9AG7I7BNQUlDR3Mm9I8iZAIxSANY4UA0ZRQbGZhbdUDbt3LT8iX69ABQAlLb2ICsxcQnJYulMtkQLkfK5KDR6F4fH4kJURjVUrQ6g1mq0Ol0en1oFihuFRuNJtNsHMFgQlt81ljNjt9octhCPNDfP4bncHk8EG9bMEQOQOERaHB+I4FNExPgfEKwhEZPReJwUqAJNhhUIRDoCBIKuJJPxIFAECYxNhNNxOCAZOxzYhumIoAQYA8VLQIIlbEEZOr8pK6CNwow7OI+LCSCATHAIDATEhkLtwNAjSh40ZkzJEdsbEGOBIEABhIhYGAobDKTg2IA
-- So a failure-rate monitor can divide this counter by the intent identifier call count today. No new instrumentation is needed.
 
-The P95 latency monitor on this service cannot fire, for an unrelated reason
+The P95 latency monitor on this service cannot fire
 
 - The P95 latency monitor (https://app.datadoghq.com/monitors/238419172) has a threshold of 10 on a metric measured in seconds, so it means 10 seconds, while its message text says 10 ms. Normal p95 is about 15 ms, so nothing ever reaches 10 seconds and the monitor has never fired.
+
+RECOMMENDATIONS
+
+Service and client, in leverage order:
+
+1. The 3Gi memory limit sits upstream of both big bursts. A pod pinned at 99.2% of that limit for 36 minutes is the most likely reason the restarts happen at all. Raising the limit, raising requests to match real usage, or finding the leak each attack the cause instead of the symptom.
+2. Removing the retry on HttpTimeoutException stops the load from doubling. With waitDuration 0 the second attempt hits a pod that is already stalled. Returning an empty no-intent result instead also turns a hard failure into a degraded response.
+3. A read timeout of 60 to 75 ms recovers the constant background failures, which are most of the 4,393 logs. The service answers those in 52 to 54 ms, by which point SSP has already closed the stream. The new value needs checking against SSP's whole request budget first.
+4. A fourth replica keeps three warm pods serving through a restart. With 3 replicas a restart removes a third of the capacity and routes traffic to a cold JVM. A fourth replica does not stop the restarts, so it limits the damage rather than fixing the cause.
+
+Monitoring:
+
+5. The monitor filter needs AND in place of the space, if the monitor should match its name. Leaving it as OR is also defensible, as a general "intent identification failed" monitor, but then the name and message want updating instead.
+6. A failure-rate monitor on sspEngine.intent.identifier.errors divided by the intent identifier call count measures impact rather than volume. Both inputs exist today, so this needs no new instrumentation. Group it by pod to catch a single bad replica.
+7. The P95 monitor needs its threshold in seconds, and p99 rather than p95. p95 stayed inside its normal band through both bursts, so a p95 threshold cannot detect them at all. p99 reached 0.0254 in both against a 0.0162 to 0.0201 baseline, so roughly max(last_5m):p99 > 0.023 catches them with margin. avg(last_5m) also dilutes a one-minute spike about fivefold, so max is the better time aggregator.
 
 footgun: episode duration does not indicate severity here. The 683-timeout burst produced a 5-minute episode, the same length as episodes containing six logs. 13 of the 18 episodes lasted exactly 5 minutes, which is only the monitor's evaluation window.
 
