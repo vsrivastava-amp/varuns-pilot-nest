@@ -66,6 +66,18 @@ Marked as unverified in both drafts, deliberately: the CR thread itself (not rea
 
 `map/aas.md` §135-145 is accurate but less precise than the above. Did not edit it — `map/` edits get proposed for Varun's review, not made unilaterally. Offer standing.
 
+**Both drafts rewritten after Varun's read (2026-07-28, in-chat).** Two corrections from him:
+
+1. **The DM read passive-aggressive.** Cause: it asked "did 0.93 come from something?" when both sides already know it is arbitrary. A question whose answer is known reads as rhetorical. Varun's framing: this is a human problem, not a technical dispute. We are kicking the football down the road deliberately, and the job is to put it somewhere it gets seen later and resolved intelligently. Rewrote to three short paragraphs: state the placeholder as shared knowledge, give the two things Artem may not know, then ask only where he wants it tracked. No derivation question, no evidence dump.
+2. **Find where the problem gets encountered naturally, rather than filing an orphan ticket.** Searched Jira for live ranking/text-ads work. Answer: **AS-13428** (Stephen Ince, "dsp-engine: Discover 3.0 - Support Unified Auction Ranking for Text and Product Ads") went **Ready for QA today**, handed to Narek Gasparyan 10:34 ET on build `dsp-engine 1.1.1127-release-discover-3_0-text-ads`, with ACs that require coverage of mixed text and product results. QA on mixed ranking is the natural encounter point, so both drafts now hang the timing argument on it.
+
+Two facts AS-13428 contributed:
+
+- Its technical notes give the DSP yield formula as `rankingScore * ctr * advertiserBid` descending, `creativeYield` as tiebreak. This **upgrades the DSP multiplication step from "reported at the 7/23 sync" to written on a ticket currently in QA.**
+- ⚠️ **New open question, now the first AC on the ticket draft.** AS-13428 says the dsp-engine comparator picks the relevance signal by ad type and names TEXT as "Elasticsearch or keyword relevance score", *not* the AAS normalizedScore. So it is unclear whether the 0.93-scaled AAS score is the `rankingScore` DSP multiplies, or whether DSP derives its own text signal. Did not read dsp-engine PR 841. If DSP uses its own signal, the AAS coefficients never reach pricing and there is likely a second uncalibrated constant DSP-side. This changes the scope, so it gates the calibration work.
+
+Ticket placement moved from **AI-1513 to AI-1549** (H2 2026 Ranking and Pricing Engine, Yield-Based Ranking, Saksham). Reason: AI-1513 closes once AAS supports text ads, and this question outlives it. AI-1549 already owns ranking calibration.
+
 ### Sensitive-data finding (Varun decided: leave as-is)
 
 `review/qwant_fr_queries_sample_20260724.csv` (1,000 real Qwant end-user search terms from `prod_amplify.event_silver.ad_request`) and its `.sql` are **tracked in git**, committed in **515bdf3** — apparently swept in rather than added deliberately. `review/README.md` says this class of file "may sit here **git-untracked** — never commit those; check `git status` before commit." Varun's call, in-chat 2026-07-28: **leave both alone** (private repo, he is comfortable). Recording the README-vs-practice mismatch and taking no action. Note for future sessions: deleting the file would not remove the queries from history — that needs a rewrite plus a force push, coordinated across live sessions.

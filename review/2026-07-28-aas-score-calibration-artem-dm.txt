@@ -1,13 +1,5 @@
-# SEND ORDER: file the ticket first, then paste the last line with the real key.
-# Without the key, drop that line entirely. The previous version of this draft died
-# because it claimed a ticket that was never filed.
+Hey Artem, small thing on the 3.0 text ads ranking, not urgent.
 
-Hey Artem, I was reading the Discover ranking path and got curious about one constant. Wanted to ask you directly since you wrote it.
+kvssScoreLinearA is 0.93 and as far as I can tell it is a placeholder, which is fine for now. Raising it because AS-13428 just went to QA with mixed text and product ranking, so Narek is about to look at an ordering that 0.93 sets. Separately the KvssProperties javadoc still explains 0.8 from before the CR, so the file disagrees with itself.
 
-kvssScoreLinearA is 0.93 today. I traced how it got there. It started at 1 on 7/10, then the 7/14 cleanup put 0.93 in application.yml and 0.8 in the Java default, and the 7/15 CR commit moved the Java default up to 0.93 to match. The javadoc still explains the 0.8 version. Since the yaml always sets the property, 0.93 is what has actually been running the whole time.
-
-My question is whether 0.93 came from something. A distribution comparison, a spot check against results, anything. I could not find a derivation in the repo and I did not read the CR thread, so I may be missing the conversation where it was settled. The argument in the javadoc makes sense to me, that a KVSS short-phrase match should sit below a VSS full-title match at the same raw score. I am only unsure about the size of the discount.
-
-Asking because DiscoverRankingStep sorts product and text candidates on normalizedScore alone, so this one number sets the text-vs-product mix in every 3.0 auction. If it was a reasonable placeholder, that is completely fine, I would just like it written down before text ads ramp. Also worth a one-line javadoc fix at some point, since it still documents 0.8.
-
-[If the ticket is filed: I put <AI-KEY> under AI-1513 to track the calibration so it does not get lost before go-live.]
+Worth getting a real number at some point. Do you want it tracked under AI-1549, or somewhere you would see it sooner?
