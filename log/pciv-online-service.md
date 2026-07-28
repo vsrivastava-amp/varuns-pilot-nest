@@ -237,3 +237,36 @@ Prompt-design implication (Yaarit's task): flash use case input = query + SERP t
 ## 2026-07-27 — AI-1538 status comment posted (170943, Varun-approved)
 
 - STE-100 done/next-steps/footgun comment on AI-1538 (approved after 2 rounds; "IRSA" de-jargoned to "AWS permissions to call Bedrock" — Varun asked what IRSA was, explain-first rule applied). Footgun reframed per Varun: "deploy this service only after the new cd-deploy-configs deployment is created" + cd-deploy-configs mechanics.
+
+## 2026-07-28 — Norbert briefing (relayed live by Varun) + Discover 3.0 integration doc read
+
+Varun got a live download from Norbert Tamas; laptop session then read the shared gdoc directly (Drive MCP): **"Qwant / AMP Discover API v3"**, id `1-FfoHnnPSJ5bPXCcSzv95nLlAnow1EaaZ5HHIWfynHM` — three tabs: 17/06 integration notes, 20/07 "Qwant proposal", Placement IDs.
+
+### Norbert verbal (via Varun)
+
+- Flash answers have **strict latency reqs** (no number given — consistent with 7/24 "no trusted target" stance).
+- France UX: clicking a "see more"-style button on a flash answer lands in a **full AI chat UX with input box** (Gemini-like) = the AI Chat surface.
+- **Qwant won't do pCIV extraction — AMP does pCIV "for now"; Qwant open to doing it themselves "later".** Reaffirms the June-26 refusal / Jul-8 pivot; the "open to later" is the new nuance (long-term the hot path could move back to their side).
+- What they send us: **prompt** (user query); **web results** = organic SERP (not promoted), which per Norbert **come from the Bing API**; per-result **title** ("not necessarily useful" — his words) and per-page **summary** ("also not useful"); and **snippets, per search result** — the signal he actually flagged as interesting.
+- **Proposed ad-serving flow is still unclear — Varun to connect with Pinkel Gurung to nail the exact spec.** Fits the dossier's 7/23 open question #5 (no bridge ticket SSP→pCIV): AS-13384 is an empty shell, AS-13436/13437 (ASV + "Integrate with pCIV", Pinkel → Alexandr Gontarev) are Not Started with an open "where/how is pCIV logged?" risk.
+
+### Doc contents (read 2026-07-28 — facts as of doc's 20/07 tab)
+
+- **Surfaces × markets** (3 surfaces, each on both **Qwant and Lilo**):
+  | Surface | Markets | commerciality | intent.response | source |
+  |---|---|---|---|---|
+  | Flash Answer | all countries | in-house FR model / top classifier (EN,US,CA) | ❌ none | serp |
+  | Detailed Flash Answer | EN, CA, US | top classifier on the short flash query | ✅ the previous flash answer | serp |
+  | AI Chat | **FR only** | ❌ **not provided** (no intent model on long-tail) | ✅ current LLM response of the turn | web_search, **only if the search tool fired; otherwise source omitted entirely** |
+- **source.items[]**: rank, title, description (SERP snippet/meta), url, plus **snippets[].text = reranked page-content extracts ("extra_snippets"), several per document** — marked in-doc as *"Qwant proposal — to confirm & organize with AMP"*, i.e. the snippet field shape is explicitly ours to negotiate (matches Norbert steering attention there).
+- **user object**: geo.country_code, locale, timezone.name + offset_minutes, device.form_factor. **geo.region_code: Qwant does NOT send** (settled). No raw IP (GDPR). → Resolves the 7/21-22 open confirm: region no, **locale/tz yes — confirmed in doc**.
+- **Placement IDs** (ghost = no live ads during ghost phase): Qwant Flash `6oi4i2g6c9` · Qwant Chat AI / Flash Detailed `fsh242tjtv` · Lilo Flash `fxytxsp25l` · Lilo Chat AI / Flash Detailed `bzs31vnk6l` · Sandbox Test `qlvmkcd5x3` (live-trafficked: US since EOD Fri 7/24, other markets since Mon 7/27 10:00 ET). Note **Chat AI and Detailed Flash share one placement id per brand** — placement id alone won't distinguish those two shapes; the payload (commerciality present vs absent) does.
+- Mechanics: `POST https://qwantai.di.ampfeed.com/di`, header `x-discover-version: 3.0`, `meta.mode=privacy` (s2s tracking), `meta.request_id` Qwant-generated. Separate API call per placement. ad_count: proposal tab says Qwant sends 10 / renders ≤5 in V1; placement-tab examples send 5 — minor inconsistency, not load-bearing.
+- Response side: unified ad object (no Text-vs-Product distinction); currently **Product destination URLs only; Brand/Category/Text by end of July** (matches Pinkel's 7/30 ETA in the 7/27 digest). Qwant-side rendering rule stands: AMP product ads on Qwant-validated non-commercial intent won't display (the Dhaval objection from 7/21 remains open).
+- Line that concerns us directly: *"AMP's internal CIV extraction service is still under development and is expected to be available by the go-live date."* — AI-1538 is now written into the partner-facing doc with the Aug-24 go-live attached.
+
+### Implications for the pCIV service (interpretation, not source facts)
+
+1. **Four concrete input shapes** to build/eval against: flash (prompt + serp source w/ snippets, commerciality present); detailed flash (+ response = short flash answer); AI chat w/ search (response + web_search source); AI chat bare (prompt + response only, no source). Eval datasets (AI-1556 / Amarachi FR emphasis) should mirror these four, not just bare queries.
+2. **FR AI Chat arrives with no commerciality signal** — no upstream intent filter on exactly the surface Amarachi called Qwant's core market. Whether pCIV runs on every chat turn or something filters first is undecided → that's the heart of the Pinkel serving-flow conversation.
+3. Snippets are the negotiable, information-dense context field; titles/summaries second-order per Norbert. When the snippet schema gets "confirmed & organized with AMP," pCIV's prompt-context needs should drive the ask (how many, how long, reranked by what).

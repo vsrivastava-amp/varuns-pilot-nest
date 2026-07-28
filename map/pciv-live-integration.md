@@ -9,6 +9,7 @@ Live integration effort; ownership in flux (Steven Wu as of week of 2026-07-20).
 - Anchor issues (2026-07-23): epic AI-1213 (Emerging Qwant support, due 8/15) → **AI-1538 (deploy online pCIV service, Varun)** + **AI-1542 (latency, Varun)** + AI-1540 (model eval, Steven Wu) + AI-1556 (query sets, Bhupesh); SSP side AS-13389 (ghost launch)/AS-13400 (payload spec); AI-1535 (live-path spike, Done — holds the architecture plan)
 - Owner: **Varun** owns both build tickets since 2026-07-22 (Saksham reassigned AI-1538 Rama→Varun, AI-1542 Steven→Varun)
 - Launch: Qwant 3.0 production launch **Aug 24** (decided 7/23); ghost 3.0 endpoints by 7/31
+- Integration doc (Norbert, shared w/ Qwant): "Qwant / AMP Discover API v3" gdoc `1-FfoHnnPSJ5bPXCcSzv95nLlAnow1EaaZ5HHIWfynHM` — surfaces×markets, per-surface request matrix, placement IDs, sandbox schedule. Extract in `log/pciv-online-service.md` (2026-07-28 entry).
 
 ## Build tracker context (2026-07-23)
 
