@@ -17,10 +17,11 @@ Volume last week (2026-07-20 18:00 to 2026-07-27 18:00 UTC)
 Both bursts happen at the exact minute a pod restarts
 
 - The container restart counter for intent-identifier-service-ric1 steps up at 14:50 on 07-27, the same minute as the 683 timeouts (https://app.datadoghq.com/metric/explorer?start=1785160800000&end=1785166200000&paused=true#N4Ig7glgJg5gpgFxALlFOAzCA7CCID22KoATnAI4CucAzgrSgNpoS0AOANgIYCeA+gl7s4KEJxyiANCAwFSAWyo9GyFrPlKeY8vW6kGgggm6cQAXwC6M6nFIQ6zNNxP9aBKqQDGo5CAWI9l6MMtjcATp0Jga0RiZmNjSkvGK0VArIANZUAEZ22Ih0AHReRCaSpLRFutEMwHDYAG7I7KQEUFLZefzoXAS8AdgIyDgIDQgAtNDjEFh2E7R2jRA+E0EAjOYW1iC67ESL-HKKLmL4AYv2jjL0vJy+oBIFgsK+IO4SUCAyT3D8kFAEAALMTYTSmb4gdimRBjMRQAgwfheFS0FYWKwyIQiM4QC52ByMcw-PgeJCoEBAuAQGBA8nrGQA4EoBkgAAeLJkKWQm2J7y4eAAwkQsDAUNhlJxzEA). It steps up again at 08:46 on 07-26, the other burst minute.
-- The deployment has 3 replicas in eks-prd-use1-01, namespace prod. The pods have restarted 4, 3 and 1 times. That is 8 restarts in 13 days, so roughly one every day and a half, and each one has produced a burst.
+- The deployment has 3 replicas in eks-prd-use1-01, namespace prod. The pods have restarted 4, 3 and 1 times, which is 8 restarts in 13 days, or roughly one every day and a half.
+- Five of those restarts fall inside the week above, against 18 episodes. So restarts do not explain all 18. They explain the two big ones, and normal latency explains the small remainder.
 - Memory looks like the reason the pods die. Across the 14:50 restart, pod dfb5cf44c-htd6n sat at 3.196 GB against a 3Gi limit, which is 99.2%, flat for at least 36 minutes, then dropped to a fresh 0.8 GB heap (https://app.datadoghq.com/metric/explorer?start=1785162000000&end=1785165600000&paused=true#N4Ig7glgJg5gpgFxALlFOAzCA7CCID22KoATnAI4CucAzgrSgNpoS0AOANgIYCeA+gl7s4KEJxyiANCAwFSAWyo9GyFrPlKeYhXAUgAvgF0Z1OKQh1mabgm79aBKqQDGo5CF0ILLxjOzcujp6IKY0pLw63AAeyADWVABG5tiIdAB0ugryvOlUtNzwwHDYAG7I7KQEUFIJyfzoXAS8utgIyDgIJQgAtNDdEFjmPbTmpRBuPT4AjAYABIm8c8Ds1fwBugaGJiDkHESj-HKKtmL4uqMWVjL0vJzuoBKpgsLuII4SUKHikvyQUAgABZibCabicb7scGILpiKAEGD8FwqWgTQzGGRCERnCAXcyWRgGGQ8XhOJCoECAuAQGCA8nTGT-IEoBkgaIsmSRZCzInvLh4ADCRCwMBQ2GUnAMQA).
 - Memory requests are 2Gi and steady usage sits above that, at about 147% of requests. QoS class is Burstable.
-- container.memory.oom_events is 0 for all three pods over the week, so the kernel is not OOM killing them. I did not retrieve the container termination reason, so what actually restarts them is unconfirmed. A JVM held at its heap ceiling and thrashing GC would fit the evidence, including the 6.09 second request below, and would show up as a liveness probe failure rather than an OOM.
+- container.memory.oom_events is 0 for all three pods over the week, so the kernel is not OOM killing them. I did not retrieve the container termination reason, so what actually restarts them is unconfirmed. A JVM held at its heap ceiling and thrashing GC would fit the evidence, including the 6.09 second request during the 07-26 burst, and would show up as a liveness probe failure rather than an OOM.
 
 The bursts are stalls, not gradual latency growth
 
@@ -45,8 +46,8 @@ The client retries timeouts with no wait between attempts
 
 Replicas, the memory limit, the read timeout and the retry are four separate changes
 
-- A fourth replica keeps three warm pods serving through a restart. With 3 replicas a restart removes a third of the capacity and routes traffic to a cold JVM, and every burst so far happened during a restart. A fourth replica does not stop the restarts, so it limits the damage rather than fixing the cause.
-- The 3Gi memory limit is the cause upstream of every burst. A pod pinned at 99.2% of that limit for 36 minutes is the most likely reason the restarts happen at all. Raising the limit, raising requests to match real usage, or finding the leak each attack the cause instead of the symptom.
+- A fourth replica keeps three warm pods serving through a restart. With 3 replicas a restart removes a third of the capacity and routes traffic to a cold JVM, and both big bursts happened during a restart. A fourth replica does not stop the restarts, so it limits the damage rather than fixing the cause.
+- The 3Gi memory limit sits upstream of both big bursts. A pod pinned at 99.2% of that limit for 36 minutes is the most likely reason the restarts happen at all. Raising the limit, raising requests to match real usage, or finding the leak each attack the cause instead of the symptom.
 - A read timeout of 60 to 75 ms recovers the constant background failures. The service answers those in 52 to 54 ms, by which point SSP has already closed the stream. The new value needs checking against SSP's whole request budget first.
 - Removing the retry on HttpTimeoutException stops the load from doubling. With waitDuration 0 the second attempt hits a pod that is already stalled. Returning an empty no-intent result instead also turns a hard failure into a degraded response.
 
