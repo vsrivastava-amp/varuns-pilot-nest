@@ -75,3 +75,11 @@ One standard — **ASD-STE100 sentence discipline** — run in two moods dependi
 - A heading must be a self-contained statement a scanner can read alone. Fixes applied: → "Replicas, the memory limit, the read timeout and the retry are four separate changes"; → "The P95 latency monitor on this service cannot fire, for an unrelated reason"; → "sspEngine.intent.identifier.errors already counts failures once per request"; → "The monitor counts log lines, and its filter is an OR".
 - Same trap in list bullets: lead with the subject, not a verb aimed at the reader. "A fourth replica keeps three warm pods serving through a restart" beats "Add a replica, 3 to 4." The declarative form also avoids issuing directives on someone else's ticket.
 - Watch these tells: "this", "these", "the two", "any of this", "one thing", "it all", and any heading that is a bare label ("What the monitor measures") rather than a claim.
+
+## INFRA request conventions (board-studied 2026-07-28, 50 recent tickets + precedents)
+
+- **Task** issue type, **no labels, no components, assignee EMPTY** (infra triages + self-assigns; frequent: Pun Tong, Ivan Trichev, Antonio Flores Perez, Oren Forer). Turnaround same-day–4d when well-specified (INFRA-3462 next-day).
+- Structure: 1–2 sentences context → enumerated asks with **exact identifiers** (SA names, akeyless paths in `app/env/dc/KEY` form, full IAM action lists, Bitbucket links to the exact file). "Same setup pattern as <existing app>" is phrasing infra responds well to. Conversational politeness normal.
+- Anti-patterns (observed to cost days): vague permission verbs (enumerate actions, not "read/write"), env ambiguity (say "dev EKS ric1" up front), grab-bag multi-ask tickets (INFRA-866: 18 months). Prod-scoped access asks need a manager-approval comment; dev-scoped skip it; CC'ing the manager preempts the round-trip.
+- **Bedrock-specific (INFRA-2973 lesson): IAM actions alone are insufficient** — the account's model access agreement / marketplace subscription must also be enabled per model; ask infra to confirm it explicitly.
+- No general infra-request Slack channel exists (searched 2026-07-28) — infra works from the board; nudge path is a DM (Pun Tong for llm-eval-adjacent infra).
