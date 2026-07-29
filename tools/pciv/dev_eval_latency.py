@@ -163,14 +163,18 @@ def main():
     ap.add_argument("--no-bypass-cache", action="store_true",
                     help="let DynamoDB cache serve hits (default bypasses it)")
     ap.add_argument("--timeout", type=int, default=60, help="per-request timeout, seconds")
-    ap.add_argument("--out", default="/tmp/pciv_dev_latency.jsonl",
-                    help="JSONL rows, append mode")
+    ap.add_argument("--out", default=None,
+                    help="JSONL rows, append mode. Default: unique per run — on "
+                         "shared DBX clusters /tmp files belong to another job's "
+                         "ephemeral user, so a fixed path hits EACCES on append")
     args = ap.parse_args()
 
     eval_ids = [int(e) for e in args.eval_ids.split(",")]
     queries = load_queries(args)
     bypass = not args.no_bypass_cache
     run_id = f"latency-{int(time.time())}"
+    if args.out is None:
+        args.out = f"/tmp/pciv_dev_{run_id}.jsonl"
     print(f"run_id={run_id} base={args.base_url}{args.endpoint} evals={eval_ids} "
           f"n={args.n} warmup={args.warmup} bypassCache={bypass} queries={len(queries)}",
           flush=True)
