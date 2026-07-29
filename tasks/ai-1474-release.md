@@ -46,3 +46,12 @@ L1/L2/L3 = .928/.902/.897 (statistical tie w/ luna, both >> prior .845 L3); Chri
 - [ ] Optional: retry_empty mop-up of 460k NULLs (storm losses largely cache-recovered; sample first)
 - [ ] Decide: merge feat-civ-eval-6-gemini to main or leave dev-only (dev pod pinned to branch image 1.0.288)
 - [ ] AI-1474 closing comment + ticket transition (In Review); civ_config table row sync if keeping eval 6
+
+## 5. Main-merge + prod release track (Dhaval's 2026-07-29 asks — NOT started, jotted for a future session)
+
+- [ ] **Flag Sunil first**: we want to merge eval 6 = gemini to main per Dhaval's request ("code should be merged into main and deployed to prod, even if runs stay on dev"). Requires setting up a new eval config in main — coordinate the config-id/registry shape with Sunil before opening the PR (branch `feat-civ-eval-6-gemini` @ ae1da11 is the starting point).
+- [ ] **Tribikram's latest PR (Varun 2026-07-29, verbatim: "a certain regression needs to be made to main")** — AMBIGUOUS, confirm with Varun before acting: either (a) Tribikram's latest PR introduced a regression that must be fixed/reverted in main alongside our merge, or (b) a regression TEST pass is needed against main because of his PR. Check the service repo's recent PRs from Tribikram for context.
+- [ ] Before prod deploy: invalidate/check prod DynamoDB cache namespace for eval id 6 (currently holds gpt-5-mini-era entries; gemini would inherit them silently).
+- [ ] Full release process per `.claude/skills/release-process/SKILL.md` (RELEASE ticket, #releases, prod-branch CD PR + peer approval + Varun merge); sync `llm_evals.civ_config` row.
+- [ ] File separate ticket for Dhaval's "regular cadence" ask (the ticket's old "eventually: pipeline" scope).
+- [ ] Also still open: 762 storm-window NULLs targeted re-run; dev HPA revert 16→2; Dhaval reply draft awaiting Varun approval (in session 2026-07-29).
