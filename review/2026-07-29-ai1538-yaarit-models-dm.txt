@@ -1,0 +1,6 @@
+Hey Yaarit! FYI — these are the models we're planning to test on the dev online pCIV service:
+• Gemma 4 31B (Bedrock Mantle)
+• GPT-5.6 Luna (Bedrock Mantle)
+• Qwen3 Next 80B (Bedrock runtime + Mantle)
+• Ministral 3 14B (Bedrock runtime + Mantle)
+plus gpt-5.4-nano via Databricks as the baseline.
