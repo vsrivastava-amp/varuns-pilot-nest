@@ -1,0 +1,71 @@
+# AI-1538 stage rollout package — 3 steps, each Varun-executed
+# (agent prepared the overlay branch; the classifier blocks agent edits to
+#  cd-releases Application yamls, so step 2 is copy-paste)
+
+## 1. Push the prepared cd-deploy-configs branch + open PR to master
+
+cd ~/Documents/cd-deploy-configs-online-pciv
+git push -u origin AI-1538-stage-overlay
+# PR: AI-1538-stage-overlay -> master, title:
+#   AI-1538: online-pciv-service stage-ric1 overlay
+# Branch has one commit (883e48312): apps/online-pciv-service/stage-ric1/,
+# kustomize-build validated, diff-matches llm-evaluator-service stage-ric1
+# precedent exactly (names/paths only). NOTE merge = immediate stage deploy
+# (ArgoCD auto-sync) once step 2's Application also merges; without step 2
+# the overlay is inert.
+
+## 2. Create the cd-releases Application yaml (paste verbatim), push, PR
+
+cd ~/Documents/cd-releases-online-pciv   # branch AI-1538-stage-overlay exists
+cat > stage/ric1/stage-online-pciv-service.yaml <<'EOF'
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stage-online-pciv-service
+  namespace: npe-argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: online-pciv-service
+      jsonPointers:
+        - /spec/replicas
+      managedFieldsManagers:
+        - horizontal-pod-autoscaler
+  project: default
+  source:
+    repoURL: git@bitbucket.org:admarketplace/cd-deploy-configs.git
+    targetRevision: HEAD
+    path: apps/online-pciv-service/stage-ric1
+  destination:
+    server: https://AC4F52705925C150682D31A14AEC7B5E.gr7.us-east-1.eks.amazonaws.com
+    namespace: stage
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+EOF
+git add stage/ric1/stage-online-pciv-service.yaml
+git commit -m "AI-1538: register stage-online-pciv-service Application"
+git push -u origin AI-1538-stage-overlay
+# PR: AI-1538-stage-overlay -> master. Destination server + namespace copied
+# from stage-llm-evaluator-service.yaml (verified against origin/master).
+
+## 3. Merge order
+
+# Merge the cd-deploy-configs PR first, then cd-releases (registration last =
+# overlay is complete when Argo first syncs it). Same pattern as dev on 7/28.
+
+## Caveats (pre-checked, no action expected)
+
+# - Stage akeyless reuse (llm-evaluator-service/stage/ric1/databricks/*) mirrors
+#   the dev reuse pattern; INFRA-3475's answer settles both. If infra says
+#   no-reuse we update both overlays together.
+# - Image tag stays 1.0.292-feat-online-pciv (proven dev image). Stage
+#   convention is a -main tag; switch after feat-online-pciv merges to main.
+# - Stage DBX host = dbc-303276b5-9802 (from the stage precedent config.conf).
+#   The tracker previously said "host 8321" — repo precedent wins; flag if the
+#   8321 workspace was intentional.
