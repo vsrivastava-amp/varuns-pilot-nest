@@ -42,10 +42,10 @@ L1/L2/L3 = .928/.902/.897 (statistical tie w/ luna, both >> prior .845 L3); Chri
 
 ## 4. Post-run cleanup (open)
 
-- [ ] Revert dev HPA replicas 16→2 (both bumps) in cd-deploy-configs — batch job done, dev shouldn't hold 16 pods
-- [ ] Optional: retry_empty mop-up of 460k NULLs (storm losses largely cache-recovered; sample first)
-- [ ] Decide: merge feat-civ-eval-6-gemini to main or leave dev-only (dev pod pinned to branch image 1.0.288)
-- [ ] AI-1474 closing comment + ticket transition (In Review); civ_config table row sync if keeping eval 6
+- [~] Dev HPA lowered 16→8 (Varun-directed 2026-07-29): branch `feat-ai1474-dev-replicas-down-to-8` pushed, PR awaiting Varun's merge. Final drop to original 2/8 elastic = after the prod-release track lands.
+- [ ] **762-keyword targeted re-run** (promised to Dhaval on-ticket "later this week"): measured storm-window NULLs = 762 rows (query: NULLs w/ classified_at within 15min of minutes having >500 429s in observability.ai_gateway_dev payload table). Recipe: DELETE those 762 rows from raw WHERE eval_id=6, then resume the notebook (anti-join re-attempts just them, ~$1). Full 460k retry_empty NOT needed — Dhaval accepted 0.03%.
+- [x] ~~Decide merge-or-not~~ DECIDED by Dhaval 2026-07-29: merge to main + deploy prod (see section 5). He accepted 0.03% losses and nudged not to wait ("more merge conflicts"). Branch is 5+ days behind main — rebase first.
+- [x] Closing summary + rate-limit answer posted by Varun 2026-07-29; Dhaval satisfied. Ticket In Review. civ_config sync folded into section 5.
 
 ## 5. Main-merge + prod release track (Dhaval's 2026-07-29 asks — NOT started, jotted for a future session)
 
@@ -54,4 +54,5 @@ L1/L2/L3 = .928/.902/.897 (statistical tie w/ luna, both >> prior .845 L3); Chri
 - [ ] Before prod deploy: invalidate/check prod DynamoDB cache namespace for eval id 6 (currently holds gpt-5-mini-era entries; gemini would inherit them silently).
 - [ ] Full release process per `.claude/skills/release-process/SKILL.md` (RELEASE ticket, #releases, prod-branch CD PR + peer approval + Varun merge); sync `llm_evals.civ_config` row.
 - [ ] File separate ticket for Dhaval's "regular cadence" ask (the ticket's old "eventually: pipeline" scope).
-- [ ] Also still open: 762 storm-window NULLs targeted re-run; dev HPA revert 16→2; Dhaval reply draft awaiting Varun approval (in session 2026-07-29).
+- [ ] Sixuan thread: prod ITPM/OTPM for gemini never confirmed — matters again if prod is deployed AND anyone runs against prod. Fold into the Sunil conversation.
+- **Context for pickup**: winning code = `feat-civ-eval-6-gemini` @ ae1da11 (llm-evaluator-service, Bitbucket) — eval 6 = gemini-3-6-flash + registry + gemini parse fixes; dev pod runs its image 1.0.288. Notebook (all fixes: status-aware ladder, slot-held backpressure, continuous pipeline, DNS fallback) lives in the dev workspace at /Users/vsrivastava@admarketplace.com/AI-1474_keyword_gpc_reclassification/L3_categorization_v2; deliverable table adv_keyword_gpc_lvl_3_ai1474 (2,422,273 kws, 19.0% legit NULLs); Emily has the path, BI/Chris informed. Full narrative: runs/2026-07-22-ai1474-scope.md. Ops lessons in playbooks/databricks.md + release-process skill.
