@@ -270,3 +270,7 @@ Varun got a live download from Norbert Tamas; laptop session then read the share
 1. **Four concrete input shapes** to build/eval against: flash (prompt + serp source w/ snippets, commerciality present); detailed flash (+ response = short flash answer); AI chat w/ search (response + web_search source); AI chat bare (prompt + response only, no source). Eval datasets (AI-1556 / Amarachi FR emphasis) should mirror these four, not just bare queries.
 2. **FR AI Chat arrives with no commerciality signal** — no upstream intent filter on exactly the surface Amarachi called Qwant's core market. Whether pCIV runs on every chat turn or something filters first is undecided → that's the heart of the Pinkel serving-flow conversation.
 3. Snippets are the negotiable, information-dense context field; titles/summaries second-order per Norbert. When the snippet schema gets "confirmed & organized with AMP," pCIV's prompt-context needs should drive the ask (how many, how long, reranked by what).
+
+## 2026-07-29 — Snippet usefulness: open divergence (Yaarit vs Norbert steer)
+
+- Yaarit's current take (via Varun, pre-meeting): **snippets are NOT going to be that useful for ad serving.** Directly tempers Norbert's 7/28 steer (snippets = the interesting signal; titles/summaries second-order). Status: **TBD** — Varun discussing in a meeting today (~10:10 PT window). Don't treat the 7/28 interpretation point #3 (snippet schema should drive the ask) as settled until this lands; the negotiable-schema *fact* still stands regardless of which signal wins.
