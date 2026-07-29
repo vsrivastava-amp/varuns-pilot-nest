@@ -12,3 +12,5 @@
 - review/ observed: pun-dm draft disposed since yesterday (Varun sent it himself 7/28 16:30, Pun replied today); two new 7/29 ai1538 drafts appeared mid-run from a concurrent session — left alone (own-session-only rule).
 - Open decision-shaped carryovers (not yet filed in needs-human.md, per prior "say the word" posture): online-pCIV model choice (now 4 divergent data points), eval-id 4/6 collision.
 - No writes to Jira/Slack/Gmail/Calendar. No new playbook gotchas worth folding beyond what 7/28 already captured; noted in-line that `pciv` as a Slack keyword is low-yield vs `qwant`.
+- 2026-07-29 ~11:55–12:00 ET — Varun-directed Jira writes (in-chat direction = approval, guardrail 8): posted AI-1538 status comment 171248 from review/2026-07-29-ai1538-status-jira.txt (draft deleted); added descriptions to AI-1588 and AI-1589 (concise/high-level per Varun's in-chat spec).
+- 2026-07-29 — AI-1474 closing comment drafted per Varun's ask (ref Emily DM D0BFWRFDW1J + tasks/ai-1474-release.md item 34) → review/2026-07-29-ai1474-closing-jira.txt, awaiting go. Transition + civ_config row sync deliberately NOT included: row sync still blocked on eval-id 4/6 collision.

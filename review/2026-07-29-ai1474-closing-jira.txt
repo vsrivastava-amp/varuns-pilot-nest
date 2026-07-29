@@ -1,0 +1,8 @@
+Closing summary.
+
+* The full 2.23M keyword run completed on July 27 with eval 6 (gemini-3-6-flash). Dhaval approved the model and the ~$2.4k cost on July 24.
+* We ran dev-only per Sunil's direction. The dev llm-evaluator-service served the whole run. No prod deploy happened.
+* The deliverable is dev_amplify.elme_l3_keyword_categorization.adv_keyword_gpc_lvl_3_ai1474. I shared the table path with Emily on July 27. She confirmed and is passing it to BI and Chris.
+* Spot checks passed. Coverage is 2,422,273 keywords against a live universe of 2,422,112. Zero duplicates. All 21 L1 categories are valid. Chris's 17 dog examples show 0 keywords in Cat Supplies.
+* 19.0% of keywords carry no category. That rate mixes legitimate empty results with rate limit losses. A retry pass can recover part of it if anyone needs that.
+* gold_adv_keyword_gpc_level_3 stays untouched, per the thread agreement to publish separately instead of replacing gold. A formal release table remains a one-step publish later if wanted.
