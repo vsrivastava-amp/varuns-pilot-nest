@@ -1,0 +1,12 @@
+# INFRA ticket draft: stage secrets + SA for online-pciv-service
+# (single ticket; mirrors INFRA-3474+3475 which Antonio just completed for dev)
+# Suggested title: Create secrets and service account for online-pciv-service in stage EKS
+
+We are extending `online-pciv-service` (AI-1538, currently live in dev EKS ric1) to stage EKS ric1, same pattern as stage-llm-evaluator-service. The deployment configs ride the normal PR flow; this ticket covers the two infra pieces, matching what INFRA-3474/INFRA-3475 set up for dev:
+
+* Please create akeyless paths `online-pciv-service/stage/ric1/databricks/*` (DATABRICKS_ACCOUNT_ID, DATABRICKS_CLIENT_ID, DATABRICKS_CLIENT_SECRET) with the stage Databricks credentials — same values as `llm-evaluator-service/stage/ric1/databricks/*`.
+* Please create the workload-identity service account `wi-online-pciv-service` in the stage cluster with the same Bedrock IAM policy as its dev counterpart (INFRA-3474): bedrock:InvokeModel, bedrock:Converse, bedrock:ConverseStream, bedrock-mantle:CallWithBearerToken in us-east-1.
+
+We keep using the global imagePullSecret `docker-registry-access-token-ampdockercirw` per INFRA-3475.
+
+Thanks!

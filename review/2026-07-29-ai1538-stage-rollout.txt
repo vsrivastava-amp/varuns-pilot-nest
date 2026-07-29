@@ -59,11 +59,13 @@ git push -u origin AI-1538-stage-overlay
 # Merge the cd-deploy-configs PR first, then cd-releases (registration last =
 # overlay is complete when Argo first syncs it). Same pattern as dev on 7/28.
 
-## Caveats (pre-checked, no action expected)
+## Caveats — UPDATED 2026-07-29 pm after INFRA-3474/3475 landed
 
-# - Stage akeyless reuse (llm-evaluator-service/stage/ric1/databricks/*) mirrors
-#   the dev reuse pattern; INFRA-3475's answer settles both. If infra says
-#   no-reuse we update both overlays together.
+# - GATE: INFRA-3475's ruling is per-app SA + per-app secrets. The branch's
+#   second commit (0baa9fe3f) already points stage at wi-online-pciv-service +
+#   online-pciv-service/stage/ric1/databricks/* — but NEITHER exists in stage
+#   yet. File the stage INFRA ask (draft: 2026-07-29-ai1538-stage-infra-jira.txt)
+#   and let it complete BEFORE merging these PRs, or pods crash-loop on secrets.
 # - Image tag stays 1.0.292-feat-online-pciv (proven dev image). Stage
 #   convention is a -main tag; switch after feat-online-pciv merges to main.
 # - Stage DBX host = dbc-303276b5-9802 (from the stage precedent config.conf).

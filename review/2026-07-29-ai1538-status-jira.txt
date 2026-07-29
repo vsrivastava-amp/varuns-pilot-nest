@@ -6,12 +6,12 @@ done:
 * The dev deployment is live. online-pciv-service runs in dev EKS ric1 at dev-online-pciv-service.ric1.admarketplace.net, image 1.0.292-feat-online-pciv. Health returns 200 in 15 ms from inside the network. One eval call through the Databricks path returned a correct extraction in 2.5 s with the prompt cache active. The service reports to Datadog under its own name.
 * We screened 11 candidate models on the 500-query golden set. We measured accuracy, latency, and cost for each model with single-query calls. Every candidate beat the gpt-5.4-nano baseline on accuracy.
 * Four finalists came out of the screen: Gemma 4 31B, GPT-5.6 Luna, Qwen3-Next-80B, and Ministral 14B. All four are wired as eval configs in the service. Qwen and Ministral run on both Bedrock endpoints (runtime and mantle). Gemma and Luna exist only on mantle.
-* INFRA-3474 (Bedrock permissions for the pod) and INFRA-3475 (secrets and service account) are filed and assigned. The assignee confirmed he will work on them.
-* The stage deployment configs are prepared on branch AI-1538-stage-overlay. They follow the llm-evaluator-service stage pattern.
+* INFRA-3474 and INFRA-3475 are done. The app has its own service account (wi-online-pciv-service) with the Bedrock permissions, and its own secret paths in akeyless.
+* The stage deployment configs are prepared on branch AI-1538-stage-overlay. They follow the llm-evaluator-service stage pattern and the new per-app service-account ruling.
 
 next steps:
 
-* Infra completes INFRA-3474. Then the Bedrock and mantle evals work from dev.
+* Merge the one-file deployment change that moves the dev pods to the new service account and secret paths. Then the Bedrock and mantle evals work from dev.
 * Run latency test batches from a Databricks job against the dev endpoint for the four finalists. Report p50, p95, and p99 ballparks to the business before Friday August 1.
 * Open the stage PRs after the dev numbers are in. The target is a minimum viable service on prod that the SSP integration can call.
 
