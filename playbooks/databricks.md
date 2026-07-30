@@ -46,6 +46,7 @@ databricks api get "/api/2.0/jobs/runs/get-output?run_id=<TASK run id>" -p X | j
 
 - Poll pattern: background `while` loop echoing state every 60–90s, exit on `TERMINATED|INTERNAL_ERROR`.
 - **Notebook-task cell outputs**: `runs/get-output` returns nothing for notebook tasks (`.logs` is spark_python-only). Use `databricks api get "/api/2.0/jobs/runs/export?run_id=<TASK run id>&views_to_export=CODE"` → `.views[0].content` is HTML embedding `__DATABRICKS_NOTEBOOK_MODEL = '<base64>'` → base64-decode, URL-decode, parse JSON → `.commands[].results` holds each cell's printed output. (Proved out on AI-1474 cache-refresh forensics, 2026-07-27.)
+- **A Delta-row retry may still be a service-cache hit**: deleting a notebook output row only defeats the notebook's anti-join. If the service caches by eval ID + normalized query, the rerun can reproduce the old result without invoking the model. For a real re-evaluation, use the API's optional `bypassCache: true` on the scoped retry and verify gateway traffic. AI-1474 proof: 762 apparent retry rows produced zero model calls until bypass was enabled; the bypass run recovered 337 categories.
 - Continuous jobs never terminate on success — poll for FAILED, verify output tables, then cancel.
 
 ## "Who uses this table?" forensics (system tables)
