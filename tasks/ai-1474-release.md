@@ -42,8 +42,8 @@ L1/L2/L3 = .928/.902/.897 (statistical tie w/ luna, both >> prior .845 L3); Chri
 
 ## 4. Post-run cleanup (open)
 
-- [~] Dev HPA lowered 16→8 (Varun-directed 2026-07-29): branch `feat-ai1474-dev-replicas-down-to-8` pushed, PR still awaiting Varun's merge as of fresh 2026-07-30 fetch. `origin/master` remains 16/16; branch is 8/8. Final drop to original 2/8 elastic = after the prod-release track lands.
-- [ ] **762-keyword targeted re-run** (promised to Dhaval on-ticket "later this week"): measured storm-window NULLs = 762 rows (query: NULLs w/ classified_at within 15min of minutes having >500 429s in observability.ai_gateway_dev payload table). Recipe: DELETE those 762 rows from raw WHERE eval_id=6, then resume the notebook (anti-join re-attempts just them, ~$1). Full 460k retry_empty NOT needed — Dhaval accepted 0.03%. **BLOCKED 2026-07-30:** all configured Databricks profiles are invalid; no prod profile exists.
+- [x] Dev HPA lowered 16→8: Varun merged `feat-ai1474-dev-replicas-down-to-8` as cd-deploy-configs PR #7242 on 2026-07-30. Fresh `origin/master` verification shows min/max 8/8. Final drop to original 2/8 elastic = after the prod-release track lands.
+- [~] **762-keyword targeted re-run** (promised to Dhaval on-ticket "later this week"): Databricks auth restored 2026-07-30. Recovered the exact original query from `system.query.history` and re-verified 762 rows = 762 distinct keywords, classified 2026-07-27 16:54:10–16:56:34 UTC across 28 storm minutes. Notebook resume logic verified. Waiting for AI-1538 run `45121900854995` to release the shared classic cluster before delete + retry. Full 460k retry_empty NOT needed — Dhaval accepted 0.03%.
 - [x] ~~Decide merge-or-not~~ DECIDED by Dhaval 2026-07-29: merge to main + deploy prod (see section 5). He accepted 0.03% losses and nudged not to wait ("more merge conflicts"). Fresh 2026-07-30 fetch shows the branch is 0 commits behind and 1 ahead of main; no rebase is currently needed.
 - [x] Closing summary + rate-limit answer posted by Varun 2026-07-29; Dhaval satisfied. Ticket In Review. civ_config sync folded into section 5.
 
