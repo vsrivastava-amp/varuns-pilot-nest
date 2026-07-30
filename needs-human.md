@@ -45,3 +45,11 @@ Entry template:
 - why it matters: AI-1542's latency numbers are due to the business team **before Friday 2026-08-01** (Varun's own commitment; Qwant is OOO in August). Which models get benchmarked determines whether that deliverable answers the question anyone is actually asking. Benchmarking the Bedrock four while the real decision is nano-vs-mini would burn the deadline on the wrong comparison. INFRA-3474 has already attached Bedrock model-access agreements for framing 4's models specifically.
 - ask: for the numbers due 8/1, is the comparison nano vs gpt-5-mini (Yaarit's framing), or the four Bedrock candidates, or both?
 - resolution: (pending)
+
+## Q-2026-07-30-02 — What did “a certain regression needs to be made to main” mean for AI-1474? (open)
+- raised: 2026-07-30, ai1474-release-resume
+- project: map/llm-eval-service (AI-1474)
+- conflict/decision: Varun's 2026-07-29 handoff says Tribikram's latest PR means “a certain regression needs to be made to main.” Fresh Bitbucket history shows Tribikram's latest merged service PR is #44 (`9fa18ec`, AI-1361), already in main and the Gemini branch. The phrase could mean fixing/reverting a regression from that PR, or running a regression test before the AI-1474 merge.
+- why it matters: the answer changes the service PR scope. The hot-path rule forbids changing or testing around the likely interpretation.
+- ask: did you mean “run regression tests against current main,” or is there a specific Tribikram change that must be fixed/reverted?
+- resolution: (pending)

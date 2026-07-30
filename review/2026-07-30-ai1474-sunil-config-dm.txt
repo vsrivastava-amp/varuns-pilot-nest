@@ -1,0 +1,7 @@
+Hey <@U08EU7D9GKC>, Dhaval asked us to merge the AI-1474 Gemini config to main and deploy main to prod, even if future keyword runs stay on dev.
+
+Main currently maps CIV eval 6 to `gpt-5-mini`. The tested branch remaps eval 6 to `gemini-3-6-flash`. Prod may already have eval-6 mini results in DynamoDB, and the cache key does not include the model. Reusing eval 6 could therefore serve old mini results as Gemini results.
+
+Should we keep eval 6 for mini and give Gemini a new eval ID, or reuse eval 6 and purge its full prod cache namespace before deployment? Also, should the new config get an inactive row in `prod_amplify.llm_evals.civ_config`, or do we keep that table limited to active pipeline configs?
+
+One capacity check remains. We confirmed the Gemini increase in dev, but not in prod. Do we need to confirm prod ITPM/OTPM before a code-only deployment if no batch run will use prod yet?
