@@ -1,7 +1,11 @@
-Hey <@U08EU7D9GKC>, Dhaval asked us to merge the AI-1474 Gemini config to main and deploy main to prod, even if future keyword runs stay on dev. The same service PR will revert AI-1361 PR #44. That ticket's discussion held the skip-cache-for-scores-1–5 behavior because it can cause systematic cache misses and token-cost spikes until the prompt also forbids those scores.
+Hey <@U08EU7D9GKC>, Dhaval asked us to merge the AI-1474 Gemini config to main and deploy main to prod, even if future keyword runs stay on dev.
 
-Main currently maps CIV eval 6 to `gpt-5-mini`. The tested branch remaps eval 6 to `gemini-3-6-flash`. Prod may already have eval-6 mini results in DynamoDB, and the cache key does not include the model. Reusing eval 6 could therefore serve old mini results as Gemini results.
+I checked the current prod deployment. `cd-deploy-configs/prod` pins `1.0.286-main`, which defines CIV configs through eval 6: eval 4 is nano with the v3 prompt, eval 5 is GPT-5.2, and eval 6 is GPT-5 Mini.
 
-Should we keep eval 6 for mini and give Gemini a new eval ID, or reuse eval 6 and purge its full prod cache namespace before deployment? Also, should the new config get an inactive row in `prod_amplify.llm_evals.civ_config`, or do we keep that table limited to active pipeline configs?
+The tested AI-1474 branch changes eval 6 to `gemini-3-6-flash`. Prod may already have eval-6 mini results in DynamoDB, and the cache key does not include the model. Should we preserve eval 6 and give Gemini a new eval ID, or repurpose eval 6 and purge its full prod cache namespace before deployment?
+
+The same service PR will revert AI-1361 PR #44. That ticket's discussion held the skip-cache-for-scores-1–5 behavior because it can cause systematic cache misses and token-cost spikes until the prompt also forbids those scores.
+
+Should the Gemini config get an inactive row in `prod_amplify.llm_evals.civ_config`, or do we keep that table limited to active pipeline configs?
 
 One capacity check remains. We confirmed the Gemini increase in dev, but not in prod. Do we need to confirm prod ITPM/OTPM before a code-only deployment if no batch run will use prod yet?
