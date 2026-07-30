@@ -1,0 +1,24 @@
+AI-1474: add Gemini CIV config and revert AI-1361 cache bypass
+
+This PR prepares the LLM Evaluator Service for the AI-1474 Gemini CIV configuration and regresses the unreleased AI-1361 cache behavior.
+
+Changes:
+
+- Revert AI-1361 PR #44. Scores from 1 through 5 use the normal cache path again, and the one-time low-score purge script is removed. The AI-1361 discussion held this behavior because skipping cache writes can cause systematic cache misses and token-cost spikes unless the prompt also forbids those scores.
+- Map CIV eval 6 to `gemini-3-6-flash`.
+- Add the Gemini model registry entry and Databricks endpoint mappings.
+- Normalize list-style Gemini content and accept fenced JSON responses.
+- Retain the accuracy-script retry support used for AI-1474 validation.
+
+Validation:
+
+- 295 tests passed on Python 3.13.1.
+- `git diff --check` passed.
+- The AI-1474 full run and spot checks already passed in dev.
+
+Related tickets:
+
+- AI-1474: https://admarketplace.atlassian.net/browse/AI-1474
+- AI-1361: https://admarketplace.atlassian.net/browse/AI-1361
+
+The eval-ID and prod cache migration decision must be confirmed before release. Prod currently maps eval 6 to `gpt-5-mini`, and its DynamoDB cache namespace may contain mini results.

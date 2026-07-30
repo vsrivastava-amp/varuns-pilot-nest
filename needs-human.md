@@ -46,10 +46,10 @@ Entry template:
 - ask: for the numbers due 8/1, is the comparison nano vs gpt-5-mini (Yaarit's framing), or the four Bedrock candidates, or both?
 - resolution: (pending)
 
-## Q-2026-07-30-02 — What did “a certain regression needs to be made to main” mean for AI-1474? (open)
+## Q-2026-07-30-02 — What did “a certain regression needs to be made to main” mean for AI-1474? (answered)
 - raised: 2026-07-30, ai1474-release-resume
 - project: map/llm-eval-service (AI-1474)
 - conflict/decision: Varun's 2026-07-29 handoff says Tribikram's latest PR means “a certain regression needs to be made to main.” Fresh Bitbucket history shows Tribikram's latest merged service PR is #44 (`9fa18ec`, AI-1361), already in main and the Gemini branch. The phrase could mean fixing/reverting a regression from that PR, or running a regression test before the AI-1474 merge.
 - why it matters: the answer changes the service PR scope. The hot-path rule forbids changing or testing around the likely interpretation.
 - ask: did you mean “run regression tests against current main,” or is there a specific Tribikram change that must be fixed/reverted?
-- resolution: (pending)
+- resolution: 2026-07-30 Varun confirmed that Tribikram's most recent PR to main, PR #44 / AI-1361, must be reverted. The corresponding Jira discussion is the decision record.

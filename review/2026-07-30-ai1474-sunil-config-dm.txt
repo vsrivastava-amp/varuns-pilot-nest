@@ -1,4 +1,4 @@
-Hey <@U08EU7D9GKC>, Dhaval asked us to merge the AI-1474 Gemini config to main and deploy main to prod, even if future keyword runs stay on dev.
+Hey <@U08EU7D9GKC>, Dhaval asked us to merge the AI-1474 Gemini config to main and deploy main to prod, even if future keyword runs stay on dev. The same service PR will revert AI-1361 PR #44. That ticket's discussion held the skip-cache-for-scores-1–5 behavior because it can cause systematic cache misses and token-cost spikes until the prompt also forbids those scores.
 
 Main currently maps CIV eval 6 to `gpt-5-mini`. The tested branch remaps eval 6 to `gemini-3-6-flash`. Prod may already have eval-6 mini results in DynamoDB, and the cache key does not include the model. Reusing eval 6 could therefore serve old mini results as Gemini results.
 

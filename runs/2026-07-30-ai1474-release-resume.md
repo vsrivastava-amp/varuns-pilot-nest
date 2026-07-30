@@ -13,3 +13,7 @@
 - 2026-07-30 — Dev HPA downshift PR remains unmerged: `origin/master` still has min/max 16/16; branch `origin/feat-ai1474-dev-replicas-down-to-8` has 8/8.
 - 2026-07-30 — Release-process stop point: no RELEASE ticket, release announcement, service PR, prod CD PR, cache mutation, or deployment created. These would encode the unresolved eval-ID/cache choice. Prod CD still requires peer approval and a manual Varun merge.
 - 2026-07-30 — Filed `Q-2026-07-30-02` for Varun's ambiguous Tribikram instruction and released the queue claim per the hot-path rule.
+- 2026-07-30 — Varun resolved `Q-2026-07-30-02`: revert Tribikram's most recent main PR, AI-1361 PR #44. Jira AI-1361 confirms the reason: the skip-cache-for-scores-1–5 behavior causes systematic cache misses and token-cost spikes unless the prompt also forbids those scores; Tribikram held the release pending that prompt change.
+- 2026-07-30 — Built isolated local branch `feat-ai1474-gemini-revert-ai1361` from `ae16d88`: merge-revert `a3cd0b0` for PR #44, Gemini cherry-pick `4cf7bd0`, and whitespace cleanup `c96a3e3`. No Bitbucket push performed.
+- 2026-07-30 — Combined branch validation: 295/295 tests passed on Python 3.13.1; `git diff --check` passed. The test count drops from 307 because reverting PR #44 removes its added relevancy/cache tests along with the held implementation.
+- 2026-07-30 — Updated the Sunil+Yaarit review draft to disclose the AI-1361 revert and created service PR copy in `review/2026-07-30-ai1474-service-pr.txt`. Both remain unsent/unopened.
