@@ -30,4 +30,18 @@ Entry template:
 - ask: confirm with Claire/Camille what Qwant will actually send (locale? timezone?) and get the tracker corrected — then answer here.
 - 2026-07-22 update: message draft parked in REVIEW.md with a HOLD-unless recommendation — Dhaval/Camille are already working this in-channel; only escalate if our extraction/eval code consumes these fields (Varun knows). Slack Claude monitoring for self-resolution.
 - 2026-07-27 update: the Claire HOLD draft was retired in the REVIEW.md deprecation (git history keeps it). New evidence toward resolution: Norbert's 7/24 sandbox test request to the ghost endpoint includes `locale: en-US` AND a full `timezone` object — consistent with Camille's "should be fine"; the tracker correction is what remains.
+- 2026-07-30 update: Stephen Ince's stage 3.0 test payload in #proj-amp-discover-3-0 (7/30 09:35 ET) again carries `locale: "en-US"` and `timezone: {name, offsetMinutes}`. Third independent confirmation. The technical question is effectively settled; only the tracker correction is open.
+- resolution: (pending)
+
+## Q-2026-07-30-01 — Which model does the online pCIV service actually ship with? (open)
+- raised: 2026-07-30, morning-routine
+- project: map/pciv-live-integration (AI-1538 / AI-1542 / AI-1576)
+- conflict/decision: five different framings of the production model choice exist and no ticket reconciles them.
+  1. `gpt-5.4-nano` — Saksham's 5-step DM work order (7/28), "quick-and-dirty latency check with nano".
+  2. "GPT-Nano" — AI-1540.
+  3. `Ministral 8B` — Varun's own AI-1538 comment.
+  4. Four Bedrock candidates — Varun's DM to Yaarit 7/29 10:30 ET: Gemma 4 31B, GPT-5.6 Luna, Qwen3 Next 80B, Ministral 3 14B (with gpt-5.4-nano as a Databricks-only baseline, not on Bedrock).
+  5. `gpt-5-4-nano` vs `gpt-5-mini` — Yaarit's AI-1576 comment (7/29 11:10 ET) registers evals 104/105 for exactly these two and says the production choice is "pending cost/latency/accuracy tradeoff discussion with Saksham/Dhaval". She measured nano ~1.0–1.2s vs mini ~2.1s, with mini "meaningfully better at GPC assignment on ambiguous/multi-item queries".
+- why it matters: AI-1542's latency numbers are due to the business team **before Friday 2026-08-01** (Varun's own commitment; Qwant is OOO in August). Which models get benchmarked determines whether that deliverable answers the question anyone is actually asking. Benchmarking the Bedrock four while the real decision is nano-vs-mini would burn the deadline on the wrong comparison. INFRA-3474 has already attached Bedrock model-access agreements for framing 4's models specifically.
+- ask: for the numbers due 8/1, is the comparison nano vs gpt-5-mini (Yaarit's framing), or the four Bedrock candidates, or both?
 - resolution: (pending)
