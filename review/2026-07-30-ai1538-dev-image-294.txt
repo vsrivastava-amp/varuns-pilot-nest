@@ -1,0 +1,13 @@
+cd /private/tmp/pciv-cd-deploy-image-294
+git push -u origin AI-1538-image-1.0.294
+
+# Open PR: AI-1538-image-1.0.294 -> master
+# Title: AI-1538: deploy online-pciv image 1.0.294 to dev
+#
+# One-file change: online-pciv-service dev image
+# 1.0.292-feat-online-pciv -> 1.0.294-feat-online-pciv.
+# Commit: 5e1510886
+# kubectl kustomize apps/online-pciv-service/dev-ric1: PASS.
+#
+# MERGE AUTO-DEPLOYS to dev via ArgoCD. After the rollout, validate:
+# health, eval 601, then Mantle evals 609/610/612/613.
