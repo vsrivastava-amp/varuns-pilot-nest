@@ -85,10 +85,15 @@ def post_eval(base_url, endpoint, eval_id, query, ad_request_id, bypass_cache, t
         sample["tokens_out"] = tokens.get("output")
         sample["tokens_cache_read"] = tokens.get("cacheRead")
         if summary.get("failureCount"):
-            errors = [e for r in payload.get("results", [])
-                      for e in ([r.get("error")] if r.get("error") else [])]
+            # CIV responses use "queries"; relevancy responses use "results".
+            result_rows = payload.get("queries") or payload.get("results") or []
+            errors = [r.get("error") for r in result_rows if r.get("error")]
             if errors:
-                sample["error"] = json.dumps(errors[0])[:300]
+                error = errors[0]
+                sample["error"] = (
+                    error.get("message", json.dumps(error))
+                    if isinstance(error, dict) else str(error)
+                )[:300]
     except (json.JSONDecodeError, AttributeError):
         sample["error"] = "unparseable response: " + raw[:200].decode(errors="replace")
     return sample
@@ -203,7 +208,8 @@ def main():
                 s = post_eval(args.base_url, args.endpoint, ev, q,
                               91_000_000 + i, bypass, args.timeout)
                 record(s)
-                flag = "" if s.get("success_count") == 1 else f" ** {s.get('error', 'FAIL')[:80]}"
+                error_text = str(s.get("error", "FAIL")).replace("\n", " ")
+                flag = "" if s.get("success_count") == 1 else f" ** {error_text[:300]}"
                 print(f"  [{ev} #{i}] e2e={s['e2e_ms']}ms proc={s.get('processing_ms')}ms "
                       f"cacheRead={s.get('tokens_cache_read')}{flag}", flush=True)
 

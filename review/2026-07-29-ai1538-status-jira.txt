@@ -3,19 +3,19 @@
 
 done:
 
-* The dev deployment is live. online-pciv-service runs in dev EKS ric1 at dev-online-pciv-service.ric1.admarketplace.net, image 1.0.292-feat-online-pciv. Health returns 200 in 15 ms from inside the network. One eval call through the Databricks path returned a correct extraction in 2.5 s with the prompt cache active. The service reports to Datadog under its own name.
+* The dev deployment is live. online-pciv-service runs in dev EKS ric1 at dev-online-pciv-service.ric1.admarketplace.net, image 1.0.294-feat-online-pciv. Health returns 200 from inside the network. Eval 601 succeeds through the Databricks path with the prompt cache active. The service reports to Datadog under its own name.
 * We screened 11 candidate models on the 500-query golden set. We measured accuracy, latency, and cost for each model with single-query calls. Every candidate beat the gpt-5.4-nano baseline on accuracy.
 * Four finalists came out of the screen: Gemma 4 31B, GPT-5.6 Luna, Qwen3-Next-80B, and Ministral 14B. All four are wired as eval configs in the service. Qwen and Ministral run on both Bedrock endpoints (runtime and mantle). Gemma and Luna exist only on mantle.
-* INFRA-3474 and INFRA-3475 are done. The app has its own service account (wi-online-pciv-service) with the Bedrock permissions, and its own secret paths in akeyless.
+* INFRA-3474 and INFRA-3475 created the app service account and akeyless paths. Bedrock runtime works from the new service account. Mantle now reaches AWS but needs one additional IAM action.
 * The stage deployment configs are prepared on branch AI-1538-stage-overlay. They follow the llm-evaluator-service stage pattern and the new per-app service-account ruling.
 
 next steps:
 
-* Merge the one-file deployment change that moves the dev pods to the new service account and secret paths. Then the Bedrock and mantle evals work from dev.
+* Add bedrock-mantle:CreateInference to wi-online-pciv-service in dev. Then rerun Mantle evals 609, 610, 612, and 613.
 * Run latency test batches from a Databricks job against the dev endpoint for the four finalists. Report p50, p95, and p99 ballparks to the business before Friday August 1.
 * Open the stage PRs after the dev numbers are in. The target is a minimum viable service on prod that the SSP integration can call.
 
 footgun:
 
-* The Bedrock evals fail from dev until INFRA-3474 is done. The Databricks-path evals work today.
+* bedrock-mantle:CallWithBearerToken is not sufficient for inference. AWS also checks bedrock-mantle:CreateInference. The current pod role gets a 401 on that action.
 * The screen latencies came from a laptop with the 16.4k-token offline prompt. Treat them as a ranking of models, not as absolute numbers. The dev test with the online prompt gives the numbers we can quote.

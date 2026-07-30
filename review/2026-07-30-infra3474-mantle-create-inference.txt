@@ -1,0 +1,7 @@
+Hey Antonio, validation reached the new pod role after image 1.0.294 deployed. Bedrock runtime succeeds. Mantle returns this 401:
+
+`User: arn:aws:sts::564079877134:assumed-role/WI-online-pciv-service-eks-use1-us-east-1/... is not authorized to perform: bedrock-mantle:CreateInference`
+
+Could you add `bedrock-mantle:CreateInference` to `wi-online-pciv-service` in dev? Please retain `bedrock-mantle:CallWithBearerToken`. AWS requires both bearer-token access and inference access for this endpoint: https://docs.aws.amazon.com/bedrock/latest/userguide/inference.html
+
+I will rerun evals 609, 610, 612, and 613 after the policy update.
