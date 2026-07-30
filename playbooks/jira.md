@@ -38,6 +38,16 @@ BASE="https://admarketplace.atlassian.net/rest/api/3"
 - **`searchJiraIssuesUsingJql` ignores the `fields` allowlist** and returns full `description`, `project`, and avatar blobs regardless of what you ask for. ~15 issues overflows the tool-result cap. Either accept the spill-to-file and digest it, or use the curl `/search/jql` path where `fields=` is honored (much cheaper). This is the same overflow noted for `comment` on 2026-07-22, but it is not limited to `comment` — the allowlist simply does not work.
 - Pattern that works for a delta sweep: light JQL for the moved-issue list, then `getJiraIssue` per issue that actually moved. Confirm anchors are unmoved rather than assuming it, and say which you confirmed.
 
+### `createJiraIssue` timeouts — don't retry blind (2026-07-30)
+
+`createJiraIssue` via Rovo frequently exceeds the 120s tool timeout, gets backgrounded, then aborts at 300s idle. **A client-side abort is NOT proof the write didn't land** — retrying blind duplicates tickets. Sequence that worked:
+
+1. On timeout, run `searchJiraIssuesUsingJql` with `reporter = currentUser() AND created >= -2h` to see what actually exists.
+2. If the background task is still *running* rather than failed, `TaskStop` it before retrying — otherwise a late success duplicates your retry.
+3. Retry, then confirm with `searchResultMode: "count"`.
+
+Observed 2 of 3 calls timing out, both genuinely uncommitted; retries returned in normal time, so the slowness looks transient rather than inherent.
+
 ## Landscape (2026-07-21 snapshot — re-derive, don't trust stale)
 
 ~40 projects visible. Ones that matter here: **AI** (Artificial Intelligence — PCIV core), **AS** (Ad Selection), **DPR** (Data Products & Reporting), **INFRA**, **PUB** (Publisher Onboarding), **DATABRICKS**, **RELEASE**.
