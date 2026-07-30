@@ -42,10 +42,12 @@ Also appended a third-confirmation update to **Q-2026-07-21-01** (Qwant locale/t
 Varun asked in-chat during sprint planning for backlog candidates from `tasks/`, then directed "just go ahead and file the tickets." That in-chat direction is the approval (morning-routine gotcha 2026-07-22); logging the writes here as required. All three created in project AI, type per line, assigned to Varun, status Not Started:
 
 - **AI-1603** — Set up recurring keyword GPC reclassification (Story)
-- **AI-1604** — Investigate model-serving path for online pCIV: prompt caching and provider region (Spike)
-- **AI-1605** — Serving capacity for online pCIV: rate-limit increase and client-side throttling (Task)
+- **AI-1604** — Investigate prompt caching and providers for online pCIV (Spike)
+- **AI-1605** — Online pCIV rate-limit increase and client-side throttling (Task)
 
 Drafts deleted from `review/` on filing, per convention.
+
+**Varun edited all three in Jira same-day (titles above are HIS final versions, not the drafted ones).** Re-fetched 11:55 to keep this record accurate. AI-1603 untouched. AI-1604 title shortened, body unchanged. **AI-1605 body trimmed to the quota half only** — the entire client-side-throttling section was removed, along with the AI-1598 justification and the `564079877134` account reference, while the title still says "and client-side throttling." Flagged the title/body mismatch to him in-chat; not corrected by me, since trimming may have been deliberate and the ticket is his. If the throttling scope is meant to survive, it currently exists in no ticket body anywhere.
 
 Grouping rationale (his constraint was "at most 3-4 new tickets, fold the rest"): Bedrock prompt caching and the OpenAI us-east question merged into one spike (AI-1604) because both answer "how do we make the serving hop fast." The rate-limit increase was deliberately split OUT of that spike into AI-1605 — it is an external ask with no approval SLA and must not sit behind an investigation. Client-side throttling folded into AI-1605 as the mitigation for the same constraint, justified by AI-1598 (llm-evaluator-service failing on rate limiting; online pCIV runs the same image).
 
