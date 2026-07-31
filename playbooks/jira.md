@@ -38,6 +38,14 @@ BASE="https://admarketplace.atlassian.net/rest/api/3"
 - **`searchJiraIssuesUsingJql` ignores the `fields` allowlist** and returns full `description`, `project`, and avatar blobs regardless of what you ask for. ~15 issues overflows the tool-result cap. Either accept the spill-to-file and digest it, or use the curl `/search/jql` path where `fields=` is honored (much cheaper). This is the same overflow noted for `comment` on 2026-07-22, but it is not limited to `comment` — the allowlist simply does not work.
 - Pattern that works for a delta sweep: light JQL for the moved-issue list, then `getJiraIssue` per issue that actually moved. Confirm anchors are unmoved rather than assuming it, and say which you confirmed.
 
+### Sweep coverage gotchas (2026-07-31)
+
+- **A spill-to-file result can be a *partial* page with `hasNextPage: true`.** The 7/30 run recorded "`hasNextPage` false, so no pagination gap" and that reads as general reassurance — it is not, it was true only of that query. INFRA needed 4+ pages at ~15 issues each today, and **INFRA-3476 was invisible** until a separate `created >=` count (15) failed to reconcile with the assembled list (14). Always `jq '.issues.pageInfo'` on the saved file, and cross-check new issues with an independent `created >=` count.
+- **Bound the query to skip a bulk band** instead of paginating through it: `updated >= "<cutoff>" AND updated <= "<band start>"`. That returned 5 rows inline today and closed a gap in one call.
+- **`status changed after "<cutoff>"` is clean JQL** for the transition list, one call for both projects.
+- **A bulk band overwrites `updated` on every anchor issue**, so after one you cannot use timestamps to tell movement from field writes. Comment-check each issue in the band individually. Today's 49-issue sprint roll (7/31 09:43:56–59) hid AI-1267's real 10:49 comment behind it.
+- **Credentialed curl is denied inside a subagent context.** A subagent's `curl -u "...:$ATLASSIAN_API_KEY"` was refused by the auto-mode classifier, and the script variant failed *silently* with success-shaped output and zero files written — the dangerous failure mode. The same calls run clean in the main session, so this is the classifier reacting to credentials on a subagent's command line, not a network block. Give subagents the Rovo MCP path, or have the main session run the curl.
+
 ### `createJiraIssue` timeouts — don't retry blind (2026-07-30)
 
 `createJiraIssue` via Rovo frequently exceeds the 120s tool timeout, gets backgrounded, then aborts at 300s idle. **A client-side abort is NOT proof the write didn't land** — retrying blind duplicates tickets. Sequence that worked:
