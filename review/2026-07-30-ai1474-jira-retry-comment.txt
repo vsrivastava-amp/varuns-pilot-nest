@@ -1,0 +1,9 @@
+Update on the promised reprocessing:
+
+* I isolated 762 keywords associated with the rate-limit storm windows from the original run.
+* The first retry exposed a cache issue: deleting the output rows was not enough because the LLM Eval Service returned the existing eval-6 DynamoDB entries instead of calling Gemini. I added an optional `bypassCache` path to the notebook and reran exactly those 762 keywords against Gemini at concurrency 3 with the existing retry/backoff logic.
+* 337 keywords gained categories. 307 returned legitimate empty classifications. 118 still returned service-level failures after five attempts, which is 0.0049% of the full table.
+* The retry itself had no rate-limit losses: all 190 AI Gateway requests returned HTTP 200, with zero 429s.
+* Final table integrity is green: 2,422,276 rows, 2,422,276 distinct keywords, and zero duplicates.
+
+The main-merge/prod-release work is still being coordinated with Sunil because the deployed service config and `civ_config` table are currently out of sync on eval IDs. I’ll post a separate update once that release shape is resolved.
