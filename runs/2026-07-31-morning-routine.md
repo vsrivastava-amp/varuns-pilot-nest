@@ -14,7 +14,7 @@
 
 2026-07-31 — `state/digest-2026-07-31.md` written and committed. 13 attention flags, ordered by consequence.
 2026-07-31 — `needs-human.md`: filed **Q-2026-07-31-01** (AI-1386 offline ARES/coverage test). Commit `7fcc1ea`.
-2026-07-31 — `review/2026-07-31-luna-offline-civ-ares-jira.txt`: Varun-requested ticket draft, evaluate `gpt-5-6-luna` for offline CIV and ARES. Commit `f39c0e4`. **Awaiting his disposition — not filed.**
+2026-07-31 — `review/2026-07-31-luna-offline-civ-ares-jira.txt`: Varun-requested ticket draft, evaluate `gpt-5-6-luna` for offline CIV and ARES. Commit `f39c0e4`. **Filed as AI-1618 and draft disposed — see the AI-1618 section at the bottom.**
 
 ## The seam miss, and why it matters
 
@@ -68,3 +68,13 @@
 2026-07-31 — AI-1542's deadline is today and the Mantle blocker is gone. The finalist latency run needs `pciv_extraction.txt` (~3.6k prompt) rather than `civ_extraction.txt` (18–23k), and n>=50 per eval. This morning's four Mantle samples are functional evidence only.
 2026-07-31 — INFRA-3456 scaled the CIV DynamoDB table back to baseline on 7/30 (read 694 RCUs, write 434 WCUs). Check this before any AI-1474 retry pass at volume.
 2026-07-31 — Three independent signals now point at GPC handling as the bottleneck rather than taxonomy coverage: Dhaval on Vespa indexing/querying, Saksham proposing GPC leave the L2 filter, and the 7/29 spec cut reducing GPC to bare ids. The queue's taxonomy-expansion task was scoped against the old premise and should be re-checked before it starts.
+
+## AI-1618 filed (Varun-directed)
+
+2026-07-31 — Varun corrected the draft twice before approving. First: "*insanely* verbose… we need to make this way more *general* and high level, rather than a super granular step by step plan." Cut from ~600 words to ~150 and folded the standard into `playbooks/jira.md` as a new "Writing ticket bodies" section. Second: the footgun block is not mandatory — "we *do not* need to include footguns in every comment (its just ocassionally helpful)."
+2026-07-31 — He also caught a factual error in the draft. It listed INFRA-3462 as a blocking dependency. He filed that ticket himself on 2026-07-23 requesting `civ-gpt-5-6-luna` and `civ-gemini-3-6-flash`, and Pun Tong answered 2026-07-24: "created the AI Gateway endpoints as specified." The gemini twin from that same request is already live in the service as civ eval 6, which corroborates it. **CIV needed no infra work at all**; only `ares-gpt-5-6-luna` is unrequested. INFRA-3462 sits In Review pending Varun's confirmation, not pending work.
+2026-07-31 — The draft's rate-limit warning was also wrong. INFRA-3462's own text says "no ITPM/OTPM rate limits need to be set on these — this task will be one time and offline for now." Removed rather than restated.
+2026-07-31 — Endpoint verification limit worth knowing: `databricks api get /api/2.0/serving-endpoints -p dbc-562d27e2-d74d` returns only the 50 `databricks-*` FOUNDATION_MODEL_API catalog entries (`databricks-gpt-5-6-luna` present). The `civ-*` / `ares-*` / `ai-*` wrappers live on the separate `<workspace>.ai-gateway.cloud.databricks.com` host and do **not** appear in that list, so serving-endpoints cannot confirm a wrapper exists. Folded into `playbooks/llm-eval-system.md`.
+2026-07-31 — Varun approved in-chat ("go ahead"). Filed via the curl POST path rather than Rovo `createJiraIssue`, avoiding the 120s timeout gotcha: HTTP 201 in normal time, id 158208. Read-back verified. **AI-1618**, Spike, Not Started, parent AI-1473, assignee and reporter Varun.
+2026-07-31 — Executed review draft deleted per the `review/` convention; git history and the ticket retain the content.
+2026-07-31 — Also per Varun in-chat: INFRA status hygiene is infra's job, not his. Folded into `playbooks/morning-routine.md`.
