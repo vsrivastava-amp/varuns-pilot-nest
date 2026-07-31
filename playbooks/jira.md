@@ -72,7 +72,18 @@ One standard — **ASD-STE100 sentence discipline** — run in two moods dependi
 - Active voice; one word per concept (no synonym variation — "filter" stays "filter").
 - No padding: content that lives in the dossier/run log stays there. Claim-to-evidence ratio 1:1 — every assertion personally verified.
 
-**Handoff/status comments** (imperative mood): instructions and warnings only. Structure: `next steps:` then `footgun:`. No hedges, no questions. Worked example: AI-1542 c170926. Origin: Varun rejected a verbose draft — "I just want the exact footgun i raised, in simple text."
+**Handoff/status comments** (imperative mood): instructions and warnings only. Structure: `next steps:` then, *only when there is one worth the lines*, `footgun:`. No hedges, no questions. Worked example: AI-1542 c170926. Origin: Varun rejected a verbose draft — "I just want the exact footgun i raised, in simple text."
+
+⚠️ **A `footgun:` section is optional, not part of the template** (Varun, in-chat 2026-07-31: "we *do not* need to include footguns in every comment (its just ocassionally helpful)"). Include one when a specific trap will cost the reader real time and they cannot reasonably foresee it. Otherwise leave it out. A ticket that manufactures footguns to fill the slot reads as padding, which is the thing STE-100 discipline exists to prevent. When a would-be footgun is really a dependency ("X has no rate limit yet"), state it as a dependency in the description instead of a warning.
+
+## Writing ticket bodies (Varun standard, 2026-07-31)
+
+Same sentence mechanics as comments, but **pitch a new ticket general and high level, not as a step-by-step plan.** Varun rejected a ~600-word draft as "*insanely* verbose" and asked for "way more *general* and high level, rather than a super granular step by step plan."
+
+- Say what changed in the world, what should be measured or built, and what "done" looks like. Roughly: 2 short paragraphs plus 3-ish acceptance criteria.
+- **Do not enumerate implementation steps.** No "add entry to models.json, then add eval id 7, then redeploy". The assignee knows the codebase; a numbered work plan pre-empts their judgment and rots the moment the code moves.
+- Ground the ticket in verified facts anyway — read the configs, check the blocking ticket, confirm it is not a duplicate. That work belongs in the run log, not in the ticket body. **Verify deeply, write shallowly.**
+- Keep only the specifics a reader cannot derive: the blocking ticket key, the current models or values being compared against, a link to the source conversation.
 
 **Discussion comments on others' analyses** (indicative mood + questions): Varun frames this as "a conversational variant of STE-100" — same sentence mechanics, wider speech acts. Worked examples: AI-1545 c170698/c170757.
 - Friendly direct opener ("Hey @Artem — dug through the CSVs"), cc whoever needs the thread.
