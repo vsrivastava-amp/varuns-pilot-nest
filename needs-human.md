@@ -53,3 +53,14 @@ Entry template:
 - why it matters: the answer changes the service PR scope. The hot-path rule forbids changing or testing around the likely interpretation.
 - ask: did you mean “run regression tests against current main,” or is there a specific Tribikram change that must be fixed/reverted?
 - resolution: 2026-07-30 Varun confirmed that Tribikram's most recent PR to main, PR #44 / AI-1361, must be reverted. The corresponding Jira discussion is the decision record.
+
+## Q-2026-07-31-01 — Does the grouped-topology plan include an offline ARES/coverage test, or not? (open)
+- raised: 2026-07-31, morning-routine
+- project: map/vespa (AI-1386)
+- conflict/decision: Dhaval killed the offline test and Neena's current plan still contains it.
+  - Dhaval, AI-1386 c171371, 2026-07-30 09:58 ET: "No need to run any offline ARES/coverage tests. A/B test will provide a lot more reliable results without any effort once we start the test. Let's please not talk about or debate the A/B test anymore - let's just start it."
+  - Neena, AI-1386 c171462, 2026-07-31 09:38 ET, posted as her summary of "the latest plan of action" and explicitly asking Dhaval and Oren to correct her: "we run a ARES/coverage test offline for our 50K Superlinked queries (on prod or prod-test cluster)".
+  - Dhaval replied to that comment at 10:07 ET (c171468) but answered only her question about making Vespa queries efficient. He did not correct the offline-test line. Oren replied at 10:27 ET (c171476) about traffic shifting and housekeeping. Neither confirmed nor withdrew the offline test.
+- why it matters: the 50K Superlinked ARES/coverage run lands on Varun's side. It is the work item inside Neena's Option 2. Varun's 2026-07-30 digest recorded it as his, before anyone here had seen that Dhaval had already waved it off an hour earlier. Silence now reads as assent, and a 50K offline run is real effort spent against an explicit "no need".
+- ask: is the offline ARES/coverage test on the 50K Superlinked queries in scope for Varun, or did Dhaval's 7/30 09:58 comment retire it?
+- resolution: (pending)
