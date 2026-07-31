@@ -1,3 +1,11 @@
+> **Three tools live here.** `latency_harness.py` (below) A/B-tests *prompt changes*
+> against the demo service's provider. `dev_eval_latency.py` fires at a deployed
+> llm-evaluator-service endpoint by eval id — service E2E, VPN or DBX classic cluster only.
+> `mantle_direct_probe.py` (added 2026-07-31) bypasses the service entirely and times
+> Bedrock Mantle directly, with and without connection reuse — that is how the
+> provider floor in `state/mantle-direct-pciv-prompt-20260731.md` was measured.
+> Next planned use: run it from a us-east-1 EC2/pod for the in-network number.
+
 # pCIV latency A/B harness
 
 Measures the latency impact of the GPC taxonomy/prompt expansion

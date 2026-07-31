@@ -76,9 +76,38 @@ it; any standalone script must do the same.
 Legitimate, but it makes its latency advantage partly an output-length artifact — do not
 compare raw latency across models without also comparing output tokens.
 
-## Next
+## Label correction (Varun pushed on this, twice — he was right to)
 
-2026-07-31 — Varun's call: DBX path or a temporary EC2/pod in the dev VPC for the in-network
-number. Either way the service-side run still needs the finalists wired to
-`pciv_extraction.txt` in `pciv_online` (currently only 102 nano / 103 ministral-8b; the 6xx
-finalists all sit in `civ_extraction` at 18k).
+2026-07-31 — He asked whether the persistent-connection numbers were real or manufactured.
+They are real: a stopwatch around `client.post()` on actual HTTPS requests, 96 measured calls,
+nothing estimated or extrapolated. But I had labelled the column `e2e`, which overstates it.
+The timer covers serialization, network round trip, server prefill and generation, and reading
+the full non-streamed body. It excludes bearer-token generation, the amortized TLS handshake,
+and all service overhead, and it follows 3 excluded warmups that primed both the connection and
+the prompt cache. Renamed the columns to "round trip", documented the exact span in the state
+file and the script docstring, and noted that the JSONL keeps `e2e_ms` only for continuity with
+`dev_eval_latency.py`.
+2026-07-31 — Lesson for future sessions: my first two answers over-hedged instead of answering
+the binary question he asked. He had to ask a third time to get "genuine, not manufactured."
+Lead with the direct answer, then qualify.
+
+## Wrap-up and next
+
+2026-07-31 — Probe script promoted out of the session scratchpad to
+`tools/pciv/mantle_direct_probe.py` with run instructions for both laptop and EC2, and a
+three-tool orientation note added to `tools/pciv/README.md`. Durable findings folded into
+`playbooks/llm-eval-system.md` §Bedrock.
+2026-07-31 — **Varun's plan: Monday, run the same probe from a us-east-1 EC2** for the
+in-network number. That also settles PrivateLink against the laptop baseline. Service-side run
+still needs the finalists wired to `pciv_extraction.txt` in `pciv_online` (only 102 nano / 103
+ministral-8b exist there; the 6xx finalists all sit in `civ_extraction` at 18k) — pair that
+config change with the persistent-connection + cached-token fix in one commit, since both need
+the same push → CI → overlay bump → merge cycle.
+2026-07-31 — **Four commits sit unpushed**: the auto-mode classifier blocked `git push origin
+main` on two attempts, including as a single non-compound command. Varun needs to push, or add
+a Bash permission rule. Nothing in the working tree from this session is uncommitted; the
+`--query` edit to `dev_eval_latency.py` is another session's and was left untouched.
+2026-07-31 — AI-1542's Aug-1 deadline was NOT addressed this session. Varun did not ask for a
+ticket comment and per the run history his exact wording must be approved before any outbound
+write, so nothing was drafted. The numbers are ready to quote if he wants one Monday — with the
+caveat that they are provider-only and laptop-origin.
