@@ -16,7 +16,17 @@ in-network provider latency is at or below these numbers.
 
 ## Persistent connection — one reused connection, one bearer token (the provider floor)
 
-| Model | p50 | p95 | p99 | min | input tok | output tok | cache hit |
+**What the timer covers.** `client.post()` only: request serialization, network round trip,
+server prefill and generation, and reading the full response body (not streamed). It
+**excludes** bearer-token generation (created once before the loop — that cost is added back
+in the next table), the TLS handshake (paid once, amortized across 12 calls), and every bit of
+service overhead (no FastAPI, no LangChain, no DynamoDB, no parse/validate, no GPC
+resolution). Response JSON parsing also sits outside the timer, but the body is a few hundred
+bytes. 3 warmups per model are excluded from the statistics and primed both the connection and
+the prompt cache. **These are provider round trips under warm, ideal client conditions — a
+floor, not a production estimate.**
+
+| Model | round trip p50 | p95 | p99 | min | input tok | output tok | cache hit |
 |---|---|---|---|---|---|---|---|
 | Qwen3-Next-80B | **399 ms** | 471 | 490 | 315 | 3,998 | 8 | 0% |
 | Ministral 3 14B | **486 ms** | 620 | 666 | 179 | 4,183 | 49 | 17% |
@@ -25,9 +35,10 @@ in-network provider latency is at or below these numbers.
 
 ## New connection per request — plus a fresh bearer token each time (what the service does today)
 
-`e2e` excludes token generation; `total` adds the measured `provide_token()` cost.
+`round trip` covers the same span as the table above; `total` adds the separately measured
+`provide_token()` cost for that same request. Still excludes all service overhead.
 
-| Model | e2e p50 | e2e p95 | tokengen p50 | **total p50** | **total p95** | **total p99** |
+| Model | round trip p50 | round trip p95 | tokengen p50 | **total p50** | **total p95** | **total p99** |
 |---|---|---|---|---|---|---|
 | Ministral 3 14B | 475 | 843 | 544 | **973** | 1,410 | 1,448 |
 | Qwen3-Next-80B | 403 | 995 | 577 | **1,014** | 1,596 | 1,672 |
@@ -76,3 +87,8 @@ in-network provider latency is at or below these numbers.
   LLM response, so production input will exceed 3.3–4.2k tokens and these numbers will move.
 - n=12 per cell. Enough for a ballpark, not for a defensible p99.
 - Provider only. Service overhead (FastAPI, DynamoDB lookup, parse/validate) is not included.
+- **Nothing here is end-to-end.** The JSONL field is named `e2e_ms` for continuity with
+  `tools/pciv/dev_eval_latency.py`, but in this file it means the provider round trip only.
+  Do not quote it as a product latency.
+- Steady-state warm, after 3 warmups. Cold starts are materially worse — the 7/31 DBX run saw
+  a 26 s cold prime, and Mantle's throughput ramps gradually by design.
