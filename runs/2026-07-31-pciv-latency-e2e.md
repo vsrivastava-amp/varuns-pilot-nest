@@ -46,9 +46,10 @@ and the response — the probe settled both.
 2026-07-31 — Script: scratchpad `mantle_direct_probe.py` (session 4ecb7d74). Raw HTTP to
 `bedrock-mantle.us-east-1.api.aws`, no service, no LangChain. System prompt =
 `pciv_extraction.txt` (11,266 B), user message = one French query per call, mirroring
-`_format_message` at `max_group_size: 1`. Model params copied from `models.json`. Two arms:
-persistent client + reused token, versus fresh client + fresh token per request (the service's
-current behaviour). 4 finalists interleaved, 3 warmups + 12 measured per model per arm.
+`_format_message` at `max_group_size: 1`. Model params copied from `models.json`. Each model
+measured two ways: a **persistent connection** with a reused bearer token, versus a **new
+connection per request** with a fresh token each time (the service's current behaviour). 4
+finalists interleaved, 3 warmups + 12 measured per model per way.
 2026-07-31 — 108 calls, 96 measured, **zero failures**. Results and full caveats in
 `state/mantle-direct-pciv-prompt-20260731.{md,jsonl}`.
 2026-07-31 — Headline: **Luna is not slow — the 18k prompt was.** At the real ~3.3k pCIV
@@ -56,10 +57,10 @@ prompt Luna is p50 741 ms / p99 1,154 ms provider-side, against the 5.965 s p50 
 run produced on `civ_extraction.txt` at 18,183 tokens. Provider floor ranking: Qwen3-Next-80B
 399 ms, Ministral 3 14B 486 ms, Gemma 4 31B 615 ms, Luna 741 ms (all p50).
 2026-07-31 — Luna reported `reasoning_tokens: 0` on every call. Reasoning burn is ruled out.
-2026-07-31 — **`provide_token()` costs ~545 ms p50 by itself**, paid per request today. Losing
-connection reuse on top of that roughly doubles Luna's p95 (1,150 → 2,280 ms). Persistent
-client + cached token is worth ~550 ms at p50 and ~1.7 s at p95 on Luna. This is the single
-biggest service-side lever and it is a code fix, not a provider problem.
+2026-07-31 — **`provide_token()` costs ~545 ms p50 by itself**, paid per request today. Not
+reusing the connection on top of that roughly doubles Luna's p95 (1,150 → 2,280 ms). A
+persistent connection plus a cached token is worth ~550 ms at p50 and ~1.7 s at p95 on Luna.
+This is the single biggest service-side lever and it is a code fix, not a provider problem.
 2026-07-31 — Prompt caching is reliable only on Luna (3,332 of 3,334 tokens cached, 75–100%
 hit rate). Gemma 4 implicit cache hit 0–17%, Qwen reported none, Ministral 0–50%. Do not model
 open-weight cache savings as dependable.
