@@ -16,4 +16,5 @@
 2026-07-30 — Antonio replied in INFRA-3474 comment 171433 that the permission was added and asked for validation. DBX run `670945446823863` / task `274921216024749` passed: 609 Gemma 4524ms, 610 Luna 1204ms, 612 Qwen Mantle 1172ms, 613 Ministral Mantle 1881ms. All four returned successful extractions; no 401s; `CreateInference` is proven on the pod role.
 2026-07-30 — These four samples used `civ_extraction.txt` at 18,183–23,525 input tokens and zero cache reads. They are functional evidence only. The deadline latency run still needs finalist configs in `pciv_online` using `pciv_extraction.txt` (~3.6k prompt), then n≥50 per eval.
 2026-07-30 — Validation reply for Antonio parked at `review/2026-07-30-infra3474-validation-green.txt`; posting requires Varun approval.
+2026-07-31 — Varun approved the validation reply. Jira API auth probe returned 200; INFRA-3474 comment 171479 posted and read-back verified. Executed review draft deleted; Jira and git history retain it.
 2026-07-30 — Pending review drafts flagged in chat: pCIV stage infra/stage rollout/status, plus AAS calibration and Sheets GCP-SA drafts; none modified.
