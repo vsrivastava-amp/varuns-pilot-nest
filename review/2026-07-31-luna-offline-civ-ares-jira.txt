@@ -1,0 +1,41 @@
+Title: Evaluate gpt-5-6-luna for offline CIV and ARES on the llm-evaluator-service
+
+Suggested placement: project AI, child of AI-1473 (ML/AI: Emerging Business Issues), the same parent as AI-1474. Link INFRA-3462 as a blocker. Link AI-1474.
+
+Description:
+
+OpenAI cut GPT-5.6 pricing on 2026-07-30. Dhaval reports an 80% cut that puts Luna at gpt-5-4-nano pricing, and raised offline CIV as the beneficiary (https://admarketplace.slack.com/archives/C08GKCC9742/p1785468944971119). Offline CIV runs gpt-5-4-nano today. ARES runs gpt-5-mini today. A stronger model at nano pricing may improve both domains without raising cost. Nothing has measured this yet.
+
+Current state, verified at llm-evaluator-service origin/main:
+
+* civ_extraction eval 2 is the active offline CIV config. Model gpt-5-4-nano, prompt civ_extraction.txt, max_group_size 40, max_concurrency 20.
+* relevancy eval 1 is the active ARES config. Model gpt-5-mini, prompt hybrid_prompt_v1.txt, max_group_size 50, max_concurrency 80.
+* llm/config/models.json has no gpt-5-6-luna entry. The highest civ eval_id on main is 6.
+* gpt-5-6-luna exists in the dev Databricks foundation model catalog. It was added 2026-07-09.
+
+Work:
+
+1. Confirm with Pun Tong that INFRA-3462 creates the per-domain wrapper endpoints and not only the default one. models.json resolves endpoints per domain, so this needs civ-gpt-5-6-luna and ares-gpt-5-6-luna. The existing entries follow that pattern (civ-gemini-3-6-flash, ares-gpt-5-mini).
+2. Add gpt-5-6-luna to models.json with default, civ and relevancy endpoint names.
+3. Add civ eval_id 7. Model gpt-5-6-luna, prompt civ_extraction.txt. Hold max_group_size at 40 and max_concurrency at 20 so the comparison isolates the model.
+4. Add relevancy eval_id 2. Model gpt-5-6-luna, prompt hybrid_prompt_v1.txt, group size 50, concurrency 80.
+5. Redeploy dev. The service caches eval configs at process start, so a config change alone does nothing.
+6. Run both new evals against the same input sets the active evals ran on.
+
+Acceptance criteria:
+
+1. Offline CIV accuracy of Luna against nano on one input set. Report GPC agreement rate, empty-GPC rate, and the 422 invalid-taxonomy rate.
+2. ARES score agreement of Luna against mini on one ad set.
+3. Latency per LLM call for both domains.
+4. Confirmed list pricing for gpt-5-6-luna, and measured cost per 1M queries for both domains. Take token counts from system.ai_gateway.usage including cache_read_input_tokens.
+5. A recommendation on whether to switch the active eval for either domain.
+
+Footguns:
+
+Rate limits are set per workspace per model in tokens, and Databricks sets them rather than infra. Luna is un-negotiated, so its default limit will be small. gpt-5-2 became effectively unusable for this reason and produced 429 storms. Get ITPM and OTPM raised before any full-volume run.
+
+The civ system prompt is about 16.4k tokens and gets resent on every call. Prefix caching returns 93 to 97 percent of input tokens as cache reads for nano and mini. Confirm Luna gets the same treatment before trusting any cost number. A comparison against list input price alone runs about 10x high.
+
+The nest records an unresolved conflict over civ eval-ids 4 and 6. Confirm 7 is unused on main before claiming it.
+
+The cost_per_1m_* fields in models.json are all set to -1. Do not read cost from that file.
