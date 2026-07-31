@@ -1,6 +1,6 @@
 Title: Evaluate gpt-5-6-luna for offline CIV and ARES
 
-Suggested placement: project AI, child of AI-1473 (ML/AI: Emerging Business Issues). Link INFRA-3462.
+Suggested placement: project AI, child of AI-1473 (ML/AI: Emerging Business Issues).
 
 Description:
 
@@ -8,7 +8,7 @@ OpenAI cut GPT-5.6 pricing on 2026-07-30. Luna now costs about the same as gpt-5
 
 Add gpt-5-6-luna to the llm-evaluator-service and run both domains against their current active configs on the same inputs. Compare quality, latency and measured cost, then recommend whether to switch either one.
 
-Depends on INFRA-3462 for the gateway endpoints. Luna has no negotiated rate limit yet, so that needs raising with Databricks before any full-volume run.
+The CIV side needs no infra work. INFRA-3462 created civ-gpt-5-6-luna on 2026-07-24. ARES needs an ares-gpt-5-6-luna endpoint, which nobody has requested yet.
 
 Acceptance criteria:
 
