@@ -84,6 +84,7 @@ def post_eval(base_url, endpoint, eval_id, query, ad_request_id, bypass_cache, t
         sample["tokens_in"] = tokens.get("input")
         sample["tokens_out"] = tokens.get("output")
         sample["tokens_cache_read"] = tokens.get("cacheRead")
+        sample["tokens_cache_creation"] = tokens.get("cacheCreation")
         if summary.get("failureCount"):
             # CIV responses use "queries"; relevancy responses use "results".
             result_rows = payload.get("queries") or payload.get("results") or []
@@ -133,6 +134,7 @@ def summarize(samples, eval_id):
     e2e = [s["e2e_ms"] for s in ok]
     proc = [s["processing_ms"] for s in ok if s.get("processing_ms") is not None]
     cache = [s["tokens_cache_read"] or 0 for s in ok]
+    cache_creation = [s["tokens_cache_creation"] or 0 for s in ok]
     return {
         "eval_id": eval_id,
         "n": len(rows),
@@ -149,6 +151,10 @@ def summarize(samples, eval_id):
             s["tokens_out"] for s in ok if s.get("tokens_out")), 0) if ok else None,
         "cache_read_mean": round(statistics.mean(cache), 0) if cache else None,
         "cache_hit_rate": round(sum(1 for c in cache if c > 0) / len(cache), 2) if cache else None,
+        "cache_creation_mean": round(statistics.mean(cache_creation), 0) if cache_creation else None,
+        "cache_write_rate": round(
+            sum(1 for c in cache_creation if c > 0) / len(cache_creation), 2
+        ) if cache_creation else None,
     }
 
 
@@ -162,6 +168,8 @@ def main():
     ap.add_argument("--queries-file", help="one query per line, # comments ignored")
     ap.add_argument("--queries-table", help="spark table with a query column (DBX only)")
     ap.add_argument("--queries-column", default="query")
+    ap.add_argument("--repeat-first-query", action="store_true",
+                    help="reuse the first loaded query for every call (cache diagnostics)")
     ap.add_argument("--n", type=int, default=50, help="measured samples per eval id")
     ap.add_argument("--warmup", type=int, default=3,
                     help="unmeasured priming requests per eval id (cache/ramp)")
@@ -176,6 +184,8 @@ def main():
 
     eval_ids = [int(e) for e in args.eval_ids.split(",")]
     queries = load_queries(args)
+    if args.repeat_first_query:
+        queries = queries[:1]
     bypass = not args.no_bypass_cache
     run_id = f"latency-{int(time.time())}"
     if args.out is None:
@@ -200,6 +210,8 @@ def main():
                               queries[i % len(queries)], 90_000_000 + i, bypass, args.timeout)
                 record(s, warmup=True)
                 print(f"  [warmup {ev} #{i}] e2e={s['e2e_ms']}ms "
+                      f"cacheRead={s.get('tokens_cache_read')} "
+                      f"cacheCreate={s.get('tokens_cache_creation')} "
                       f"err={s.get('error', '')[:80]}", flush=True)
 
         for i in range(args.n):
@@ -211,7 +223,8 @@ def main():
                 error_text = str(s.get("error", "FAIL")).replace("\n", " ")
                 flag = "" if s.get("success_count") == 1 else f" ** {error_text[:300]}"
                 print(f"  [{ev} #{i}] e2e={s['e2e_ms']}ms proc={s.get('processing_ms')}ms "
-                      f"cacheRead={s.get('tokens_cache_read')}{flag}", flush=True)
+                      f"cacheRead={s.get('tokens_cache_read')} "
+                      f"cacheCreate={s.get('tokens_cache_creation')}{flag}", flush=True)
 
     print("\n=== summary (measured samples only; times in ms) ===")
     for ev in eval_ids:
