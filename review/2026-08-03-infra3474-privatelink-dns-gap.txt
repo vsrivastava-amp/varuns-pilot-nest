@@ -1,4 +1,4 @@
-Hey Antonio, thanks for creating the endpoint. I validated it from inside the VPC today. It is configured correctly, and our workloads still reach Mantle over the public internet. DNS is the reason.
+Hey Antonio, thanks for creating the endpoint. I validated it from inside the VPC today. It is configured correctly, but DNS stops our workloads from reaching Mantle through it, so they still go over the public internet.
 
 * Our two DNS servers, 10.11.128.70 and 10.11.128.50, answer bedrock-mantle.us-east-1.api.aws with the public addresses 3.214.115.45, 34.231.48.123 and 52.87.73.163.
 * The VPC Route 53 Resolver at 10.11.144.2 answers with 10.9.173.80 and 10.9.178.251. Those are the endpoint ENIs for vpce-088316a09b030fcfd.
