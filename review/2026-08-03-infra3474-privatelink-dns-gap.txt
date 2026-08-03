@@ -1,13 +1,9 @@
 Thanks Antonio. The endpoint is created correctly. I validated it from inside the VPC today.
 
-The endpoint resolves to private addresses through the VPC resolver. Our workloads still reach the public Mantle endpoint. The cause is DNS, not the endpoint.
+The endpoint resolves to private addresses through the VPC resolver. Our workloads still reach the public Mantle endpoint. The cause is DNS, not the endpoint. Looking up bedrock-mantle.us-east-1.api.aws:
 
-| Resolver | Result for bedrock-mantle.us-east-1.api.aws |
-|---|---|
-| 10.11.128.70 and 10.11.128.50 (from the VPC DHCP option set) | public: 3.214.115.45, 34.231.48.123, 52.87.73.163 |
-| 10.11.144.2 (VPC Route 53 Resolver) | private: 10.9.173.80, 10.9.178.251 |
-
-The private addresses are the endpoint ENIs for vpce-088316a09b030fcfd.
+* 10.11.128.70 and 10.11.128.50, the two servers in the VPC DHCP option set, both return the public addresses 3.214.115.45, 34.231.48.123 and 52.87.73.163.
+* 10.11.144.2, the VPC Route 53 Resolver, returns 10.9.173.80 and 10.9.178.251. Those are the endpoint ENIs for vpce-088316a09b030fcfd.
 
 DHCP option set dopt-004a4a58405411647 sets domain-name-servers to 10.11.128.70 and 10.11.128.50. Instances and pods use those servers. Those servers do not serve the endpoint's private hosted zone, so workloads get the public addresses.
 
