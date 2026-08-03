@@ -107,6 +107,57 @@ the same push → CI → overlay bump → merge cycle.
 main` on two attempts, including as a single non-compound command. Varun needs to push, or add
 a Bash permission rule. Nothing in the working tree from this session is uncommitted; the
 `--query` edit to `dev_eval_latency.py` is another session's and was left untouched.
+## 2026-08-03 — the fix, three days later (same session, resumed)
+
+2026-08-03 — Re-synced before touching anything. Nest was already level with origin; four commits
+had landed today from another session (Monday digest, the AI-1542 ballparks draft, Varun's edits
+to it, a map entry). Confirmed my Friday service commit `1aac587` was still unpushed and that
+nothing in the nest recorded a fix existing — only the problem, at `playbooks/llm-eval-system.md`
+line 94. So no duplicate work.
+2026-08-03 — Varun posted the ballparks himself as AI-1542 **c171586** today, so that deliverable
+is closed and I did not touch it. His five edits are already captured in `playbooks/jira.md` by the
+session that drafted it.
+
+### Root cause, sharper than Friday's number
+
+2026-08-03 — `provide_token()` builds a **new `botocore.session.Session()` per call**, and the
+expensive part is *resolving* the credentials, not the crypto. Timed: resolution ~740ms,
+`Session().get_credentials()` ~3ms, the SigV4 presign ~0.1ms. Locally the resolution reads the SSO
+cache; **under IRSA it is an `AssumeRoleWithWebIdentity` call to STS**, so uncached this put a real
+network round trip on every inference request — plausibly worse in-pod than on the laptop where I
+measured it.
+
+### The fix
+
+2026-08-03 — Commit `1aac587` on `feat-online-pciv`. Two caches. (1) The Mantle bearer token,
+refreshed hourly well inside its 12h validity. (2) Chat models, keyed on provider, config, domain,
+environment **and a digest of the credential** — the key design point, because both the Databricks
+and Mantle clients bake their token in at construction, so keying on it means a rotation changes the
+key and produces a fresh client instead of a stale one silently 401ing. Added `reset_model_cache()`
+for tests and a `threading.Lock` on each cache, since `get_chat_model` is reached through
+`asyncio.to_thread`.
+2026-08-03 — Blast radius checked before writing: `get_chat_model` has exactly two callers,
+`invoker_unstructured.py:176` and `invoker_structured.py:209`, both at the top of
+`run_batch_*` — so once per API request, not per query. The offline batch path (group 40) already
+amortized this cost across 40 queries; the online single-query path paid it in full every time.
+That is why this barely shows up in offline civ and dominates online pCIV.
+2026-08-03 — Verified live against Mantle through the service's own provider layer, not a
+standalone script: repeat `get_chat_model` **545–740ms → 0.03ms**, and Luna warm requests settled at
+**~636ms p50** (min 554, max 677) — at or slightly better than Friday's 741ms persistent-connection
+floor. 486 tests pass, 9 new covering reuse, rotation, TTL expiry, region change, cache bounding,
+and the unsupported-provider error path.
+2026-08-03 — Push parked in `review/2026-08-03-ai1542-client-reuse-push.txt`. Pushing only triggers
+a CI image build; deploying still needs a cd-deploy-configs tag-bump PR after it.
+
+### The thing nobody has told Saksham
+
+2026-08-03 — Per today's digest flag 2: Saksham fixed CIV at **1.1s** in the Friday thread at 11:59,
+before the 700ms measurement landed at 15:12, and never restated the stack. AI-1542 c171586 reports
+**provider round trips** and says so explicitly. The number that belongs in his budget slot is the
+service-side one — ~1.5s p50 before this fix, ~636ms provider plus service overhead after. That
+distinction has not reached him, and it is the difference between the 2s AI-Chat budget closing and
+not closing.
+
 2026-07-31 — AI-1542's Aug-1 deadline was NOT addressed this session. Varun did not ask for a
 ticket comment and per the run history his exact wording must be approved before any outbound
 write, so nothing was drafted. The numbers are ready to quote if he wants one Monday — with the
