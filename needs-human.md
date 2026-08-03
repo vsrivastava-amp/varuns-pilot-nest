@@ -64,3 +64,14 @@ Entry template:
 - why it matters: the 50K Superlinked ARES/coverage run lands on Varun's side. It is the work item inside Neena's Option 2. Varun's 2026-07-30 digest recorded it as his, before anyone here had seen that Dhaval had already waved it off an hour earlier. Silence now reads as assent, and a 50K offline run is real effort spent against an explicit "no need".
 - ask: is the offline ARES/coverage test on the 50K Superlinked queries in scope for Varun, or did Dhaval's 7/30 09:58 comment retire it?
 - resolution: (pending)
+
+## Q-2026-08-03-01 — Is online CIV extraction still in scope for Qwant France, or was it dropped? (open)
+- raised: 2026-08-03, morning-routine
+- project: map/pciv-live-integration (AI-1538 / AI-1542 / AI-1620)
+- conflict/decision: a Gong brief and Dhaval's standing scope disagree about whether the online service ships for France at all.
+  - Gong brief for "Internal Call: Weekly Qwant Stand-up (1/2)", Aug 3, 13 min, posted to #gongtest 09:42 ET: "For France, online CIV extraction will not be used, and virtual building will be used as support but not enabled for now." Two lines later the same brief says: "If the one-second latency budget is not met, CIV extraction will be used if it matches the prompt."
+  - Dhaval, #pub-onboarding-qwant-ai 2026-07-31 10:35 ET: "online CIV extraction for Flash answers is out of scope for Flash answers" — Flash out, France AI-Chat in. Norbert, 10:03 same day: "No, all requests send an LLM response. Just France AI-Chat."
+  - Reliability caveat: the brief's attendee field reads "adMarketplace: Price Is Right +1", a conference-room name parsed as a person, and "Price" is then credited with every action item. Gong-brief unreliability is a standing playbook gotcha. The benign reading is Gong compressing the Flash-only exclusion into "France".
+- why it matters: this is the hot path for the entire online pCIV stream. AI-1538 (deploy), AI-1542 (latency), AI-1618 and the Luna evaluation, the API contract doc Varun owes an endpoint for, and AS-13436/AS-13437 which Alexandr Gontarev has In Progress right now all assume France AI-Chat is the launch surface. If it was actually dropped, the 8/24 go-live work is aimed at nothing; if it was not, acting on the brief would stall a live integration.
+- ask: on today's Qwant stand-up, was online CIV extraction dropped for France entirely, or only for Flash answers as decided on 7/30?
+- resolution: (pending)
