@@ -125,3 +125,15 @@ The failure was procedural, not stylistic ignorance — the style section above 
 
 - **Measurement setup and caveats belong in the run log, not the comment.** One sentence of method is enough (origin, sample count, prompt size). A reader who needs the rest opens the attached raw rows.
 - **Merge tables.** Two tables with a shared key are one table with more columns. Overlapping tables read as a dump rather than a finding.
+
+### Varun's edits to an accepted measurement comment (2026-08-03, AI-1542 c171586)
+
+He posted the rewritten draft with five changes. All five generalize.
+
+- **The table goes first. Method goes below it, under a plain `Additional details:` line.** The draft opened with the measurement setup and he moved it down. Lead with the finding; a reader who wants the conditions keeps reading.
+- **Name the real network path.** "Laptop to bedrock-mantle" became "local (office wifi) to bedrock-mantle". Say the thing that lets a reader judge the number.
+- **Do not tell the audience how to use the numbers.** He cut "Do not add them to the 2 second Qwant budget as end-to-end numbers" and kept "Every number in the table is a provider round trip. They exclude FastAPI, the DynamoDB lookup, parse and validate, and GPC resolution." The no-directives rule is not limited to other people's tickets. On his own ticket, state the fact and let the reader draw the conclusion.
+- **Cut internal history.** A whole paragraph retracting an earlier 5.965 s figure and retiring eval 610 came out. Readers of the ticket never saw the old number, so correcting it in public is noise. Retractions belong in the run log.
+- **Link ticket keys as Jira links**, not bare text keys.
+
+He also softened a measured claim into a forward-looking one: the draft's "prompt caching is a cost win and not a latency win" became "Prompt caching is important for reducing latency + cost, may not be available on all bedrock models", plus two open items (try OpenAI directly, check whether the Luna price cut reached Bedrock). The 3.3k measurement supports the draft's version; his version is right once the AI-Chat payload grows. Worth knowing that he will trade a tight present-tense claim for one that stays true at the next prompt size.
