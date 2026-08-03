@@ -148,6 +148,10 @@ floor. 486 tests pass, 9 new covering reuse, rotation, TTL expiry, region change
 and the unsupported-provider error path.
 2026-08-03 — Push parked in `review/2026-08-03-ai1542-client-reuse-push.txt`. Pushing only triggers
 a CI image build; deploying still needs a cd-deploy-configs tag-bump PR after it.
+2026-08-03 — **Varun pushed it.** Verified `1aac587` is on `origin/feat-online-pciv`; executed review
+draft deleted per the convention. Next in the deploy chain: get the CI image tag, then a
+cd-deploy-configs tag-bump PR. Nothing is deployed yet — dev still runs `1.0.294-feat-online-pciv`,
+which predates this fix, so any latency measured against dev right now is still the slow path.
 
 ### The thing nobody has told Saksham
 
