@@ -1,0 +1,15 @@
+TITLE:
+AI-1538 / AI-1542: online pCIV domain, Bedrock and Mantle providers, client reuse
+
+DESCRIPTION:
+Adds the online pCIV extraction service for the Qwant AI-Chat integration, plus the two provider paths it needs and a latency fix in shared provider code.
+
+New domain `pciv_online` at `/v1/intent/pciv`, built as a copy of `civ_extraction` with conversation-shaped output (`type`/`topic`/`targets[]`). Eval IDs start at 101 because the DynamoDB `civ_label` cache key is sha256(eval_id, query) with no domain component, so IDs must never collide with civ_extraction's.
+
+Two providers added in `llm/utils/providers.py`. `bedrock` uses `ChatBedrockConverse` on the default boto3 chain (AWS_PROFILE locally, IRSA in k8s). `mantle` targets the Bedrock Mantle endpoint for models AWS does not serve on bedrock-runtime, including GPT-5.6 Luna and Gemma 4. Mantle serves two API roots, so `mantle_path` selects `/openai/v1` or `/v1`.
+
+`get_chat_model` now caches clients instead of building one per request. Each request previously paid a fresh TLS handshake, and the Mantle path also called `provide_token()`, which builds a new botocore Session and re-resolves credentials every time. Measured on the 3.3k pCIV prompt: credential resolution alone was about 740ms, and losing connection reuse roughly doubled Luna's p95. Under IRSA that resolution is an AssumeRoleWithWebIdentity call to STS, so it was a network round trip per inference. Clients are keyed on provider, config, domain, environment and a digest of the credential, so a rotated Databricks OAuth or Mantle bearer token changes the key and yields a fresh client rather than going stale inside a cached one.
+
+Reviewer note: `providers.py` and both invokers are shared with civ_extraction and relevancy. The caching change affects those paths too. They call `get_chat_model` once per API request rather than per query, so batch callers already amortized the old cost.
+
+Verified: 486 tests pass, 9 new. Live smoke against Mantle through the service provider layer shows repeat `get_chat_model` at 0.03ms and Luna warm requests at about 636ms p50. Dev has been running this branch's image since 2026-07-28.
