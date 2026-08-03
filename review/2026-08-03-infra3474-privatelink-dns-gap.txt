@@ -1,15 +1,13 @@
-Thanks Antonio. The endpoint is created correctly. I validated it from inside the VPC today.
+Hey Antonio, thanks for creating the endpoint. I validated it from inside the VPC today. It is configured correctly, and our workloads still reach Mantle over the public internet. DNS is the reason.
 
-The endpoint resolves to private addresses through the VPC resolver. Our workloads still reach the public Mantle endpoint. The cause is DNS, not the endpoint. Looking up bedrock-mantle.us-east-1.api.aws:
+* Our two DNS servers, 10.11.128.70 and 10.11.128.50, answer bedrock-mantle.us-east-1.api.aws with the public addresses 3.214.115.45, 34.231.48.123 and 52.87.73.163.
+* The VPC Route 53 Resolver at 10.11.144.2 answers with 10.9.173.80 and 10.9.178.251. Those are the endpoint ENIs for vpce-088316a09b030fcfd.
 
-* 10.11.128.70 and 10.11.128.50, the two servers in the VPC DHCP option set, both return the public addresses 3.214.115.45, 34.231.48.123 and 52.87.73.163.
-* 10.11.144.2, the VPC Route 53 Resolver, returns 10.9.173.80 and 10.9.178.251. Those are the endpoint ENIs for vpce-088316a09b030fcfd.
-
-DHCP option set dopt-004a4a58405411647 sets domain-name-servers to 10.11.128.70 and 10.11.128.50. Instances and pods use those servers. Those servers do not serve the endpoint's private hosted zone, so workloads get the public addresses.
+DHCP option set dopt-004a4a58405411647 points every instance and pod at the two servers above. Those servers do not serve the endpoint's private hosted zone.
 
 additional asks:
 
-* Forward bedrock-mantle.us-east-1.api.aws to the VPC Route 53 Resolver at 10.11.144.2. A conditional forwarder on the two servers above is one way. A CoreDNS forward rule in eks-dev-use1-01 is a narrower way. Please pick whichever fits your standards.
-* Confirm the AZ coverage you intended. The endpoint has ENIs in us-east-1a and us-east-1b. This VPC also runs instances in us-east-1c, and AWS offers this endpoint service in 1a, 1b and 1d.
+* Send bedrock-mantle.us-east-1.api.aws to the VPC Route 53 Resolver. A conditional forwarder on 10.11.128.70 and 10.11.128.50 covers the whole VPC. A CoreDNS forward rule in eks-dev-use1-01 covers only our cluster. An inbound resolver endpoint works if those two servers cannot reach 10.11.144.2 directly. Which fits your standards?
+* The endpoint has ENIs in us-east-1a and us-east-1b. This VPC also runs instances in us-east-1c. Is that the coverage you intended?
 
 No application change is needed. The service already calls the same hostname.
