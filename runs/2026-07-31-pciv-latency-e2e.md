@@ -189,6 +189,39 @@ path**, so it cannot show a PrivateLink benefit yet. Two ways forward that do no
 force resolution to `10.9.173.80` and compare against the public address, or measure TCP+TLS handshake
 time to each address, which costs nothing and isolates exactly the hop PrivateLink changes.
 
+### 2026-08-03 (later) — Antonio added a forward, and my draft had sent him to the wrong address
+
+2026-08-03 — Varun posted the DNS-gap comment with simplifications. Draft deleted. Antonio replied
+that he added a forward, so I re-checked.
+2026-08-03 — Re-probe from both workers: unchanged. System resolver and both corporate resolvers still
+return the public `3.214.115.45` / `34.231.48.123` / `52.87.73.163`, **TTL 60s and fresh**, so no stale
+cache is involved. `10.11.144.2` still returns the private ENIs.
+2026-08-03 — Before reporting failure I checked the layer his fix would live in. `dig`-less probe now
+prints TTL. Found an **INBOUND** Route 53 Resolver endpoint `rslvr-in-edb8270b26b345029`, OPERATIONAL,
+created 18:08:02 UTC (14:08 EDT) today, IPs `10.9.174.63` (1a) and `10.9.179.109` (1b). Its security
+group `sg-025b04763a508424b` allows TCP+UDP 53 from exactly `10.11.128.70/32` and `10.11.128.50/32`.
+The AWS side is complete and correctly locked down. Those endpoint IPs time out from a worker, which
+is the SG working as intended, not a fault.
+2026-08-03 — **My error, worth owning: the first draft told Antonio to forward to `10.11.144.2`.** That
+is the VPC resolver and it only answers from inside the VPC, so a query from `10.11.128.70/.50` can
+never reach it. The reachable target is the inbound endpoint, `10.9.174.63` / `10.9.179.109`. If he
+pointed the forward at `10.11.144.2` it times out every time, which alone explains why nothing changed.
+The inbound endpoint already existed when I wrote that draft and I missed it, because I queried
+`describe-vpc-endpoints` and the DHCP option set but never `route53resolver`.
+2026-08-03 — **Generalizable: when private DNS has to reach in from outside the VPC, check
+`route53resolver list-resolver-endpoints` before naming a forward target.** `10.11.144.2` is only ever
+correct for in-VPC clients. Also confirmed `tf-dev-vpc` holds `10.11.144.0/20`, `10.9.160.0/19` and
+`10.10.160.0/19`, so `10.11.128.70/.50` sit outside this AWS account entirely — the conditional
+forwarder may be another team's change, which the follow-up asks about directly.
+2026-08-03 — Follow-up drafted at `review/2026-08-03-infra3474-forward-wrong-target.txt`, awaiting
+Varun. It leads with the correction rather than burying it. Caught one address typo in the draft
+before it went out (`10.9.179.109` written where `10.9.178.251` belonged — an inbound-endpoint IP
+confused for a VPC-endpoint ENI, exactly the confusion the comment is trying to clear up).
+2026-08-03 — `kubectl` is configured for `eks-dev-use1-01` but the credentials are stale
+(`the server has asked for the client to provide credentials`). Needs
+`aws eks update-kubeconfig --name eks-dev-use1-01 --profile dev` before any cluster read. Not needed
+for this diagnosis, since the mechanism turned out to be the resolver route rather than CoreDNS.
+
 ### The thing nobody has told Saksham
 
 2026-08-03 — Per today's digest flag 2: Saksham fixed CIV at **1.1s** in the Friday thread at 11:59,
