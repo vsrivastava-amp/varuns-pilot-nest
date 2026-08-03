@@ -1,0 +1,22 @@
+Thanks Antonio. The endpoint is created correctly. I validated it from inside the VPC today.
+
+The endpoint resolves to private addresses through the VPC resolver. Traffic from our workloads still goes to the public Mantle endpoint. The cause is DNS, not your endpoint.
+
+I ran the same lookup three ways from an EKS worker in subnet-0a3cb949a8af631d2, which is one of the two subnets holding the endpoint ENIs.
+
+| Resolver used | Result for bedrock-mantle.us-east-1.api.aws |
+|---|---|
+| 10.11.128.70 (from the VPC DHCP option set) | public: 3.214.115.45, 34.231.48.123, 52.87.73.163 |
+| 10.11.128.50 (from the VPC DHCP option set) | public: the same three addresses |
+| 10.11.144.2 (VPC Route 53 Resolver) | private: 10.9.173.80, 10.9.178.251 |
+
+The two private addresses are the endpoint ENIs for vpce-088316a09b030fcfd. Private DNS is enabled and the private hosted zone works.
+
+DHCP option set dopt-004a4a58405411647 sets domain-name-servers to 10.11.128.70 and 10.11.128.50. Instances and pods use those servers. Those servers do not serve the endpoint's private hosted zone, so every workload still gets the public addresses.
+
+next steps:
+
+* Forward the single name bedrock-mantle.us-east-1.api.aws to the VPC Route 53 Resolver at 10.11.144.2. A conditional forwarder on 10.11.128.70 and 10.11.128.50 is one way. A CoreDNS forward rule in eks-dev-use1-01 is a narrower way that stays inside the cluster. Please pick whichever fits your standards.
+* Confirm the AZ coverage you intended. The endpoint has ENIs in us-east-1a and us-east-1b only. This VPC also runs instances in us-east-1c, and AWS offers this endpoint service in 1a, 1b and 1d. Nodes in 1c will reach the endpoint across AZs.
+
+No application change is needed either way. The service already calls the same hostname.

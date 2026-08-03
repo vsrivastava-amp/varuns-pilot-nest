@@ -153,6 +153,42 @@ draft deleted per the convention. Next in the deploy chain: get the CI image tag
 cd-deploy-configs tag-bump PR. Nothing is deployed yet — dev still runs `1.0.294-feat-online-pciv`,
 which predates this fix, so any latency measured against dev right now is still the slow path.
 
+### 2026-08-03 (pm) — Antonio's endpoint validated: correct, and bypassed
+
+2026-08-03 — Varun ran `aws sso login --profile dev` in-session. Antonio asked whether the dev VPC
+endpoint works. Answer: the endpoint is right, the DNS path around it is not.
+2026-08-03 — Endpoint `vpce-088316a09b030fcfd` exists in `vpc-0317d6910f3add39a`, created 17:01 UTC
+(13:01 EDT) today, state available, `PrivateDnsEnabled: true`, ENIs `10.9.173.80` (us-east-1a) and
+`10.9.178.251` (us-east-1b), subnets `subnet-0a3cb949a8af631d2` and `subnet-05f1dc5d674c61d34`.
+2026-08-03 — First probe looked like a flat failure: from two EKS workers the hostname still resolved
+to Friday's exact three public addresses. Both workers turned out to sit in **the same two subnets as
+the endpoint ENIs**, which ruled out placement and pointed at the resolver.
+2026-08-03 — Cause: DHCP option set `dopt-004a4a58405411647` sets `domain-name-servers` to
+`10.11.128.70` and `10.11.128.50` (corporate DNS, matching the `ric1.admarketplace.net` domain-name),
+not AmazonProvidedDNS. Those servers do not serve the endpoint's private hosted zone. `enableDnsSupport`
+on the VPC is `True`, so the Route 53 Resolver itself is fine — nothing queries it.
+2026-08-03 — Proof, one worker, three resolvers, same name: `10.11.128.70` → public
+`3.214.115.45`/`34.231.48.123`/`52.87.73.163`; `10.11.128.50` → the same three; **`10.11.144.2` (VPC
+resolver) → private `10.9.173.80`/`10.9.178.251`**, exactly the endpoint ENIs. So private DNS works
+and only the resolver choice is wrong.
+2026-08-03 — **The lesson worth carrying: `PrivateDnsEnabled: true` only means the private hosted zone
+was created.** It says nothing about whether your instances query a resolver that can see it. Check the
+DHCP option set before concluding PrivateLink is live. Folded into `playbooks/llm-eval-system.md`.
+2026-08-03 — Tooling gotcha: `dig` and `nslookup` are absent on these workers, and `getent hosts` only
+uses the system resolver so it cannot compare resolvers. Wrote a raw-UDP DNS query in Python 3
+(scratchpad `dnsq.py`), sanity-checked it locally against 8.8.8.8, then base64'd it into an SSM
+`AWS-RunShellScript` command. All lookups read-only; the temp file was removed in the same command.
+2026-08-03 — Secondary gap raised with Antonio: ENIs cover 1a/1b only, the VPC runs instances in 1c
+too, and AWS offers this endpoint service in 1a/1b/1d. `eks-dev-use1-01` currently has nodes only in
+1a/1b so nothing is broken today, but scaling into 1c means cross-AZ hops to the endpoint.
+2026-08-03 — Reply drafted at `review/2026-08-03-infra3474-privatelink-dns-gap.txt`, awaiting Varun.
+Deliberately does not pick the fix mechanism for Antonio — conditional forwarder on the corporate
+servers versus a CoreDNS forward inside the cluster is his call.
+2026-08-03 — **Consequence for measurement: an in-VPC latency run today would still traverse the public
+path**, so it cannot show a PrivateLink benefit yet. Two ways forward that do not wait on the DNS fix:
+force resolution to `10.9.173.80` and compare against the public address, or measure TCP+TLS handshake
+time to each address, which costs nothing and isolates exactly the hop PrivateLink changes.
+
 ### The thing nobody has told Saksham
 
 2026-08-03 — Per today's digest flag 2: Saksham fixed CIV at **1.1s** in the Friday thread at 11:59,
