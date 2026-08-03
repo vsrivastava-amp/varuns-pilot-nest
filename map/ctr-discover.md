@@ -8,33 +8,100 @@ Not Varun's project. It is mapped here because it consumes `advertiser-ctr-servi
 
 Source: Neena Sulakhe, `#proj-ctr-discover`, 2026-08-03 10:59:49 ET, message ts `1785769189.630719`, "high level diagram :" with `Screenshot 2026-08-03 at 10.59.07 AM.png` (file `F0BMKCH198V`). One 👍 as of 11:13. **This is Neena's drawing, not an independently verified topology.**
 
-```
-DSP ─────────────► AAS
- │                  ╎
- │  (this will be   ╎ (Future)
- │   removed in     ╎
- │   future)        ╎
- ▼                  ╎
-ctr-inference-service ◄╌╌╌╌╯
- │        │        │
- │        │        └──────────► Baseten
- │        ▼
- │   feast-service ──► DBx
- │     └─ caffeine
- ▼
-advertiser-ctr-service
+Mermaid below is **Varun's transcription** of that screenshot, supplied in-chat 2026-08-03. It supersedes an earlier ASCII version in this file that misread two things.
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "background": "#121212",
+    "primaryColor": "#121212",
+    "primaryTextColor": "#2fbf5b",
+    "primaryBorderColor": "#2fbf5b",
+    "lineColor": "#2fbf5b",
+    "secondaryColor": "#121212",
+    "tertiaryColor": "#121212",
+    "fontFamily": "monospace"
+  },
+  "flowchart": {
+    "curve": "linear",
+    "nodeSpacing": 55,
+    "rankSpacing": 65
+  }
+}}%%
+
+flowchart TB
+    subgraph TOP[" "]
+        direction LR
+        DSP["DSP"]
+        AAS["AAS"]
+    end
+
+    subgraph MIDDLE[" "]
+        direction LR
+        CTR["ctr-inference-service"]
+        BASETEN["Baseten"]
+    end
+
+    subgraph BOTTOM[" "]
+        direction LR
+        ADV["advertiser-ctr-service"]
+
+        subgraph FAST_GROUP[" "]
+            direction TB
+            FAST["fast-service"]
+            CAFFEINE(["Caffeine"])
+        end
+
+        DBX[("DBx")]
+    end
+
+    DSP --> AAS
+    DSP --> CTR
+
+    AAS -. "Future" .-> CTR
+
+    CTR --> BASETEN
+    CTR --> ADV
+    CTR --> FAST
+
+    FAST --- CAFFEINE
+    FAST --> DBX
+
+    REMOVE_NOTE["DSP will be removed<br/>in the future"]
+    REMOVE_NOTE -.- DSP
+
+    classDef service fill:#121212,stroke:#2fbf5b,color:#2fbf5b,stroke-width:2px;
+    classDef deprecated fill:#121212,stroke:#49a7ff,color:#2fbf5b,stroke-width:2px,stroke-dasharray:6 4;
+    classDef datastore fill:#3187dc,stroke:#b6c9ff,color:#a8d1ff,stroke-width:2px;
+    classDef annotation fill:transparent,stroke:transparent,color:#49a7ff;
+    classDef cache fill:#121212,stroke:#2fbf5b,color:#2fbf5b,stroke-width:2px;
+
+    class AAS,CTR,BASETEN,ADV,FAST service;
+    class DSP deprecated;
+    class CAFFEINE cache;
+    class DBX datastore;
+    class REMOVE_NOTE annotation;
+
+    style TOP fill:transparent,stroke:transparent
+    style MIDDLE fill:transparent,stroke:transparent
+    style BOTTOM fill:transparent,stroke:transparent
+    style FAST_GROUP fill:transparent,stroke:transparent
+
+    linkStyle 2 stroke:#49a7ff,stroke-width:2px,stroke-dasharray:3 7;
+    linkStyle 8 stroke:#49a7ff,stroke-width:1px,stroke-dasharray:3 7;
 ```
 
-Read as: `ctr-inference-service` is the hub. It calls `advertiser-ctr-service`, a feature-store service, and Baseten. The feature-store service caches with Caffeine and reads from Databricks.
+Read as: `ctr-inference-service` is the hub. It calls `advertiser-ctr-service`, `fast-service` and Baseten. `fast-service` holds a Caffeine cache and reads from Databricks.
 
-**The caller changes.** Today DSP calls `ctr-inference-service` directly. Neena annotates that arrow "this will be removed in future" and draws a dotted "Future" arrow from AAS instead. So the intended end state is AAS calling `ctr-inference-service`, with DSP out of that path.
+**DSP is being removed, not just rerouted.** The annotation attaches to the DSP node itself and reads "DSP will be removed in the future", and DSP carries the deprecated style. Today DSP calls both AAS and `ctr-inference-service`; the dotted "Future" arrow has AAS calling `ctr-inference-service` instead.
 
 That matches Dhaval on AI-1140's adjacent thread, `#proj-ctr-discover` 2026-07-29 19:46 ET: "In an ideal world, this data flows through from AAS to DSP. AAS knows which query path it took so it the most deterministic info." The diagram is the architecture that argument implies.
 
-## Two things in the diagram to confirm before relying on them
+## Two open questions on the diagram
 
-- **The feature-store box label is ambiguous in the image.** It renders as "fast-service" with a line struck through "fast", which reads as an in-place correction. `feast-service` is the probable reading: `state/digest-2026-07-24.md` records AI-1370 as "Redis lag-features via **feast-store-library** working locally", Rama asked Steven Wu on 2026-07-20 for a "working Dev **Feature Store** API endpoint", and Steven filed **AI-1632** "Create Databricks Secrets Scope and Values for Feature Store - Stage" on 2026-08-03. Feast plus a Caffeine local cache plus Databricks is a coherent feature-store shape. Not confirmed from the service name itself.
 - **The solid arrow to Baseten may contradict a recorded decision.** `state/digest-2026-07-24.md` records, on AI-1370: "(Baseten ruled out for this service on latency SLA.)" Neena's diagram draws Baseten as a current dependency of `ctr-inference-service`, not a rejected one. Possible readings: the decision reversed, the earlier note was scoped to a narrower comparison, or the arrow means the embedding-model path rather than CTR inference. Baseten is certainly still live somewhere — **AI-1267** "CI/CD to deploy fine tuned embedding model to Baseten" moved Blocked → In Review on 2026-08-02. Worth one question to Neena or Rama before anyone cites the topology.
+- **Whether `fast-service` is the Feature Store work is unconfirmed.** Its shape in the diagram is feature-store-shaped: a Caffeine cache in front of Databricks. Separately, `state/digest-2026-07-24.md` records AI-1370 as "Redis lag-features via **feast-store-library** working locally", Rama asked Steven Wu on 2026-07-20 for a "working Dev **Feature Store** API endpoint", and Steven filed **AI-1632** "Create Databricks Secrets Scope and Values for Feature Store - Stage" on 2026-08-03. Those may all be `fast-service` under a different name, or a separate component. The diagram shows Caffeine and Databricks and does not mention Redis, so do not merge the two records without asking.
 
 ## Contract and integration state (2026-08-03)
 
