@@ -1,11 +1,5 @@
-Thanks Antonio. I re-checked after your forward. The AWS side looks complete, and I gave you a wrong address in my last comment. Sorry about that.
+My mistake, I gave you the wrong address. Can you point the forward at 10.9.174.63 and 10.9.179.109 instead of 10.11.144.2?
 
-Your inbound resolver endpoint rslvr-in-edb8270b26b345029 is operational at 10.9.174.63 and 10.9.179.109. Its security group allows TCP and UDP 53 from exactly 10.11.128.70/32 and 10.11.128.50/32. That is the correct setup.
+Those are the IPs of your inbound resolver endpoint, and its security group already allows 53 from 10.11.128.70 and 10.11.128.50. 10.11.144.2 only answers from inside the VPC, so a query from those two servers times out.
 
-My last comment asked you to forward to 10.11.144.2. That address is the VPC resolver and it only answers from inside the VPC. A query from 10.11.128.70 or 10.11.128.50 cannot reach it. If the forward points there, it will time out every time.
-
-The reachable target from those two servers is the inbound endpoint, so 10.9.174.63 and 10.9.179.109.
-
-Lookups from an EKS worker still return the public addresses 3.214.115.45, 34.231.48.123 and 52.87.73.163, with a fresh 60 second TTL. Nothing is serving a stale cached answer. The VPC resolver at 10.11.144.2 returns the private endpoint addresses 10.9.173.80 and 10.9.178.251 correctly.
-
-Two questions. Which server did the forward land on, and what target IPs does it use? Also, 10.11.128.70 and 10.11.128.50 are not in this AWS account, so let me know if that change belongs to another team and I will take it there.
+Lookups from an EKS worker still return the public addresses, so nothing has changed yet on our side.
