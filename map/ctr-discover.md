@@ -61,9 +61,23 @@ Read as: `ctr-inference-service` is the hub. It calls `advertiser-ctr-service`, 
 
 `feast-service` corroborates elsewhere in the nest: `state/digest-2026-07-24.md` records AI-1370 as "Redis lag-features via **feast-store-library** working locally", Rama asked Steven Wu on 2026-07-20 for a "working Dev **Feature Store** API endpoint", and Steven filed **AI-1632** "Create Databricks Secrets Scope and Values for Feature Store - Stage" on 2026-08-03.
 
-## The solid Baseten arrow may contradict a recorded decision
+## Baseten is not a serving dependency, and the diagram's arrow to it is the open question
 
-`state/digest-2026-07-24.md` records, on AI-1370: "(Baseten ruled out for this service on latency SLA.)" Neena's diagram draws Baseten as a current dependency of `ctr-inference-service`, not a rejected one. Possible readings: the decision reversed, the earlier note was scoped to a narrower comparison, or the arrow means the embedding-model path rather than CTR inference. Baseten is certainly still live somewhere — **AI-1267** "CI/CD to deploy fine tuned embedding model to Baseten" moved Blocked → In Review on 2026-08-02. Worth one question to Neena or Rama before anyone cites the topology.
+Inference runs **in process**, not on Baseten. Rama Mukkamalla decided this on 2026-07-07 and the AI-1370 comment history carries it end to end.
+
+- **AI-1370 c169423, Rama, 2026-07-07 11:10 ET:** "Baseten: We will not be going to Baseten, considering the additional latency added and low latency SLA requirement of this service to be used by DSP"
+- **c169513, 2026-07-08:** "Had meeting with team on pre processing for Inference Model and to get predictions within the Service **without using Baseten**."
+- **c170342, 2026-07-20:** "Completed migration of python baseten new inference model code to this Service … We are using `onnxruntime` maven dependency." So the model moved into the JVM process.
+- **The ticket's own AC does not mention Baseten:** "Service integrated with Feast, ELME CTR service and new Inference Model."
+
+Baseten does survive in two narrower roles, which is the likely explanation for Neena's arrow:
+
+1. **As the reference endpoint for output validation.** AI-1370 c170813, 2026-07-23, ToDo item: "Compare results from response with Baseten hosted endpoint." That is a correctness check against the incumbent, not a request path.
+2. **Hosting the fine-tuned embedding model**, which is a different model on a different track — **AI-1267** "CI/CD to deploy fine tuned embedding model to Baseten" moved Blocked → In Review on 2026-08-02.
+
+⚠️ So `CTR --> BASETEN` in the diagram is drawn as a solid current dependency, and the ticket says the serving path deliberately avoids Baseten. Ask Neena whether the arrow means the comparison path, the embedding model, or something that changed after 7/27. **Do not read it as "ctr-inference-service calls Baseten to get CTR predictions"** — the primary source says the opposite, on latency grounds.
+
+AI-1370 itself is **Ready for QA**, assignee Rama, newest comment 2026-07-27.
 
 ## Contract and integration state (2026-08-03)
 
