@@ -137,3 +137,12 @@ He posted the rewritten draft with five changes. All five generalize.
 - **Link ticket keys as Jira links**, not bare text keys.
 
 He also softened a measured claim into a forward-looking one: the draft's "prompt caching is a cost win and not a latency win" became "Prompt caching is important for reducing latency + cost, may not be available on all bedrock models", plus two open items (try OpenAI directly, check whether the Luna price cut reached Bedrock). The 3.3k measurement supports the draft's version; his version is right once the AI-Chat payload grows. Worth knowing that he will trade a tight present-tense claim for one that stays true at the next prompt size.
+
+### `additional asks:`, not `next steps:`, on someone else's ticket (2026-08-03, INFRA-3474 draft)
+
+Two edits Varun made to a validation reply on Antonio's infra ticket. Both generalize.
+
+- **Rename the closing section by who owns the work.** `next steps:` is right on our own ticket, where we are the ones doing them. On an infra ticket the remaining work is the assignee's, so it reads as us assigning them a plan. Use **`additional asks:`**. This is the section-header form of the existing no-directives rule.
+- **Do not narrate how the finding was produced.** The draft said "I ran the same lookup three ways from an EKS worker in subnet-0a3cb949a8af631d2". Cut it — the evidence table already shows three resolvers, and the subnet only mattered to us while ruling out a hypothesis. Method belongs in the run log even when the method is the interesting part of the work.
+
+Related: rows that share an answer merge. Two corporate resolvers returning identical results became one table row, which also removed the last trace of the "three ways" framing.
