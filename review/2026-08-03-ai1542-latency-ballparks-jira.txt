@@ -1,0 +1,22 @@
+Latency ballparks for the four Bedrock finalists. Laptop to bedrock-mantle.us-east-1, no service in the path, 12 measured samples per model after 3 warmups, at the real 3.3k pCIV prompt. Raw rows attached.
+
+| Model | provider p50 | service p50 | service p95 | service p99 |
+|---|---|---|---|---|
+| Qwen3-Next-80B | 399 ms | 1,014 | 1,596 | 1,672 |
+| Ministral 3 14B | 486 ms | 973 | 1,410 | 1,448 |
+| Gemma 4 31B | 615 ms | 1,116 | 1,669 | 1,789 |
+| GPT-5.6 Luna | 741 ms | 1,500 | 2,835 | 3,293 |
+
+The provider column reuses one connection and one bearer token. The service columns mint a fresh token and open a new connection on every request, which is what the deployed service does today.
+
+Every number in the table is a provider round trip. They exclude FastAPI, the DynamoDB lookup, parse and validate, and GPC resolution. Do not add them to the 2 second Qwant budget as end-to-end numbers.
+
+The service spends about 545 ms per request generating a bearer token, because providers.get_chat_model is not cached and invoker_unstructured builds a fresh model per call. Reusing the connection and caching the token is worth about 550 ms at p50 and 1.7 s at p95 on Luna. AI-1588 covers that fix.
+
+Luna at 741 ms replaces the 5.965 s figure from eval 610. That run used civ_extraction.txt at 18,183 input tokens. Eval 610 is retired as a latency benchmark.
+
+Prompt caching moves latency by about 60 ms at this prompt size, so it is a cost win and not a latency win. It matters again if the AI-Chat payload pushes input to 8 to 10k tokens.
+
+next steps:
+- Rerun the suite in network from the dev EKS pod. Blocked on INFRA-3474, which has no Bedrock Mantle interface endpoint in the dev VPC.
+- Remeasure once the AI-Chat payload shape is fixed. These inputs are bare French search terms, so production input will be larger.

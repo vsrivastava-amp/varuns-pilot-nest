@@ -112,3 +112,16 @@ Same sentence mechanics as comments, but **pitch a new ticket general and high l
 - Anti-patterns (observed to cost days): vague permission verbs (enumerate actions, not "read/write"), env ambiguity (say "dev EKS ric1" up front), grab-bag multi-ask tickets (INFRA-866: 18 months). Prod-scoped access asks need a manager-approval comment; dev-scoped skip it; CC'ing the manager preempts the round-trip.
 - **Bedrock-specific (INFRA-2973 lesson): IAM actions alone are insufficient** — the account's model access agreement / marketplace subscription must also be enabled per model; ask infra to confirm it explicitly.
 - No general infra-request Slack channel exists (searched 2026-07-28) — infra works from the board; nudge path is a DM (Pun Tong for llm-eval-adjacent infra).
+
+### "Not Started" does not mean "not backlogged" (2026-08-03)
+
+Backlog membership lives in the **sprint field**, not `status`. A ticket pulled out of the active sprint keeps `status: Not Started`, so status alone is never evidence that a promised backlog move did not happen. A 2026-08-03 digest flagged AI-1603 as "said he would move it to backlog, still Not Started" and Varun had in fact already moved it. Check `sprint` (or the board) before writing any flag about backlog placement, and do not treat `Not Started` as a hygiene finding on its own.
+
+### Read this file before drafting any Jira text (2026-08-03)
+
+A morning-routine session drafted an AI-1542 comment without reading this playbook and produced ~600 words in the shape of a run-log entry: a "Measurement setup." label heading, two overlapping tables, and a closing caveats block. Varun's response was that it "violates almost every convention." The rewrite that worked was ~230 words, one table carrying both the provider floor and the as-deployed numbers, and `next steps:` at the end.
+
+The failure was procedural, not stylistic ignorance — the style section above already said all of it. Two rules that carry the most weight when a comment reports measurements:
+
+- **Measurement setup and caveats belong in the run log, not the comment.** One sentence of method is enough (origin, sample count, prompt size). A reader who needs the rest opens the attached raw rows.
+- **Merge tables.** Two tables with a shared key are one table with more columns. Overlapping tables read as a dump rather than a finding.
