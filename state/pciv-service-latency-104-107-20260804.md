@@ -52,9 +52,12 @@ Round 3 (~15:15–15:30 EDT, Varun challenged "degraded" and then "user error"):
   Friday and this morning, before the 10:40 CoreDNS change.
 - Residual unknown: everything ran in dev account 564079877134 — account-scoped slow pool vs global
   cannot be distinguished without a second account.
-- **Workaround if Luna must stay in play: stream and take `output_text.done` (~0.5s tiny; real-prompt
-  streamed timing not yet measured)** — usage/cache metadata rides `completed`, so it would need
-  async collection or dropping.
+- **Workaround MEASURED (~15:35 EDT): streamed Luna at the real 3.3k prompt delivers full text in
+  411–578ms** (first event 151–191ms); the finalization gap is ~5.0s at BOTH tiny and real sizes
+  (n=3 each). Streamed Luna would sit between Qwen (473ms) and Ministral (657ms) through-service
+  p50s. Service adoption = a streaming Responses invoker that stops at `output_text.done`;
+  usage/cache metadata rides `completed`, so collect it async or drop it. Only worth building if
+  AI-1540 picks Luna.
 
 ## Quantiles split by cache hit vs miss (e2e ms; includes the errored calls, so 106 max=45.5s is the 500)
 
