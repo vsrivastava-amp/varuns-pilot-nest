@@ -1,5 +1,0 @@
-My mistake, I gave you the wrong address. Can you point the forward at 10.9.174.63 and 10.9.179.109 instead of 10.11.144.2?
-
-Those are the IPs of your inbound resolver endpoint, and its security group already allows 53 from 10.11.128.70 and 10.11.128.50. 10.11.144.2 only answers from inside the VPC, so a query from those two servers times out.
-
-Lookups from an EKS worker still return the public addresses, so nothing has changed yet on our side.
