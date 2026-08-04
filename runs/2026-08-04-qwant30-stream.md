@@ -13,3 +13,5 @@
 - `source.summary` is a templated title list, not an LLM flash answer — the contested "flash answer text on Flash" field is effectively still absent.
 
 2026-08-04 Disposition: findings reported in-chat; no outbound drafts created this session (Saksham reply, if wanted, to be drafted on Varun's direction).
+
+2026-08-04 Follow-up (Varun-directed): one-level breakdown CSV over ALL version-3.0 rows (8.23M, 2026-07-06 → 2026-08-04 19:19 UTC) → `~/Documents/qwant_30_onelevel_breakdowns_20260706-20260804.csv` (18 dims, tall format). Notables: real ghost ramp began 7/30 (a day before the 7/31 plan; trickle since 7/6); `amp_ad_request_status_id` uniformly 1200; brand 1337 / publisher 1276 ≈ 100%. More CSVs to follow on Varun's spec (two-level cuts explicitly deferred).
