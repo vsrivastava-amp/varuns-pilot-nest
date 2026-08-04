@@ -222,6 +222,42 @@ confused for a VPC-endpoint ENI, exactly the confusion the comment is trying to 
 `aws eks update-kubeconfig --name eks-dev-use1-01 --profile dev` before any cluster read. Not needed
 for this diagnosis, since the mechanism turned out to be the resolver route rather than CoreDNS.
 
+### 2026-08-04 — the fix shipped, and it did not do what I predicted
+
+2026-08-04 — Varun supplied tag `1.0.296-feat-online-pciv` and decided against merging
+`feat-online-pciv` to main, so that PR draft was dropped. Built the one-line dev overlay bump in its
+own worktree (branch `AI-1538-image-1.0.296`, cd-deploy-configs `d2027d8a2`), kustomize-verified. He
+pushed and merged at ~10:26 EDT.
+2026-08-04 — Confirmed the rollout **independently of the latency metric**, which mattered: inferring
+the deploy from the number I was about to measure would have been circular. Datadog k8s shows
+ReplicaSet `b4b5c5db4`, two pods Running, image
+`docker.io/admarketplace/llm-evaluator-service:1.0.296-feat-online-pciv`, Ready 1/1, zero restarts,
+akeyless-init exit 0. Used Datadog rather than kubectl because AWS SSO had expired overnight and
+kubectl credentials were stale anyway.
+2026-08-04 — **Result: E2E p50 5,828ms, p95 6,268ms, p99 6,470ms, server p50 5,810ms.** DBX run
+`1049315117947128` / task `671944100725375`, eval 610, 3 warmups + 10 measured, one fixed query
+("chaussures de running homme"), 10/10 success, `cacheRead` 18,182 on all ten, outer network only
+~19ms. Friday's identical eval on `1.0.294`: p50 5,965 / p95 6,337 / server 5,945.
+2026-08-04 — **So ~137ms at p50, which is inside noise at n=10** (spread 5,745–6,520ms). I predicted
+~5.4s in a table labelled "Expected". That was wrong. The ~545ms came from my laptop, where resolving
+a fresh botocore Session's credentials reads and may refresh the SSO cache. Under IRSA the same work is
+an in-region `AssumeRoleWithWebIdentity` call to STS and costs far less. I had noted in-pod "may behave
+differently" and still published a point prediction built on the laptop number.
+2026-08-04 — **Rule now in the playbook: never price an auth-path optimization from a laptop
+measurement.** SSO credential resolution and IRSA credential resolution differ by roughly an order of
+magnitude. Corrected the 2026-08-03 playbook bullet that called this "the largest known service-side
+lever"; that claim was laptop-derived and does not hold in-cluster.
+2026-08-04 — The fix is still correct and worth keeping. It removes a per-request STS call and a TLS
+handshake, and it matters under concurrency. It is simply not a large lever at this prompt size.
+2026-08-04 — **The real consequence is about measurement, not the fix.** Eval 610 spends ~5.8s in
+inference, so any fixed ~100ms cost is invisible. The same absolute saving is ~20% of a ~700ms request
+on `pciv_extraction.txt`. Verified at deployed HEAD `1aac587` that no eval pairs a Mantle finalist with
+that prompt: only 102 (nano/DBX) and 103 (ministral-3-8b/bedrock-runtime) use it, and `1aac587` touched
+only `providers.py` and its test. The finalists live at 601–613 in `civ_extraction`, all on the 18k
+prompt, because they were built for the accuracy screen against the offline golden set. Closing the gap
+is four entries at IDs 104–107 in `pciv_online/eval_configs.json` with no code change, plus another
+image and overlay bump because configs are `@lru_cache`d. Offered to Varun; not started.
+
 ### The thing nobody has told Saksham
 
 2026-08-03 — Per today's digest flag 2: Saksham fixed CIV at **1.1s** in the Friday thread at 11:59,
