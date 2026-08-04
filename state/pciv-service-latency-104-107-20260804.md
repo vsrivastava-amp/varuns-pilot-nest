@@ -58,6 +58,14 @@ Round 3 (~15:15–15:30 EDT, Varun challenged "degraded" and then "user error"):
   p50s. Service adoption = a streaming Responses invoker that stops at `output_text.done`;
   usage/cache metadata rides `completed`, so collect it async or drop it. Only worth building if
   AI-1540 picks Luna.
+- **STALL ISOLATED TO MANTLE (~15:50 EDT, Varun's OpenAI key):** Luna on api.openai.com with the same
+  payloads: non-streamed 1.3–2.4s (tiny AND real 3.3k, cache hits included), streamed text_done
+  1.2–2.6s with a **105–134ms** finalization gap. OpenAI first-party finalizes normally; only
+  Mantle's layer holds `completed` for ~5s. Fully attributable now: same model, same API, same
+  payload, 100ms vs 5,000ms. Bonus finding: Mantle's streamed token delivery (~0.5s to full text)
+  is FASTER than OpenAI direct from the laptop, so Mantle-streamed stays the best measured Luna
+  configuration; the stall is the only defect. Also: the OpenAI key makes gpt-5.4-nano (the
+  original preferred model, absent from Bedrock) directly testable — untested as of this entry.
 
 ## Quantiles split by cache hit vs miss (e2e ms; includes the errored calls, so 106 max=45.5s is the 500)
 
