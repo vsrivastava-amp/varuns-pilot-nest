@@ -105,5 +105,31 @@ unknown in-cluster) is gone; e2e−proc is 15–18ms.
 - Gemma 4 cached only 10% despite byte-identical prefixes; Qwen 0%; Luna 94%.
 - tokens_out means: Qwen 14, Gemma 17, Luna 40, Ministral 52.
 
+## From-laptop 18k `civ_extraction.txt` probes (~16:00–16:40 EDT, Varun-requested)
+
+Persistent connection, non-streamed, 2 warmups + 8 measured, same 15 FR queries (ms):
+
+| model | endpoint | p50 | p95 | p99 | cache hits |
+|---|---|---|---|---|---|
+| Qwen3-Next-80B | Mantle | 804 | 1,054 | 1,123 | 0/8 |
+| Ministral 14B | Mantle | 857 | 3,769 | 4,748 | 5/8 |
+| Luna | OpenAI direct | 1,735 | 6,868 | 8,129 | 8/8 |
+| Gemma 4 31B | Mantle | 4,297 | 9,764 | 11,592 | 1/8 |
+| Luna | Mantle | 5,684 | 5,709 | 5,710 | 4/8 |
+
+- OpenAI-Luna row measured ~40min after the Mantle rows, fully cache-warm (18,171/18,184 cached
+  every call) and still ranged 1,304–8,444ms. Mantle-Luna's 89ms total spread is the stall being
+  the floor. OpenAI key = nest `.env` (see playbook "OpenAI direct" gateway section).
+- Ministral p95/p99 = its 3 cache misses paying ~23.5k prefill; hits run 600–900ms.
+- Gemma 18k p50 ~4.2s is prefill arithmetic (dense 31B vs Qwen's sparse A3B; matches 7/30's 4.52s);
+  the one cache hit came back in 1,662ms.
+- **Gemma CORRECTION (Varun caught it): the tail spikes are NOT prompt-size arithmetic and are new
+  vs Friday.** Same 3.3k prompt: Friday p95 1,024 / worst ~1.8s; today 5/16 calls hit 1.8–4.9s
+  (adjacent calls 6× apart, all cache misses ~4k tokens). Same phenomenon as the 7/28 screen
+  (14s cold, 398ms→2.7s swings) — intermittent Mantle-side serving jitter that Friday's clean n=12
+  window missed. Distinct from Luna's constant stall. Day's scorecard vs Friday: Qwen/Ministral
+  stable, Luna stall constant, Gemma jitter returned — two independent provider-side defects.
+
 Raw JSONL: `/tmp/pciv_dev_latency-1785862523.jsonl` on ML-TEAM-CLUSTER (ephemeral). Full
-per-call lines in the DBX run output (run id above).
+per-call lines in the DBX run output (run id above). 18k rows:
+scratchpad `mantle_civ18k_20260804.jsonl` (session-ephemeral).
