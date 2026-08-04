@@ -274,3 +274,21 @@ Varun got a live download from Norbert Tamas; laptop session then read the share
 ## 2026-07-29 — Snippet usefulness: open divergence (Yaarit vs Norbert steer)
 
 - Yaarit's current take (via Varun, pre-meeting): **snippets are NOT going to be that useful for ad serving.** Directly tempers Norbert's 7/28 steer (snippets = the interesting signal; titles/summaries second-order). Status: **TBD** — Varun discussing in a meeting today (~10:10 PT window). Don't treat the 7/28 interpretation point #3 (snippet schema should drive the ask) as settled until this lands; the negotiable-schema *fact* still stands regardless of which signal wins.
+
+## 2026-08-04 — 3.0 ghost stream: first real look (Saksham's ask; full session in `runs/2026-08-04-qwant30-stream.md`)
+
+**Where to look (the durable answer): `prod_amplify.event_silver.ad_request` WHERE `version='3.0'`** — dev-profile readable, `intent` variant populated on 100% of rows, ingestion lag ≈ minutes. Placement join: `prod_amplify.ssp.placement.id` = `ad_request.pub_placement_id` (NOT `media_placement_id`): 5356 Qwant Flash `6oi4i2g6c9` · 5357 Qwant Chat AI/Detailed `fsh242tjtv` · 5358 Lilo Flash `fxytxsp25l` · 5359 Lilo Chat AI `bzs31vnk6l` · 5360 Sandbox `qlvmkcd5x3`.
+
+**Volume (full day 8/3 UTC)**: ~2.93M 3.0 reqs/day ≈ 34 QPS avg. Qwant Flash FR 2.29M · Lilo Flash FR 361k · Qwant Chat 5357 FR 158k · Lilo Chat FR 15k · Flash US/GB/CA ~100k combined · sandbox ~1.3k. (Capacity memo's 200 QPS planning number = ~6× today's average; peak factor unmeasured.)
+
+**Payload shapes observed (today, ~1.4M rows UTC-partial-day)** — top-level keys are only `prompt`/`chat`/`source`/`response`:
+- **Flash (5356/5358)**: `prompt` + `source{type:serp, summary, items[10]}` + `chat.commerciality`; NO `response`. **Commerciality is BOTH values — ~25% `commercial` / ~75% `non_commercial`** — Qwant sends everything labeled, not pre-filtered ⇒ a pCIV-on-commercial-only policy cuts flash volume 4×; the "experimentation-platform config for when to run extraction" (Dhaval #2) has a live gating signal to key on.
+- **Chat placement (5357)**: three sub-shapes distinguishable in-payload exactly as the doc warned: FR AI Chat w/ search (`response` + `source.type=web_search`, 43%), FR AI Chat bare (`response` only, 56%), US/GB/CA Detailed Flash (`response` + `serp` + commerciality, <1% — 679 rows today). FR chat rows have NO commerciality (confirms the doc; the chat-filtering question stays open).
+- **`response` is an object `{content, status:"complete"}`, clean well-formed markdown** in both FR chat and US detailed samples — the garbled token-salad from the 7/23 walkthrough video is NOT what's in the stream now.
+- **FR "detailed response" clicks arrive via 5357 with templated prompt prefix `"Réponse détaillée : <query>"`** — detailed-flash-like FR traffic exists despite the doc scoping Detailed to EN/CA/US; prompt handling may want to strip/recognize the prefix.
+- **Snippets are real and frequent**: flash — avg 2.5 of 10 items carry `snippets[]`, ≥1 snippet on 78% of requests; chat web_search — 4 of 9 items, 93% of requests. Feeds the Yaarit-vs-Norbert usefulness question with coverage numbers (usefulness itself still TBD).
+- **`source.summary` is a TEMPLATE** ("Here are the results I found for X on qwant: 1: title…"), not an LLM answer ⇒ the contested flash-answer-text field is effectively still absent on Flash; informative context = item descriptions + snippets.
+- **No `user` object anywhere** (doc §user promised locale/tz/form_factor; geo lands in SSP's own `usr_geo_*` columns). Sent-vs-logged unknown — ssp-engine read would settle it.
+- Language ≠ geo: French-language queries appear under US geo rows.
+
+Sample CSV (90 stratified payloads): `~/Documents/qwant_30_intent_samples_20260804.csv` — untracked by design.
