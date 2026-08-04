@@ -28,6 +28,31 @@ persistent connection):
 
 Flat per-request penalty, independent of prompt size, cache state, payload shape, transport, SDK.
 Provider-side change between 7/31 15:12 EDT and 8/4 13:00 EDT (7/28 tiny smoke was 574ms).
+
+Follow-up probes (~14:05 EDT, all 8-token inputs): **the penalty covers the whole GPT-5.6 family** —
+Luna 5.4–7.3s, **Terra 6.1s**, **Sol >30s (timed out)**. `store: false` no effect (5.5s; one earlier
+store=false call hit a 65s ReadTimeout), `reasoning effort low` no effect (5.4s). Responses report
+`service_tier: "default"`, `status: "completed"`; headers carry only request ids — no processing-time
+or queue signals. Gemma 4 on the same `openai/v1` root but Chat Completions surface is unaffected, so
+this is the closed-weight OpenAI family (or its Responses serving path), not the endpoint host.
+Nothing on our side can fix it; it is AWS-conversation material and a re-probe-over-time question.
+
+## Quantiles split by cache hit vs miss (e2e ms; includes the errored calls, so 106 max=45.5s is the 500)
+
+| eval | group | n | p50 | p95 | p99 | min | max |
+|---|---|---|---|---|---|---|---|
+| 104 Gemma | hit | 5 | 434 | 1,391 | 1,552 | 285 | 1,592 |
+| 104 Gemma | miss | 45 | 725 | 5,388 | 7,067 | 410 | 7,980 |
+| 105 Luna | hit | 47 | 5,702 | 6,315 | 7,119 | 5,514 | 7,641 |
+| 105 Luna | miss | 3 | 5,633 | 6,201 | 6,252 | 5,576 | 6,264 |
+| 106 Qwen | miss | 50 | 474 | 1,640 | 37,806 | 317 | 45,548 |
+| 107 Ministral | hit | 36 | 639 | 841 | 940 | 151 | 971 |
+| 107 Ministral | miss | 14 | 739 | 1,133 | 1,248 | 246 | 1,277 |
+
+Readings: Gemma's ugly tail is entirely uncached prefill (hits are fast and tight, but only a 10%
+hit rate); Luna's penalty is identical for hits and misses (more proof it is not cache-related);
+Ministral's cache benefit is ~100ms at p50 and ~300ms at p99 with a clean tail either way; Qwen
+never caches and its tail is the two provider-side events, not a distribution.
 Consequences:
 - Luna is disqualified for a 2s budget while this holds. Re-probe before concluding anything
   permanent — could be Mantle ramp/scheduling ("standard tier only" has no latency guarantee).

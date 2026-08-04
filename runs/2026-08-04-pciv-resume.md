@@ -76,10 +76,21 @@ Session slug: `pciv-resume`. Task: `tasks/pciv-online-deploy.md` (AI-1538/AI-154
   payload → raw httpx probe payload → tiny prompt; all ~5.5–6s; reasoning_tokens 0 throughout.
 - Bisect cost: ~11 Luna calls + 200-call run ≈ <$1.50 total, inside the 7/23 exploration budget.
 
+## Luna deep-dive round 2 (~14:05 EDT, Varun asked why)
+
+- The flat penalty is **family-wide, not Luna-specific**: Terra 6.1s and Sol >30s-timeout at 8-token
+  inputs; Luna 5.4–7.3s across variants. store=false and effort=low change nothing. `service_tier`
+  comes back "default", `status` "completed", headers carry no queue/processing signals. Gemma on the
+  same openai/v1 root (Chat Completions) is unaffected. Conclusion: Mantle's closed-weight OpenAI
+  serving path degraded between 7/31 15:12 and 8/4 13:00 EDT. Not fixable client-side.
+- Cache-split quantiles added to the state file (Varun asked): Gemma's 5s+ tail is all uncached
+  prefill; Luna hit≈miss; Ministral cache is worth ~100ms p50 / ~300ms p99.
+- Probe cost round 2: ~8 tiny calls, well under $0.01.
+
 ## Open at session close
 
-1. Luna penalty: re-probe later today/tomorrow (persistence unknown); if it holds, it belongs in
-   any AWS/account-team conversation — flat 5.5s on standard tier, no SLA.
+1. Luna/GPT-5.6 penalty: re-probe over time for persistence (Varun unconvinced it's urgent; family-wide
+   scope raises the stakes — it belongs in the AWS account-team conversation if it holds).
 2. This morning's "client-reuse fix showed no saving" entry needs the caveat propagated wherever
    it was quoted (the fix IS proven via Qwen/Ministral/Gemma deltas).
 3. Numbers → AI-1542 comms: Varun's call on wording/when (ballparks were due ~Aug 1).
