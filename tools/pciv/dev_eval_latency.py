@@ -101,6 +101,8 @@ def post_eval(base_url, endpoint, eval_id, query, ad_request_id, bypass_cache, t
 
 
 def load_queries(args):
+    if args.query:
+        return [args.query]
     if args.queries_file:
         lines = [q.strip() for q in open(args.queries_file, encoding="utf-8")
                  if q.strip() and not q.startswith("#")]
@@ -166,6 +168,7 @@ def main():
     ap.add_argument("--eval-ids", required=True,
                     help="comma-separated, e.g. 601,604,607,609,610,612,613")
     ap.add_argument("--queries-file", help="one query per line, # comments ignored")
+    ap.add_argument("--query", help="literal query; preferred for reproducible diagnostics")
     ap.add_argument("--queries-table", help="spark table with a query column (DBX only)")
     ap.add_argument("--queries-column", default="query")
     ap.add_argument("--repeat-first-query", action="store_true",
