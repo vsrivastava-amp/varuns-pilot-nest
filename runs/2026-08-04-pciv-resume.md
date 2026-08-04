@@ -87,10 +87,22 @@ Session slug: `pciv-resume`. Task: `tasks/pciv-online-deploy.md` (AI-1538/AI-154
   prefill; Luna hit≈miss; Ministral cache is worth ~100ms p50 / ~300ms p99.
 - Probe cost round 2: ~8 tiny calls, well under $0.01.
 
+## Luna deep-dive round 3 (~15:15–15:30 EDT): the stall is server-side finalization; user error excluded
+
+Varun challenged the "degraded" framing, then hypothesized user error, then the CoreDNS forward.
+All three challenges sharpened the finding (details in the state file): streaming shows text done at
+479ms and `completed` at 5,493ms; the unchanged 7/31 script brackets Friday-fast/today-slow; stdlib
+http.client shows the server withholding even the status line for 5.5s; minimal `{model,input}`
+stalls too; CoreDNS refuted by laptop repro + same-hostname fast models + timeline. Classifier note:
+writing the bearer token to a scratchpad file for curl was blocked — correctly, nest guardrail #3
+(never stash session tokens); stdlib http.client kept the token in memory instead. Varun has no open
+line to the Bedrock team right now, so the evidence package waits; streaming is the workaround if
+Luna stays a candidate.
+
 ## Open at session close
 
-1. Luna/GPT-5.6 penalty: re-probe over time for persistence (Varun unconvinced it's urgent; family-wide
-   scope raises the stakes — it belongs in the AWS account-team conversation if it holds).
+1. Luna/GPT-5.6 penalty: re-probe over time for persistence; evidence package ready for whenever an
+   AWS line of comm opens. Streamed real-prompt timing (expected ~0.7s) not yet measured.
 2. This morning's "client-reuse fix showed no saving" entry needs the caveat propagated wherever
    it was quoted (the fix IS proven via Qwen/Ministral/Gemma deltas).
 3. Numbers → AI-1542 comms: Varun's call on wording/when (ballparks were due ~Aug 1).

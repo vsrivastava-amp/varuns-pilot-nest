@@ -37,6 +37,25 @@ or queue signals. Gemma 4 on the same `openai/v1` root but Chat Completions surf
 this is the closed-weight OpenAI family (or its Responses serving path), not the endpoint host.
 Nothing on our side can fix it; it is AWS-conversation material and a re-probe-over-time question.
 
+Round 3 (~15:15–15:30 EDT, Varun challenged "degraded" and then "user error"): the stall is a
+**constant post-generation finalization wait, and user error is excluded**.
+- Streaming timeline (tiny prompt): `response.created` 245ms, all output text delivered by 479ms,
+  then silence until `response.completed` at 5,493ms. The model generates at Friday speed.
+- The unchanged 7/31 floor script rerun (same laptop, same everything): Qwen 462 / Ministral 617 /
+  Gemma 778 / **Luna 5,576ms with a 63ms spread over 8 calls** — a constant, not jitter.
+- stdlib `http.client` (non-httpx stack): server sends ZERO bytes (no status line) until 5,575ms,
+  Content-Length set. Nothing client-side can cause that.
+- Parameter ablation: no reasoning / no temperature / no max_output_tokens / minimal `{model,input}`
+  — all ~5.5–6.4s. No parameter left to blame.
+- CoreDNS/PrivateLink hypothesis (Varun): refuted three ways — laptop repro never touches cluster
+  DNS; all four models share the hostname/route and three are fast; service Luna was already ~5.8s
+  Friday and this morning, before the 10:40 CoreDNS change.
+- Residual unknown: everything ran in dev account 564079877134 — account-scoped slow pool vs global
+  cannot be distinguished without a second account.
+- **Workaround if Luna must stay in play: stream and take `output_text.done` (~0.5s tiny; real-prompt
+  streamed timing not yet measured)** — usage/cache metadata rides `completed`, so it would need
+  async collection or dropping.
+
 ## Quantiles split by cache hit vs miss (e2e ms; includes the errored calls, so 106 max=45.5s is the 500)
 
 | eval | group | n | p50 | p95 | p99 | min | max |
