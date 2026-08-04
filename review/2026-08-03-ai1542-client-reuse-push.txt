@@ -1,9 +1,0 @@
-# Push the client/token reuse fix to Bitbucket. Commit 1aac587 on feat-online-pciv.
-# Worktree: ~/Documents/llm-evaluator-service-online-pciv
-# 486 tests pass (9 new). Verified live against Mantle: repeat get_chat_model
-# 545-740ms -> 0.03ms, Luna warm p50 ~636ms.
-# Pushing triggers a CI image build; it does NOT deploy. Deploy needs a
-# cd-deploy-configs image-tag bump PR afterwards.
-
-cd ~/Documents/llm-evaluator-service-online-pciv
-git push origin feat-online-pciv

@@ -1,0 +1,20 @@
+# Dev image bump to 1.0.296-feat-online-pciv. One line in the dev-ric1 overlay.
+# Branch AI-1538-image-1.0.296, commit d2027d8a2, cut from current origin/master.
+# Verified with kubectl kustomize: rendered image is
+#   admarketplace/llm-evaluator-service:1.0.296-feat-online-pciv
+# cd-deploy-configs master has selfHeal auto-sync ON, so MERGING DEPLOYS
+# IMMEDIATELY. Pods roll on merge.
+
+cd /private/tmp/claude-502/-Users-vsrivastava-pilots-nest/4ecb7d74-021a-426e-8a5c-9021b5ea7e54/scratchpad/cd-296
+git push origin AI-1538-image-1.0.296
+
+# then open the PR:
+# https://bitbucket.org/admarketplace/cd-deploy-configs/pull-requests/new?source=AI-1538-image-1.0.296&dest=master
+#
+# PR title:
+# AI-1538: bump online-pciv-service dev to 1.0.296-feat-online-pciv
+#
+# PR description:
+# Picks up the client and bearer-token reuse fix in llm-evaluator-service
+# (1aac587 on feat-online-pciv). Dev has been on 1.0.294 since 2026-07-30.
+# Dev-only change, one line in apps/online-pciv-service/dev-ric1.
