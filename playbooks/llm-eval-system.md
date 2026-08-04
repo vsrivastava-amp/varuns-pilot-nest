@@ -74,6 +74,15 @@
 
 Seed/clear waterline → run job → check: new rows in `llm_evals.ad_relevance` / `ad_request_civ` filtered by `modified_timestamp > run start`, grouped by `eval_id` (must match config table), failures table flat, waterline advanced. Local tests: `PYTHONPATH=src/main/python:src/test/python .venv/bin/python -m pytest src/test/python` with `JAVA_HOME=/opt/homebrew/opt/openjdk@21/...` and `PYSPARK_PYTHON=$PWD/.venv/bin/python` (421 tests).
 
+## OpenAI direct (third gateway — added 2026-08-04)
+
+- `OPENAI_API_KEY` lives in the nest root `.env` (gitignored; added by Varun 2026-08-04 for the Luna
+  stall isolation). `api.openai.com/v1/responses` works with the same body shapes as Mantle minus the
+  `openai.` model-id prefix (`gpt-5.6-luna`). Opens direct testing of models absent from Bedrock —
+  notably `gpt-5.4-nano`, the original pCIV preference. Latency from the laptop, 2026-08-04: Luna
+  non-streamed 1.3–2.4s, streamed ~100ms finalization gap (vs Mantle's ~5s stall); Mantle-streamed
+  token delivery was still faster (~0.5s to full text at 3.3k).
+
 ## AWS Bedrock (second gateway — verified 2026-07-23)
 
 - **Access confirmed end-to-end** on the `dev` profile (account 564079877134, PowerUserAccess via SSO, us-east-1): `bedrock-runtime converse` returns tokens for Meta, Mistral, Anthropic, Qwen with no extra grant work. Auth: `aws sso login --profile dev` (human-gated, expires); probe with `aws sts get-caller-identity --profile dev`.
