@@ -258,6 +258,39 @@ prompt, because they were built for the accuracy screen against the offline gold
 is four entries at IDs 104–107 in `pciv_online/eval_configs.json` with no code change, plus another
 image and overlay bump because configs are `@lru_cache`d. Offered to Varun; not started.
 
+## 2026-08-04 — HANDOFF: state at session close
+
+**Landed and verified.** Client/token reuse fix is on `origin/feat-online-pciv` (`1aac587`) and
+deployed to dev as image `1.0.296-feat-online-pciv`, confirmed running via Datadog k8s. The fix is
+correct but is NOT a large lever in-cluster (see the 2026-08-04 entry above and the corrected playbook
+bullet). Overlay bump branch `AI-1538-image-1.0.296` is merged; its temp worktree was removed and the
+stale `AI-1538-image-1.0.294` entry pruned.
+
+**Open, in priority order.**
+1. **No Mantle finalist is wired to `pciv_extraction.txt`.** Four entries at IDs 104–107 in
+   `pciv_online/eval_configs.json`; `models.json` already has the model ids, so no code. Needs another
+   image + overlay bump because configs are `@lru_cache`d. Varun was asked twice and has not answered —
+   do not start it without his go. This is the blocking unknown for any real online latency number.
+2. **INFRA-3474 DNS.** Antonio's inbound resolver endpoint and its security group are correct. Corporate
+   DNS still does not forward, and my first comment sent him to an unreachable target
+   (`10.11.144.2`). Corrected ask is parked in `review/2026-08-03-infra3474-forward-wrong-target.txt`,
+   Varun-approved wording pending. Re-verify with `tools/pciv/dns_resolver_probe.py` after he replies.
+3. **Saksham's budget still carries 1.1s for CIV**, set before any measurement. See the section below.
+
+**Two hazards for the next session.**
+- **`tools/pciv/dev_eval_latency.py` has an UNCOMMITTED `--query` flag** in the working tree, added by
+  another session on 2026-07-31 and untouched by me. My DBX validation run depends on it, and the
+  version in git does not have it. Reproducing run `1049315117947128` from a clean checkout will fail
+  on `--query`. Left alone deliberately because it is not this session's work; Varun should decide
+  whether it lands.
+- **`kubectl` is configured for `eks-dev-use1-01` but its credentials are stale.** Needs
+  `aws eks update-kubeconfig --name eks-dev-use1-01 --profile dev`. Datadog's k8s tools were used
+  instead and are the better path anyway, since they need no cluster access.
+
+**Auth is human-gated and expires.** `aws sso login --profile dev` expired twice during this work,
+overnight both times. Databricks (`dbc-562d27e2-d74d`) held. ML-TEAM-CLUSTER `1203-175656-xk3t1e83` was
+started for the validation run and left to auto-terminate.
+
 ### The thing nobody has told Saksham
 
 2026-08-03 — Per today's digest flag 2: Saksham fixed CIV at **1.1s** in the Friday thread at 11:59,
