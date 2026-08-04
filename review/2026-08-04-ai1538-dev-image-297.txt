@@ -1,0 +1,3 @@
+git -C ~/Documents/cd-deploy-configs-1.0.297 push -u origin AI-1538-image-1.0.297
+
+Then open the Bitbucket PR: master <- AI-1538-image-1.0.297 (one line, dev overlay tag 1.0.296 -> 1.0.297). Merging deploys immediately (selfHeal auto-sync).
