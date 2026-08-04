@@ -1,0 +1,1 @@
+Confirmed, the fix works. Cluster DNS now answers bedrock-mantle.us-east-1.api.aws with the endpoint ENIs 10.9.173.80 and 10.9.178.251, so our workloads reach Mantle over PrivateLink. Thanks Antonio!

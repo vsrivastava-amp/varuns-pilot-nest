@@ -45,10 +45,25 @@ Session slug: `pciv-resume`. Task: `tasks/pciv-online-deploy.md` (AI-1538/AI-154
   push: CI image (`1.0.<build>-feat-online-pciv`) → cd-deploy-configs dev overlay tag bump → PR →
   Varun merges (master selfHeal auto-deploys).
 
+## DNS fix VERIFIED (2026-08-04 ~12:10 EDT)
+
+- Varun ran the probe via `!` (worker `i-0c9a6e664cbb1ec53`; first pick `i-044723c43204060ef`
+  was running but not SSM-registered — InvalidInstanceId; the SSM-managed list comes from
+  `describe-instance-information`, folded into the tool docstring). Results:
+  corporate 10.11.128.70/.50 → public 3.214.115.45/34.231.48.123/52.87.73.163 (unchanged, host-level
+  only); VPC resolver 10.11.144.2 → private; **CoreDNS 172.20.0.10 → private 10.9.173.80/10.9.178.251
+  (ttl 30s) — the pod path, Antonio's fix confirmed.**
+- Varun's SSO re-login and settings check dead-end first: the SSM block is the Claude Code classifier,
+  not AWS auth; he chose `!`-relay over adding an ssm allow rule.
+- Confirmation reply drafted: `review/2026-08-04-infra3474-dns-verified.txt` (discussion register, no
+  method narration per the 2026-08-03 lesson).
+- Evals 104–107 push executed by Varun ~11:50 EDT; draft disposed. CI build for a0f7e08 in flight.
+- Saksham budget item: Varun in-chat — wait for more end-to-end results before restating the stack.
+
 ## Open at session close
 
-1. DNS re-verification (Varun runs the `!` SSM commands; then draft the Antonio confirmation reply).
-2. Push draft above → CI tag → overlay bump cycle.
+1. Antonio reply draft awaiting Varun's approval → post → dispose.
+2. CI tag from Varun → overlay bump branch → PR → merge → real-prompt finalist batches (104–107, n≥50).
 3. After deploy: the real-prompt finalist latency batches (evals 104–107, n≥50, `dev_eval_latency.py
    --eval-ids 104,105,106,107` from a classic DBX cluster) — the number AI-1542 actually needs.
 4. Saksham's 1.1s CIV budget still uncorrected (see 2026-08-03 task-file entry) — needs Varun's call

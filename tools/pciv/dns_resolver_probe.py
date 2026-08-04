@@ -17,13 +17,21 @@ On a dev EKS worker, via SSM (no shell access needed, read-only):
         \"python3 /tmp/p.py 10.11.128.70 10.11.128.50 10.11.144.2\",\"rm -f /tmp/p.py\"]"
     # then: aws ssm get-command-invocation --command-id <id> --instance-id <i-...>
 
-Reference values as of 2026-08-04 (dev, vpc-0317d6910f3add39a):
+Reference values as of 2026-08-04 pm, post INFRA-3474 fix (dev, vpc-0317d6910f3add39a):
     10.11.128.70 / 10.11.128.50  corporate DNS from the DHCP option set -> public
+                                 (unchanged; only affects host-level lookups)
     10.11.144.2                  VPC Route 53 Resolver -> private 10.9.173.80 / 10.9.178.251
-    10.9.174.63 / 10.9.179.109   inbound resolver endpoint; times out from a
-                                 worker by design (SG allows only the two
-                                 corporate DNS servers)
+    172.20.0.10                  CoreDNS cluster svc IP (service CIDR 172.20.0.0/16) ->
+                                 private 10.9.173.80 / 10.9.178.251 -- the path pods use;
+                                 Antonio repointed its forward rule at a RECREATED inbound
+                                 resolver endpoint, so the old 10.9.174.63/10.9.179.109
+                                 inbound IPs are stale
 Change NAME below to probe a different hostname.
+
+SSM gotchas (2026-08-04): the auto-mode classifier hard-blocks agent-run
+`aws ssm send-command` -- hand Varun the one-liner to run via `!`. Pick the
+instance from `aws ssm describe-instance-information` (PingStatus Online);
+a running EKS worker is not necessarily SSM-registered (InvalidInstanceId).
 """
 import random
 import socket
