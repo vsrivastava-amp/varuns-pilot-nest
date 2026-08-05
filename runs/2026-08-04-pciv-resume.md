@@ -99,10 +99,27 @@ writing the bearer token to a scratchpad file for curl was blocked — correctly
 line to the Bedrock team right now, so the evidence package waits; streaming is the workaround if
 Luna stays a candidate.
 
+## 2026-08-05 day-2 variability study (Varun-directed; full tables in chat, this is the compact record)
+
+- Reran everything ~10:15–10:25 EDT: local floor probe (3.3k, n=8), OpenAI-Luna local (n=8 + 2
+  streams), in-AWS service run `802350867261277` (evals 104–107, n=50, same params as 8/4).
+- **Luna stall is structural**: Mantle p50 5,575 local / 5,656 in-cluster, streamed gap
+  4,999–5,023ms — identical to 8/4, three probe sessions running. OpenAI-Luna 1,357ms p50, gap
+  ~100ms. **Gemma jitter is weather**: Tuesday-morning clean (local max 1.0s, in-cluster p95
+  2,593 vs Monday 5,294) — tail tracks time-of-day, consistent with decode contention (8/4
+  streamed TTFT was flat ~75ms with 8× decode-rate swings; contention is inference, phase is
+  measured). **Qwen stable ±8% everywhere, zero errors today; Ministral steady with 94–98%
+  in-cluster cache.** Service overhead 15–18ms both days.
+- Cluster was warm at 09:00 because rcheruku's team started it at 08:43 — 30-min auto-terminate
+  cleaned up our Monday usage; no idle burn.
+- Raw: scratchpad `mantle_floor_day2_20260805.jsonl` (ephemeral), DBX run output above.
+
 ## Open at session close
 
-1. Luna/GPT-5.6 penalty: re-probe over time for persistence; evidence package ready for whenever an
-   AWS line of comm opens. Streamed real-prompt timing (expected ~0.7s) not yet measured.
+1. Luna/GPT-5.6 stall: structural, evidence package ready for whenever an AWS line of comm opens.
+   Streaming invoker (text at ~0.5s) is the workaround if AI-1540 wants Luna; OpenAI-direct is the
+   other route (1.4s-class, needs egress + key management + quota story).
+2. Gemma: if it stays a candidate, tail SLOs need hour-of-day monitoring, not one-day benchmarks.
 2. This morning's "client-reuse fix showed no saving" entry needs the caveat propagated wherever
    it was quoted (the fix IS proven via Qwen/Ministral/Gemma deltas).
 3. Numbers → AI-1542 comms: Varun's call on wording/when (ballparks were due ~Aug 1).
