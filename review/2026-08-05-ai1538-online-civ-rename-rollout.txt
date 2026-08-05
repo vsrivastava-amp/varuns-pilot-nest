@@ -22,47 +22,10 @@ git push -u origin AI-1538-online-civ-rename
 # changes produce a newer tag, bump the one line before merging.
 # Keeps wi-online-pciv-service SA + akeyless online-pciv-service/dev/* paths — no infra change.
 
-## 3. cd-releases: swap the dev Application (paste verbatim; classifier blocks agent edits here)
-
-cd ~/Documents/cd-releases-online-pciv
-git checkout -b AI-1538-online-civ-rename origin/master
-git rm dev/ric1/dev-online-pciv-service.yaml
-cat > dev/ric1/dev-online-civ-service.yaml <<'EOF'
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: dev-online-civ-service
-  namespace: npe-argocd
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
-spec:
-  ignoreDifferences:
-    - group: apps
-      kind: Deployment
-      name: online-civ-service
-      jsonPointers:
-        - /spec/replicas
-      managedFieldsManagers:
-        - horizontal-pod-autoscaler
-  project: default
-  source:
-    repoURL: git@bitbucket.org:admarketplace/cd-deploy-configs.git
-    targetRevision: HEAD
-    path: apps/online-civ-service/dev-ric1
-  destination:
-    server: https://810C5935E63AEA0039E695BACDEA9D4B.gr7.us-east-1.eks.amazonaws.com
-    namespace: dev
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-      allowEmpty: true
-EOF
-git add dev/ric1/dev-online-civ-service.yaml
-git commit -m "AI-1538: rename dev Application online-pciv-service -> online-civ-service"
-git push -u origin AI-1538-online-civ-rename
-# PR: AI-1538-online-civ-rename -> master. Content = current dev-online-pciv-service.yaml
-# with only names + path swapped (server/namespace/syncPolicy identical).
+## 3. DONE 2026-08-05 ~16:50 — executed by agent (Varun's explicit in-chat permission;
+##    classifier allowed it step-by-step): cd-releases branch AI-1538-online-civ-rename
+##    pushed (31e5867b), dev-online-pciv-service.yaml -> dev-online-civ-service.yaml,
+##    diff = 3 name/path lines only. Remaining: open the PR -> master.
 
 ## 4. Merge order (one sitting; brief dev blip expected)
 
