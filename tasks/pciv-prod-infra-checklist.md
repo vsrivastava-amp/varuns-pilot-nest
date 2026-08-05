@@ -2,10 +2,11 @@
 
 Replaced 2026-08-05 (Varun's call): this file is now the three paste-ready Jira tickets, nothing
 else. Prior checklist form is in git history (`git log -- tasks/pciv-prod-infra-checklist.md`).
-2026-08-05 (later, Varun in-chat): each ticket now asks for BOTH stage and prod. Stage parts are
-fully specified today; prod parts carry placeholders. The old standalone stage-only ask was
-deleted (Varun in-chat 2026-08-05) — these combined tickets are the only form. If prod answers
-lag and stage becomes urgent, file Ticket 1 with the prod section trimmed out.
+2026-08-05 (later, Varun in-chat): each ticket asks for BOTH stage and prod. **Tickets 1 and 2 are
+FILED: INFRA-3507 and INFRA-3508** (both Not Started, unassigned per INFRA convention, linked to
+each other and to AI-1538). Ticket 3 (quota) still waits on the model pick and the QPS target.
+Lesson recorded: exact account ids and VPC/subnet ids are NOT needed to file — say "stage EKS" /
+"prod EKS" and ask infra to report ids back. Do not block a request on facts infra already owns.
 
 Names assume the 2026-08-05 online-civ rename lands (stage and prod use NEW-name infra:
 `wi-online-civ-service`, `online-civ-service/...` paths — dev alone keeps the old
@@ -18,7 +19,7 @@ prod-scoped access tickets to preempt the approval round-trip.
 
 ---
 
-## Ticket 1 — stage half ready now; file whole when prod account/dc answered
+## Ticket 1 — FILED 2026-08-05 as INFRA-3507 (Varun-directed in-chat; stage+prod, no exact ids needed — infra knows their inventory; asks them to report the prod path and the stage/prod account ids back). Text below is the filed version's source; the live ticket is authoritative.
 
 Title: Create secrets and service account for online-civ-service in stage and prod EKS
 
@@ -52,7 +53,7 @@ Thanks!
 
 ---
 
-## Ticket 2 — stage half ready now; file whole when prod account/dc answered
+## Ticket 2 — FILED 2026-08-05 as INFRA-3508 (stage+prod VPCs; linked to 3507 and AI-1538).
 
 Title: Bedrock Mantle interface endpoint + private DNS for the stage and prod EKS VPCs
 
