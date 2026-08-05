@@ -20,6 +20,11 @@ Examples:
         --queries-table dev_amplify.qwantai_testing_data.us_queries_gpc_lvl_3 \
         --queries-column query --n 30
 
+    # civ_online A0B cross-product via the contract-shaped endpoint
+    # (image newer than 1.0.297-feat-online-pciv required):
+    python dev_eval_latency.py --eval-ids 101,201,301,401,501 \
+        --endpoint /v1/intent/pciv --queries-file queries.txt --n 50
+
 Notes:
 - bypassCache=true by default: we are measuring the LLM path, not DynamoDB.
 - Eval ids interleave round-robin so provider-side drift over the run affects
@@ -43,12 +48,25 @@ DEFAULT_ENDPOINT = "/v1/intent/civ"
 
 
 def post_eval(base_url, endpoint, eval_id, query, ad_request_id, bypass_cache, timeout):
-    """One single-query extraction call. Returns a sample dict."""
-    body = {
-        "evalId": eval_id,
-        "queries": [{"adRequestId": ad_request_id, "qt": query}],
-        "bypassCache": bypass_cache,
-    }
+    """One single-query extraction call. Returns a sample dict.
+
+    /v1/intent/pciv speaks the SSP Online pCIV contract since 2026-08-05
+    (placementID + queries[].prompt; the dev placement_configs.json maps
+    placement IDs 1:1 onto eval IDs). /v1/intent/civ keeps the legacy shape.
+    Images 1.0.297-feat-online-pciv and older speak the legacy shape on both.
+    """
+    if "/pciv" in endpoint:
+        body = {
+            "placementID": eval_id,
+            "queries": [{"adRequestId": ad_request_id, "prompt": query}],
+            "bypassCache": bypass_cache,
+        }
+    else:
+        body = {
+            "evalId": eval_id,
+            "queries": [{"adRequestId": ad_request_id, "qt": query}],
+            "bypassCache": bypass_cache,
+        }
     req = urllib.request.Request(
         f"{base_url}{endpoint}",
         data=json.dumps(body).encode(),
