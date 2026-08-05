@@ -4,10 +4,10 @@
 
 ## §2 Endpoint (the blank Varun owns)
 
-- `POST /v1/intent/pciv`, `Content-Type: application/json`.
-- Dev: `https://dev-online-pciv-service.ric1.admarketplace.net` (reachable in-VPC only).
-- Stage/prod hosts TBD (AI-1538 Phase D).
-- Decision rider: domain code renamed `civ_online` (Yaarit's ask) but the URL stayed `/v1/intent/pciv` — if Yaarit wants the URL renamed too, that's this section's call, decide before SSP integrates.
+- **UPDATED 2026-08-05 (Varun's uniform online-civ call): `POST /v1/intent/online-civ`**, `Content-Type: application/json`.
+- Dev host becomes `https://dev-online-civ-service.ric1.admarketplace.net` once the rename package deploys (until then the live dev service still serves `/v1/intent/pciv` on the old `dev-online-pciv-service` host). Reachable in-VPC only.
+- Stage/prod hosts TBD (AI-1538 Phase D); will follow the `*-online-civ-service` pattern.
+- Tell Yaarit: this supersedes her `civ_online` domain name too (now `online_civ`) — needs her nod, Varun relaying in person.
 
 ## Naming drift inside the doc
 

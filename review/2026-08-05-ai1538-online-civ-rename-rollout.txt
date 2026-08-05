@@ -1,0 +1,86 @@
+# AI-1538 uniform online-civ rename — dev rollout package (Varun-executed)
+# Everything below is HELD behind the same gate as the overlay bump: merge only
+# after Yaarit's pending service-code changes land (or are called off) and the
+# final CI image tag is known. Merging with an image older than the route
+# rename leaves the new app serving only the old /v1/intent/pciv path.
+#
+# Already committed locally, ready to push:
+#   llm-evaluator-service  feat-online-pciv        24d34c0 (domain online_civ + route /v1/intent/online-civ)
+#   cd-deploy-configs      AI-1538-online-civ-rename   ea48a055c (worktree ~/Documents/cd-deploy-configs-online-civ-rename)
+#   cd-deploy-configs      AI-1538-stage-overlay-v2    a02b00178 (same worktree; supersedes old AI-1538-stage-overlay)
+
+## 1. Push the service-repo rename (CI builds the tag that serves /v1/intent/online-civ)
+
+cd ~/Documents/llm-evaluator-service-online-pciv
+git push origin feat-online-pciv
+
+## 2. Push the cd-deploy-configs rename branch + open PR to master
+
+cd ~/Documents/cd-deploy-configs-online-civ-rename
+git push -u origin AI-1538-online-civ-rename
+# PR: AI-1538-online-civ-rename -> master, title:
+#   AI-1538: rename app online-pciv-service -> online-civ-service
+# BEFORE MERGING: bump the image tag in apps/online-civ-service/dev-ric1/kustomization.yaml
+#   to the final CI tag (must include commit 24d34c0+). Currently 1.0.297.
+# Keeps wi-online-pciv-service SA + akeyless online-pciv-service/dev/* paths — no infra change.
+
+## 3. cd-releases: swap the dev Application (paste verbatim; classifier blocks agent edits here)
+
+cd ~/Documents/cd-releases-online-pciv
+git checkout -b AI-1538-online-civ-rename origin/master
+git rm dev/ric1/dev-online-pciv-service.yaml
+cat > dev/ric1/dev-online-civ-service.yaml <<'EOF'
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dev-online-civ-service
+  namespace: npe-argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: online-civ-service
+      jsonPointers:
+        - /spec/replicas
+      managedFieldsManagers:
+        - horizontal-pod-autoscaler
+  project: default
+  source:
+    repoURL: git@bitbucket.org:admarketplace/cd-deploy-configs.git
+    targetRevision: HEAD
+    path: apps/online-civ-service/dev-ric1
+  destination:
+    server: https://810C5935E63AEA0039E695BACDEA9D4B.gr7.us-east-1.eks.amazonaws.com
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+EOF
+git add dev/ric1/dev-online-civ-service.yaml
+git commit -m "AI-1538: rename dev Application online-pciv-service -> online-civ-service"
+git push -u origin AI-1538-online-civ-rename
+# PR: AI-1538-online-civ-rename -> master. Content = current dev-online-pciv-service.yaml
+# with only names + path swapped (server/namespace/syncPolicy identical).
+
+## 4. Merge order (one sitting; brief dev blip expected)
+
+# a. cd-deploy-configs PR (with the final image tag baked in)
+# b. cd-releases PR — old Application (finalizer) prunes the old-named resources,
+#    new Application creates the renamed ones. Old ingress host
+#    dev-online-pciv-service.ric1.admarketplace.net dies; new host is
+#    dev-online-civ-service.ric1.admarketplace.net.
+# c. Post-merge checks (agent runs on your word): Datadog pods green under
+#    service:online-civ-service, /health 200 on the new host, then the A0B
+#    latency batches via /v1/intent/online-civ.
+
+## Stage (separately gated — do NOT merge with dev)
+
+# AI-1538-stage-overlay-v2 (a02b00178) replaces the old AI-1538-stage-overlay
+# branch (delete it; never pushed). Stage uses NEW-name infra (wi-online-civ-service
+# + online-civ-service/stage/ric1/*) — file the rewritten stage INFRA ask first
+# (review/2026-07-29-ai1538-stage-infra-jira.txt), then the stage rollout
+# (review/2026-07-29-ai1538-stage-rollout.txt, rewritten for online-civ).

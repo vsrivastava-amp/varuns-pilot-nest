@@ -1,27 +1,36 @@
 # AI-1538 stage rollout package — 3 steps, each Varun-executed
-# (agent prepared the overlay branch; the classifier blocks agent edits to
-#  cd-releases Application yamls, so step 2 is copy-paste)
+# REWRITTEN 2026-08-05 for the uniform online-civ rename: stage branch is now
+# AI-1538-stage-overlay-v2 (worktree ~/Documents/cd-deploy-configs-online-civ-rename,
+# commit a02b00178, stacked on the dev rename branch). Old AI-1538-stage-overlay
+# branch is superseded — delete it (never pushed).
+# (Classifier blocks agent edits to cd-releases Application yamls, so step 2 is copy-paste.)
 
-## 1. Push the prepared cd-deploy-configs branch + open PR to master
+## 0. GATES (both must be done first)
 
-cd ~/Documents/cd-deploy-configs-online-pciv
-git push -u origin AI-1538-stage-overlay
-# PR: AI-1538-stage-overlay -> master, title:
-#   AI-1538: online-pciv-service stage-ric1 overlay
-# Branch has one commit (883e48312): apps/online-pciv-service/stage-ric1/,
-# kustomize-build validated, diff-matches llm-evaluator-service stage-ric1
-# precedent exactly (names/paths only). NOTE merge = immediate stage deploy
-# (ArgoCD auto-sync) once step 2's Application also merges; without step 2
-# the overlay is inert.
+# - The dev rename package merged (review/2026-08-05-ai1538-online-civ-rename-rollout.txt)
+#   — the stage branch stacks on it.
+# - The stage INFRA ask completed (draft: 2026-07-29-ai1538-stage-infra-jira.txt):
+#   stage uses wi-online-civ-service + online-civ-service/stage/ric1/databricks/*,
+#   NEITHER exists yet — merging first means pods crash-loop on secrets.
+
+## 1. Push the stage overlay branch + open PR to master
+
+cd ~/Documents/cd-deploy-configs-online-civ-rename
+git push -u origin AI-1538-stage-overlay-v2
+# PR: AI-1538-stage-overlay-v2 -> master, title:
+#   AI-1538: online-civ-service stage-ric1 overlay
+# NOTE merge = immediate stage deploy (ArgoCD auto-sync) once step 2's
+# Application also merges; without step 2 the overlay is inert.
 
 ## 2. Create the cd-releases Application yaml (paste verbatim), push, PR
 
-cd ~/Documents/cd-releases-online-pciv   # branch AI-1538-stage-overlay exists
-cat > stage/ric1/stage-online-pciv-service.yaml <<'EOF'
+cd ~/Documents/cd-releases-online-pciv
+git checkout -b AI-1538-stage-online-civ origin/master
+cat > stage/ric1/stage-online-civ-service.yaml <<'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: stage-online-pciv-service
+  name: stage-online-civ-service
   namespace: npe-argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
@@ -29,7 +38,7 @@ spec:
   ignoreDifferences:
     - group: apps
       kind: Deployment
-      name: online-pciv-service
+      name: online-civ-service
       jsonPointers:
         - /spec/replicas
       managedFieldsManagers:
@@ -38,7 +47,7 @@ spec:
   source:
     repoURL: git@bitbucket.org:admarketplace/cd-deploy-configs.git
     targetRevision: HEAD
-    path: apps/online-pciv-service/stage-ric1
+    path: apps/online-civ-service/stage-ric1
   destination:
     server: https://AC4F52705925C150682D31A14AEC7B5E.gr7.us-east-1.eks.amazonaws.com
     namespace: stage
@@ -48,26 +57,22 @@ spec:
       selfHeal: true
       allowEmpty: true
 EOF
-git add stage/ric1/stage-online-pciv-service.yaml
-git commit -m "AI-1538: register stage-online-pciv-service Application"
-git push -u origin AI-1538-stage-overlay
-# PR: AI-1538-stage-overlay -> master. Destination server + namespace copied
-# from stage-llm-evaluator-service.yaml (verified against origin/master).
+git add stage/ric1/stage-online-civ-service.yaml
+git commit -m "AI-1538: register stage-online-civ-service Application"
+git push -u origin AI-1538-stage-online-civ
+# PR: AI-1538-stage-online-civ -> master. Destination server + namespace copied
+# from stage-llm-evaluator-service.yaml (verified against origin/master 7/29).
 
 ## 3. Merge order
 
 # Merge the cd-deploy-configs PR first, then cd-releases (registration last =
-# overlay is complete when Argo first syncs it). Same pattern as dev on 7/28.
+# overlay is complete when Argo first syncs it). Same pattern as dev.
 
-## Caveats — UPDATED 2026-07-29 pm after INFRA-3474/3475 landed
+## Caveats
 
-# - GATE: INFRA-3475's ruling is per-app SA + per-app secrets. The branch's
-#   second commit (0baa9fe3f) already points stage at wi-online-pciv-service +
-#   online-pciv-service/stage/ric1/databricks/* — but NEITHER exists in stage
-#   yet. File the stage INFRA ask (draft: 2026-07-29-ai1538-stage-infra-jira.txt)
-#   and let it complete BEFORE merging these PRs, or pods crash-loop on secrets.
-# - Image tag stays 1.0.292-feat-online-pciv (proven dev image). Stage
-#   convention is a -main tag; switch after feat-online-pciv merges to main.
+# - Image tag in the stage overlay is 1.0.292-feat-online-pciv (the 7/29 value)
+#   — bump to the current proven dev tag before merging. Stage convention is a
+#   -main tag; switch after feat-online-pciv merges to main.
 # - Stage DBX host = dbc-303276b5-9802 (from the stage precedent config.conf).
 #   The tracker previously said "host 8321" — repo precedent wins; flag if the
 #   8321 workspace was intentional.

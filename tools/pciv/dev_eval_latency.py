@@ -55,7 +55,7 @@ def post_eval(base_url, endpoint, eval_id, query, ad_request_id, bypass_cache, t
     placement IDs 1:1 onto eval IDs). /v1/intent/civ keeps the legacy shape.
     Images 1.0.297-feat-online-pciv and older speak the legacy shape on both.
     """
-    if "/pciv" in endpoint:
+    if "/pciv" in endpoint or "/online-civ" in endpoint:
         body = {
             "placementID": eval_id,
             "queries": [{"adRequestId": ad_request_id, "prompt": query}],
