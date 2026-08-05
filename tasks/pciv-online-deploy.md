@@ -55,6 +55,8 @@ Finalists (Varun-picked off the Pareto): **Gemma 4 31B, GPT-5.6 Luna, Qwen3-Next
 
 ## Phase D — stage/prod (~~later~~ PROMOTED 2026-07-29 — see priority reframe in session log: MVP ready on prod is the build target)
 
+**2026-08-05: prod infra work has its own source-of-truth tracker — `tasks/pciv-prod-infra-checklist.md`** (Varun-requested; context: Saksham's "ship one model, switch later", leaning Qwen/Gemma). The items below remain for history; the checklist supersedes them for prod planning.
+
 - [~] stage overlay ~~on master (`stage-ric1`, DBX host 8321)~~ **BUILT 2026-07-29** on branch `AI-1538-stage-overlay` (cd-deploy-configs worktree, commit 883e48312, kustomize-validated, diff-matches llm-evaluator-service stage precedent exactly). NB stage DBX host per repo precedent = `dbc-303276b5-9802` (the "8321" in the original line was wrong/unsourced). cd-releases Application yaml could NOT be agent-written (auto-mode classifier blocks ArgoCD Application manifest edits, 3 attempts) — **full package incl. paste-ready yaml in `review/2026-07-29-ai1538-stage-rollout.txt`** (push → PR → merge order). Prod overlay on `prod` branch via release PR still TODO (pattern: RELEASE-#### tickets, e.g. 586f23a96)
 - [ ] prod akeyless paths + SA (infra), prod ingress via pub-nlb? (check — demo used INFRA-3421)
 - [ ] AS-13402-style timeout wiring for the SSP→service hop once the integration ticket exists
