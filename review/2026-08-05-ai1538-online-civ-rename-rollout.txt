@@ -1,18 +1,16 @@
 # AI-1538 uniform online-civ rename — dev rollout package (Varun-executed)
-# Everything below is HELD behind the same gate as the overlay bump: merge only
-# after Yaarit's pending service-code changes land (or are called off) and the
-# final CI image tag is known. Merging with an image older than the route
-# rename leaves the new app serving only the old /v1/intent/pciv path.
+# GATE STATUS 2026-08-05 ~16:25: step 1 EXECUTED (Varun pushed feat-online-pciv;
+# CI tag 1.0.299-feat-online-pciv = exactly the rename+alignment stack, no Yaarit
+# commits yet) and the tag is baked into the cd-deploy-configs branch (a4bb2f3e5).
+# The Yaarit hold still applies to MERGING: if her changes land, CI mints a newer
+# tag and the bump is one line; if called off, merge as-is.
 #
-# Already committed locally, ready to push:
-#   llm-evaluator-service  feat-online-pciv        24d34c0 (domain online_civ + route /v1/intent/online-civ)
-#   cd-deploy-configs      AI-1538-online-civ-rename   ea48a055c (worktree ~/Documents/cd-deploy-configs-online-civ-rename)
-#   cd-deploy-configs      AI-1538-stage-overlay-v2    a02b00178 (same worktree; supersedes old AI-1538-stage-overlay)
+# Branch state:
+#   llm-evaluator-service  feat-online-pciv         24d34c0 PUSHED; CI tag 1.0.299-feat-online-pciv
+#   cd-deploy-configs      AI-1538-online-civ-rename    a4bb2f3e5 local (worktree ~/Documents/cd-deploy-configs-online-civ-rename)
+#   cd-deploy-configs      AI-1538-stage-overlay-v2     a02b00178 local (same worktree; supersedes old AI-1538-stage-overlay)
 
-## 1. Push the service-repo rename (CI builds the tag that serves /v1/intent/online-civ)
-
-cd ~/Documents/llm-evaluator-service-online-pciv
-git push origin feat-online-pciv
+## 1. DONE 2026-08-05 — feat-online-pciv pushed by Varun; tag 1.0.299-feat-online-pciv
 
 ## 2. Push the cd-deploy-configs rename branch + open PR to master
 
@@ -20,8 +18,8 @@ cd ~/Documents/cd-deploy-configs-online-civ-rename
 git push -u origin AI-1538-online-civ-rename
 # PR: AI-1538-online-civ-rename -> master, title:
 #   AI-1538: rename app online-pciv-service -> online-civ-service
-# BEFORE MERGING: bump the image tag in apps/online-civ-service/dev-ric1/kustomization.yaml
-#   to the final CI tag (must include commit 24d34c0+). Currently 1.0.297.
+# Image tag 1.0.299-feat-online-pciv already baked in (a4bb2f3e5). If Yaarit's
+# changes produce a newer tag, bump the one line before merging.
 # Keeps wi-online-pciv-service SA + akeyless online-pciv-service/dev/* paths — no infra change.
 
 ## 3. cd-releases: swap the dev Application (paste verbatim; classifier blocks agent edits here)
