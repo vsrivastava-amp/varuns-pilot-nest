@@ -19,7 +19,9 @@ master overlay. Each prod ask below is "same as dev, in the prod account/cluster
 ## Infra asks
 
 ### 0. Name the prod account + cluster (BLOCKS EVERYTHING BELOW)
-- [ ] Which AWS account and EKS cluster/datacenter do prod pods run in? Bedrock quotas, IAM, and
+- [~] **ASKED 2026-08-05 ~12:20 EDT — Varun DM'd Antonio.** Awaiting answer; asks 1–3 fire on it
+  (conversational ticket texts prepared 2026-08-05, in chat).
+- Original question: Which AWS account and EKS cluster/datacenter do prod pods run in? Bedrock quotas, IAM, and
   the PrivateLink endpoint are all per-account and per-VPC, so no other ask can be filed precisely
   until this is answered. (Dev = 564079877134 / eks-dev-use1-01 / ric1. Open since the July quota
   research.) Also confirm the prod cluster region is us-east-1 — Mantle is in-region us-east-1 only,
@@ -78,8 +80,9 @@ master overlay. Each prod ask below is "same as dev, in the prod account/cluster
 ### 6. DynamoDB cache access in prod
 - [ ] The service reads/writes the civ_label DynamoDB cache. Confirm the prod table exists (or
   which table prod should use) and that the prod SA's role carries the same DynamoDB permissions
-  dev has. Reminder for us, not infra: the cache key is sha256(eval_id, query) with no domain or
-  env component — eval-id discipline matters across environments sharing a table.
+  dev has. (2026-08-05: cache keys now carry the domain via `service._CACHE_DOMAIN` after the
+  eval-config restructure, so the old cross-domain eval-id collision worry is retired; env
+  separation across a shared table is still worth confirming.)
 
 ## Stage (decide, then maybe mirror)
 
