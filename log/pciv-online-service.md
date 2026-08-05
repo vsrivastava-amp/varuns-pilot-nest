@@ -315,3 +315,9 @@ Sample CSV (90 stratified payloads): `~/Documents/qwant_30_intent_samples_202608
 - Max targets ≤5: not enforced anywhere in code (prompt-level only).
 
 **Endpoint answer for §2 (when Varun wants to fill it):** `POST /v1/intent/pciv`; dev host `https://dev-online-pciv-service.ric1.admarketplace.net` (in-VPC only); stage/prod hosts TBD (Phase D). Also exists: `POST /v1/intent/pciv/invalidate-cache`.
+
+## 2026-08-05 — 3.0 arrival rate measured (per-minute buckets, trailing 24h to 17:50 UTC) + volume CORRECTION
+
+- **CORRECTION to 8/4 entry**: "~2.93M reqs/day ≈ 34 QPS avg" was inflated — it summed full-day 8/3 PLUS partial-day 8/4. True full-day 8/3 = 1.68M ⇒ **~19–20 rps average**. Capacity memo's 200 QPS planning number is ~10× today's ghost average, not ~6×.
+- **Measured req/sec (mean / median / p99 / max over 1440 one-minute buckets)**: ALL 3.0 **19.6 / 21.2 / 38.9 / 40.0** · Qwant Flash 15.7/16.7/31.5/32.5 · Lilo Flash 2.7/3.1/5.5/5.9 · Qwant Chat/Detailed 1.1/1.2/2.3/2.6 · Lilo Chat ≈0.1. Diurnal: p99≈2× mean (FR daytime peak ~39–40 rps).
+- **Gated pCIV load** (commercial flash + all response-bearing turns): **5.8 / 6.5 / 11.3 / 12.5 rps** — the AI-1542 sizing number under a commercial-only extraction policy; still growing with the ramp (8/1 1.24M → 8/3 1.68M/day).
