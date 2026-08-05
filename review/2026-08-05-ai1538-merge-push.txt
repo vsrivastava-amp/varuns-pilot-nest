@@ -1,2 +1,0 @@
-cd ~/Documents/llm-evaluator-service-online-pciv
-git push origin feat-online-pciv
