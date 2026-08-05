@@ -9,9 +9,10 @@
 
 # - The dev rename package merged (review/2026-08-05-ai1538-online-civ-rename-rollout.txt)
 #   — the stage branch stacks on it.
-# - The stage INFRA ask completed (draft: 2026-07-29-ai1538-stage-infra-jira.txt):
-#   stage uses wi-online-civ-service + online-civ-service/stage/ric1/databricks/*,
-#   NEITHER exists yet — merging first means pods crash-loop on secrets.
+# - The stage INFRA ask completed (Ticket 1 in tasks/pciv-prod-infra-checklist.md,
+#   which covers stage + prod): stage uses wi-online-civ-service +
+#   online-civ-service/stage/ric1/databricks/*, NEITHER exists yet — merging
+#   first means pods crash-loop on secrets.
 
 ## 1. Push the stage overlay branch + open PR to master
 

@@ -3,9 +3,9 @@
 Replaced 2026-08-05 (Varun's call): this file is now the three paste-ready Jira tickets, nothing
 else. Prior checklist form is in git history (`git log -- tasks/pciv-prod-infra-checklist.md`).
 2026-08-05 (later, Varun in-chat): each ticket now asks for BOTH stage and prod. Stage parts are
-fully specified today; prod parts carry placeholders — if prod answers lag and stage becomes
-urgent, the stage half of Ticket 1 also exists standalone as
-`review/2026-07-29-ai1538-stage-infra-jira.txt` (dispose whichever form doesn't get filed).
+fully specified today; prod parts carry placeholders. The old standalone stage-only ask was
+deleted (Varun in-chat 2026-08-05) — these combined tickets are the only form. If prod answers
+lag and stage becomes urgent, file Ticket 1 with the prod section trimmed out.
 
 Names assume the 2026-08-05 online-civ rename lands (stage and prod use NEW-name infra:
 `wi-online-civ-service`, `online-civ-service/...` paths — dev alone keeps the old
