@@ -292,3 +292,26 @@ Varun got a live download from Norbert Tamas; laptop session then read the share
 - Language ≠ geo: French-language queries appear under US geo rows.
 
 Sample CSV (90 stratified payloads): `~/Documents/qwant_30_intent_samples_20260804.csv` — untracked by design.
+
+## 2026-08-05 — Yaarit's API contract landed (pasted in-chat; gdoc connector down) + her implementation branch discovered
+
+**Contract snapshot: `state/pciv-api-contract-20260805.md`** (doc: "SSP - Online pCIV: API Contract (WIP)"). The §2 Endpoint section is still the known blank ("Varun Srivastava please add").
+
+**The doc's repo link names branch `feat-online-pciv-qwant-prompt` — it exists on origin and is Yaarit's implementation branch** (3 commits, e6160b2/8730cc6/5804fd3, Jul 27–31), branched from `feat-online-pciv` at 50049ed (7/24). She has already built much of the contract's §3.3 mechanics: `build_conversation_text()` (user:/assistant:/source: construction), role-prefix sanitization (zero-width-space neutralization), `response` + `source{summary, items[{title,description,snippets[]}]}` request fields, cache key = sha256(eval_id, built conversation text) instead of raw qt, a dedicated `PcivConversationExtraction` response model (no always-null flat fields), prompt `pciv_extraction_qwant.txt`, and per-eval `prompt_path` selection.
+
+**⚠️ EVAL-ID COLLISION 104/105, hard conflict between the two branches:**
+- Yaarit's branch: 104 = nano + qwant prompt, 105 = gpt-5-mini + qwant prompt.
+- Our `feat-online-pciv` (a0f7e08, deployed as 1.0.297, ran the 8/4 latency batches): 104 = gemma-4 mantle, 105 = luna mantle (+ 106 qwen, 107 ministral-14).
+- The file's own `_note` says IDs must never collide (DynamoDB cache key includes eval_id). Incidental mitigation: her cache key hashes the built conversation text ("user: …" prefix) so entries don't physically collide with ours even at the same ID — but "eval 104/105" is now ambiguous in every conversation/comment/result artifact. Renumbering needs a Varun↔Yaarit call; flagged in-chat 2026-08-05.
+- Her branch also predates our last 5 commits (Mantle provider 7b03dbc/4754b0a, requirements fix 4c0cfe9, client/token reuse 1aac587, evals 104–107 a0f7e08) — a merge has real conflicts in eval_configs.json and touches the same llm.py paths.
+
+**Contract vs. code deltas that remain even on her branch (rename/wire-up work, no design unknowns):**
+- Field names: contract `queries[].prompt` vs code `qt`; contract `responseContent` vs code `response`. (Doc itself still says "qt" in §3.3 and echoes `qt` in the §5 failure example — naming drift inside the doc.)
+- `placementID` (contract: selects model+prompt config, echoed in response) vs code `evalId`; mapping layer needed.
+- `experimentContext.config.pcivExtraction` — in the contract example but not in the fields table; semantics vs placementID unstated. Not in code.
+- `additionalContext` escape hatch — not in code (her branch included).
+- Response shape: contract shows only `queries[]` (no `requestId`/`evalId`/`summary` that the code returns); contract §4.1 example uses `errorMessage` but §4.2/§5 use `error{code,message}` (code matches the latter); §4.1 example shows `googleProductCategories: [123]` ints but §4.3 says path strings (code returns strings, resolved server-side — §4.3 is authoritative).
+- Contract `intent` has no `pcivType`; her `PcivConversationExtraction` still emits it.
+- Max targets ≤5: not enforced anywhere in code (prompt-level only).
+
+**Endpoint answer for §2 (when Varun wants to fill it):** `POST /v1/intent/pciv`; dev host `https://dev-online-pciv-service.ric1.admarketplace.net` (in-VPC only); stage/prod hosts TBD (Phase D). Also exists: `POST /v1/intent/pciv/invalidate-cache`.
