@@ -67,6 +67,8 @@ Observed 2 of 3 calls timing out, both genuinely uncommitted; retries returned i
 
 ## Writing style for ticket comments (Varun standard, 2026-07-27; refined in-chat 2026-07-27)
 
+⚠️ **Scope (Varun, 2026-08-07): this standard covers ALL outbound technical prose — Jira comments/bodies, PR descriptions (GitHub + Bitbucket), and technical comments anywhere.** A GitHub PR body on online-pciv-spec written in agent-house style (bold-label bullets with em dashes, colon setups, "⚠️" markers) was rejected: "this PR description is quite wrong. There's a spec to follow (a playbook) on how to write comments, prs, technical comments." Rewrite lens that fixed it: label-bullets became subject-verb sentences, section headings became self-contained claims, em dashes and colon setups removed. In-repo files (CHANGELOG etc.) follow the repo's existing style instead.
+
 One standard — **ASD-STE100 sentence discipline** — run in two moods depending on the comment's job. The core rules always apply:
 - Short sentences (~20 words max); one idea per sentence.
 - Active voice; one word per concept (no synonym variation — "filter" stays "filter").
