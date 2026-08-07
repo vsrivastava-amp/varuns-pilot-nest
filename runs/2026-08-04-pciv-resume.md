@@ -114,12 +114,39 @@ Luna stays a candidate.
   cleaned up our Monday usage; no idle burn.
 - Raw: scratchpad `mantle_floor_day2_20260805.jsonl` (ephemeral), DBX run output above.
 
-## Open at session close
+## 2026-08-05 pm — AWS support thread + qwant-prompt token measurements
 
-1. Luna/GPT-5.6 stall: structural, evidence package ready for whenever an AWS line of comm opens.
-   Streaming invoker (text at ~0.5s) is the workaround if AI-1540 wants Luna; OpenAI-direct is the
-   other route (1.4s-class, needs egress + key management + quota story).
-2. Gemma: if it stays a candidate, tail SLOs need hour-of-day monitoring, not one-day benchmarks.
+- Varun emailed the AWS account team (Darcis/Sushant) with the five Mantle questions (latency
+  configs, cache eligibility/maximization, OSS cached-token pricing, transient spikes, Luna stall).
+  AWS came back same day with four counter-questions; Varun answered three himself; the metrics
+  answer (question 3) was drafted here from the two-day probe record — Datadog + benchmark
+  harnesses, Qwen/Ministral stable, Gemma decode-phase jitter, Luna 5.0s finalization stall with
+  example request id `req_xoaggvqy3jsadhwdhmos4266tzydx7efl52anwzi5gmo7g32jjba` (8/4 ~18:05 UTC).
+  **Thread status at session close: answers sent, awaiting AWS.**
+- **Token counts for `pciv_extraction_qwant.txt` (the contract prompt), measured 2026-08-05 via
+  Mantle-reported usage, 5 FR queries per model** (per-tokenizer facts, record per skill):
+  Luna in 3,646 / out ~42; Gemma 4 in 4,402 / out ~17; Qwen3-Next in 4,314 / **out exactly 6 on
+  all five queries — UNINVESTIGATED anomaly**, eyeball Qwen's contract output before trusting it
+  in AI-1540 accuracy or quoting its output tokens; Ministral in 4,511 / out ~64.
+  At 100 RPM flat: ~400–450k input TPM, ~25–27M input tokens/hour, ~16–20B input tokens/month
+  (also baked into Ticket 3's header in `tasks/pciv-prod-infra-checklist.md`).
+
+## Session close-out 2026-08-07 (context transferred to a new session)
+
+What this session uniquely established, and where it lives:
+- Real-prompt + 18k latency record, both Luna endpoints, cache-split, three-day variability:
+  `state/pciv-service-latency-104-107-20260804.md` + this file (day-2 section). Full ad-hoc tables
+  were chat-only by Varun's preference; the state file carries the durable versions.
+- Luna stall forensics (server-side finalization, Mantle-only, user error/CoreDNS/params/stacks all
+  excluded, streaming workaround measured): state file + `playbooks/llm-eval-system.md` (floors
+  perishable, OpenAI third gateway w/ key in nest .env).
+- Gemma jitter = decode-phase, time-of-day-correlated; TTFT stays flat (state file).
+- Prod/stage infra: now owned by the ticket file (INFRA-3507/3508 filed by a later session; quota
+  ticket 3 waits on model + QPS).
+Open threads a new session should know: AWS support thread awaiting reply; Qwen out=6 anomaly
+uninvestigated; Luna re-probe cadence informal (last confirmed 8/5 am); Saksham budget restatement
+still deferred (Varun: wait for more e2e results); evals were restructured to A0B by another
+session — this session's 104–107 references in older entries are pre-restructure history.
 2. This morning's "client-reuse fix showed no saving" entry needs the caveat propagated wherever
    it was quoted (the fix IS proven via Qwen/Ministral/Gemma deltas).
 3. Numbers → AI-1542 comms: Varun's call on wording/when (ballparks were due ~Aug 1).

@@ -81,3 +81,27 @@ Entry template:
 - 2026-08-05 update: a fourth confirmation. Yaarit's new A/B ticket AI-1654 (In Progress, under AI-1620) opens its description with "Qwant's AI Chat surface, available only in France" and defines the experiment against the llm-evaluator-service online pCIV endpoint; she also filed DPR-3420 for a `pcivExtraction` experiment config. Work is now being built on the France-in-scope reading. Still no decision record anywhere.
 - 2026-08-04 update: three independent sources now contradict the Gong brief, and the benign reading is well supported. (1) Saksham, `#pub-onboarding-qwant-ai` 2026-08-03 10:56 ET, cc'ing Varun: "we need to call the CIV service only for AI mode for FR" — plus Amarachi at 11:08 naming placements 5357 and 5359. (2) The API contract doc §1, edited 11:49 the same morning: "Primary use case today: Qwant's AI Chat surface, France only". (3) On AI-1620, 17:19–17:22 the same evening, Saksham narrowed scope to "Support Qwant launch only" and set Expected Delivery 14/Aug/26 with a green RAG, while **Dhaval personally raised priority to Highest** and assigned Amarachi as Product Lead — eight hours after the Gong brief. AI-1213 "Emerging Qwant launch support" closed Done in the same minute. Still filed as open because none of the three is a decision record: AI-1620 has no description and zero comments, so the direction is expressed only through fields.
 - resolution: (pending)
+
+## Q-2026-08-07-01 — Which experimentation-config key actually shipped: `pcivExtraction` or `civExtraction`? (open)
+- raised: 2026-08-07, morning-routine
+- project: map/pciv-live-integration (DPR-3420 / AI-1620 / contract doc)
+- conflict/decision: two live artifacts define the key differently, and the config has already shipped.
+  - **DPR-3420 Scope field** (`customfield_11292`, read fresh 2026-08-07): "Add new configuration type called ~~pCIV Extraction~~ CIV Extraction in the experimentation platform UI in Amplify **(key: pcivExtraction)**, with two possible values: Online V1 / online_v1, Off / off". Only the display name is struck through; the key line still reads `pcivExtraction`.
+  - **Yaarit's instruction to Arman**, DPR-3420 c171873 (2026-08-05 11:06 ET): "please update the config name from 'pCIV Extraction' to 'CIV Extraction'. **All the rest stays the same.**" — consistent with the key NOT changing.
+  - **Contract doc §3.2** (read from Drive 2026-08-07 10:42) documents the field as `experimentContext.config.civExtraction`, and Yaarit's doc comment says she "renamed pcivExtraction → civExtraction **to match DPR-3420**".
+  - The ticket **summary** was also renamed to "…Experimentation Platform:civExtraction" (8/05 12:24).
+  - It has shipped: Arman drove DPR-3420 Not Started → Done by 2026-08-06 09:40, and RELEASE-6169 "New Config type: CIV Extraction" is Released.
+- why it matters: the llm-evaluator-service online CIV endpoint accepts `experimentContext` and the SSP routes traffic on this key (Gontarev, `#online-civ-service` 8/05 14:32: "Request mapping + gating — via the `civExtraction` experimentation config (DPR-3420); SSP reads the config and routes traffic accordingly"). If the doc, the SSP client, and Amplify disagree on the key, gating silently fails open or closed — and the openapi.yaml the SSP generates its Jackson client from is built from the doc's spelling. Prod SSP release is Aug 12.
+- ask: what key was actually created in Amplify — `pcivExtraction` or `civExtraction`? Whichever it is, the other two artifacts need correcting to match.
+- resolution: (pending)
+
+## Q-2026-08-07-02 — Does the SSP continue on query text alone for ALL online-CIV failure classes? (open)
+- raised: 2026-08-07, morning-routine
+- project: map/pciv-live-integration (AI-1538 / AI-1620)
+- conflict/decision: no decision record exists, and the SSP is asking for one before it builds.
+  - Alexandr Gontarev, `#online-civ-service` 2026-08-05 14:32, under "Needs from your side": "Timeout/error behavior — needs an explicit decision: on timeout or extraction failure, does SSP continue the flow on the query text / publisher PCIV, or return no ads? Your timeout note suggested 'continue with just the QT' — we'd like that confirmed as the decision for all failure classes."
+  - The only thing resembling a decision is Saksham's aside, `#online-civ-service` 2026-08-05 12:18: "Do set a relatively aggressive timeout (say 700ms) so that we can move on and complete the rest of the flow with just the QT if LLM is taking too long." That covers the timeout case only, and was phrased as a note to Gontarev rather than a ruling.
+  - Gontarev has since baked 700ms in as a "working default, config-driven" and says he will validate the number against Varun's latency data.
+- why it matters: "all failure classes" is broader than timeout — it covers 422 (LLM returned an out-of-taxonomy GPC/IAB value), 500 (LLM call failed or unparseable), and per-query FAILURE inside a 207 partial success, all of which the contract doc §5 already defines. Continue-on-failure and return-no-ads are opposite revenue behaviors on the Qwant launch surface. SSP dev integration is Aug 8 and the prod release Aug 12, so this gets decided by default if nobody rules.
+- ask: on online-CIV timeout or any extraction failure, does SSP proceed with query text alone, or return no ads? Same answer for every failure class, or does 422/500 differ from timeout?
+- resolution: (pending)
